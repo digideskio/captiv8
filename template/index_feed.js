@@ -11,4 +11,10 @@ $(this).parent().find("a").toggleClass("vote_selected");//toggle both at the sam
 $(this).toggleClass("vote_selected");
 }
 
+}).on("click","input.poll_choice",function(){
+if($(this).parent().parent().hasClass("is_radio")){
+$.get("template/simcheck.php",{"poll_vote": $(this).val() , "post_que":$(this).attr("ref")},function(data){
+alert(data);  }
+});
+
 });

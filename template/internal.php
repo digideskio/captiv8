@@ -69,6 +69,14 @@ define('dflt_date_f',"F j, Y, g:i A");
 define('checkin',mysqli_error($db_main));
 define('index_page_check', preg_match("#index.php([\072]([0-9]){0,15})*$#", extraurl()));
 define('logged_in_check',(isset($_SESSION['login_q'])));
+
+function clear_array(&$listof, $search = "", $value_search = ""){
+foreach($listof as $key => $value){
+if(strlen($search) > 0 || strlen($value_search) > 0){
+
+if(preg_match("#^".$search."#",$key)){unset($listof[$key]);}
+}
+}}
  
 foreach($_SESSION as $mkey => $mvalue){ //reiterate each session and array 
 $_MONITORED[$mkey] = hack_free($mvalue);
@@ -100,6 +108,9 @@ $clone[$z] = $_SPIN[$key];             //increment array key
    }
                                                           
    
+}
+if(is_array($_POST)){
+clear_array($_SESSION,"free_sess_"); 
 } 
    $user_query = mysqli_query($db_main, "SELECT * FROM users"); //for the automatic functions 
    while($query_key = mysqli_fetch_assoc($user_query)){ //reset login attempts
@@ -280,6 +291,9 @@ setcookie("limbooo[".$bm."]","a",time()-1);
 }function plural($s){
 if($s > 1){return "s";}
 }
+
+
+
 function time_rounds($date){
 $diff = time() - strtotime($date);
 if($diff < 60){

@@ -32,7 +32,7 @@ echo "<input type='checkbox' checked='checked' name='sg_1' snowglobe='".$nx['20'
 $passes = mysqli_query($db_main, "SELECT * FROM sg_permissions WHERE towhom='$_MONITORED[login_q]'");
 $stack = mysqli_fetch_assoc($passes);
 while($permit = $stack){//i'll have to do something funky for admin permissions later
-echo "<input type='checkbox' name='sg_". $stack['access_type'] ."'";
+echo "<input type='checkbox' name='sg_". $stack['access_type'] ."'>";
 }
 mysqli_free_result($passes);
 

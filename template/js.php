@@ -165,7 +165,7 @@ alert("One or more of the poll choices were left blank. Please correct them.");
 
 //then i'm gonna have to do put it back here in case they decide to add/delete some stuff
 
-$("#content").appendTo("form#post_k");
+$("#content").insertBefore("form#post_k");
 
 if($("#input_save").html().length > 0){
 $("#input_save").empty();
@@ -173,10 +173,11 @@ $("#input_save").empty();
 
 $("#content input[type=text],#content input[type=checkbox]").each(function(){
 if($(this).attr("type") == "text"){
-$("#input_save").prepend("<input type='hidden' name='"+$(this).attr('name')+"' value='"+$(this).val()+"'>");
+var order = ($(this).attr('name') == "poll_choice") ? $(this).attr('name') + ($(this).index()-2) : $(this).attr('name');
+$("#input_save").prepend("<input type='hidden' name='"+ order +"' value='"+$(this).val()+"'>");
 }
 if($(this).attr("type") == "checkbox"){
-$("#input_save").prepend("<input type='hidden' name='"+$(this).attr('name')+"' value='"+ $(this).is(':checked') +"'>");
+$("#input_save").prepend("<input type='hidden' name='"+$(this).attr('name')+"' value='"+ $(this).prop('checked') +"'>");
 }
 });
 $("#black_overlay").empty().detach();

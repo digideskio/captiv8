@@ -51,7 +51,9 @@ $_MONITORED[$mkey] = hack_free($mvalue);
 }
 
 //end security measures.....
-  
+
+
+
   
 
 if(isset($_GET['availability'])){
@@ -70,6 +72,15 @@ $salt = mysqli_fetch_assoc($salt_check);
 if(isset($_GET['post_que']) && compare_dz($salt['password'],$_SESSION['salt_q'])){      //extra measures man
 
 //and we're in
+
+if(isset($_GET['poll_vote'])){  //live polling
+//get which id they voted on and check to see that it's a valid poll entry
+$get_poll = mysqli_query($sync, "SELECT * FROM polls WHERE post_id_root='$_FILTERED[post_que]' AND data_id='$_FILTERED[poll_vote]' AND define_set='poll_choice'");
+if(mysqli_num_rows($get_poll) > 0){
+echo "poll choice exists";
+}
+mysqli_free_result($get_poll);
+}     
 
 //votes
 if(isset($_GET['vote_action'])){

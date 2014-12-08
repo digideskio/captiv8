@@ -28,7 +28,7 @@ if(isset($_SESSION['welcome'])){echo "<div class='welcome_note' id='first1'>".$n
 
 echo "</div><table><tr><td id='left1'>";
                   
-if(index_page_check && logged_in_check){echo $nx['29']; }
+if(index_page_check && logged_in_check){echo $nx['29'];}
 //if(preg_match()){}\
 
       echo "<div class='box space1'></div>";
@@ -134,7 +134,7 @@ if(!isset($snowglobes)){$snowglobes = $matched[$key];}else{$snowglobes = $snowgl
 
 //snowglobe settings are by default for each individual snowglobe's setting, snowglobe permissions are custom and set by its admin or moderators.
 //has to be a valid post. At least one snowglobe, and not match the default text or be empty. If it's a reply, i'll set it accordingly
-//access_type under snowglobe permissions will be matched with id under snowglobe settings
+//access_type under snowglobe permissions will be matched with id under snowglobe settings 
 
 if(isset($snowglobes) || isset($_SPIN['parent_comment'])){  //check to see if it's either a new thread or a comment
 // $pass_check = mysqli_query($db_main, "SELECT * FROM ")
@@ -146,42 +146,42 @@ if(isset($snowglobes)){//if posting a new thread
 //check sg_settings first
 //for each one
 
-foreach($matched as $key => $value){
-if($value == "1"){   //users posting into their own snowglobe
+foreach($matched as $key => $value){ 
 
-if(!preg_match("#^(.){3,150}$#", $_SPIN['tcha1']) || !preg_match("#^(.){3,65536}$#", $_SPIN['tcha2']) || $_POST['tcha1'] == $nx['17'] || $_POST['tcha2'] == $nx['18']){header("Location:index.php");}
-/*
-1	content	mediumtext
-	2	cnttype	int(11)		
+if($value == "1"){  
 
-	3	msgtype	char(20)
+var_dump($_DATA);
+  
+ //users posting into their own snowglobe
 
-	4	forwhom	mediumtext
-
-	5	parent	int(11)		
-
-	6	postid	int(11)	
-
-	7	stamptime	date	
-
-	8	bywhom	mediumtext   
-  9 title	varchar(150)   
-*/
-//cnttype would be a reply, forwhom is where it'll be posted
-//1 for threads, 2 for comments, and i'll define others later      
+if((preg_match("#^(.){3,150}$#", $_SPIN['tcha1']) === 0) || strlen($_SPIN['tcha2']) > 65335 || ($_POST['tcha1'] == $nx['17']) || $_POST['tcha2'] == $nx['18']){header("Location:index.php");}
 
 
-$post_nip = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,parent,postid,stamptime,bywhom,title,thread_nick,topic_hash) VALUES('$_DATA[tcha2]','1','self','0','0',CURRENT_TIMESTAMP,'$_MICRORFID[login_q]','$_DATA[tcha1]','$thread_nick','$topic_hash')");
-if($post_nip){header("Location:index.php?phase=2");
-$_SESSION['db_query'] = "posted content-anything";
-setcookie("limbooo[0]", "k", time()+1);
-}else{
+  
+$post_submission = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,parent,postid,stamptime,bywhom,title,thread_nick,topic_hash) VALUES('$_DATA[tcha2]','1','self','0','0',CURRENT_TIMESTAMP,'$_MICRORFID[login_q]','$_DATA[tcha1]','$thread_nick','$topic_hash')");      if($post_submission){
 
-echo $error; 
+if(isset($_SPIN['poll_question'],$_SPIN['choice_addition'],$_SPIN['choice_selection'])){    //check if a poll was set
+$topic_search = mysqli_query($db_main, "SELECT * FROM posts WHERE bywhom='$_MICRORFID[login_q]' ORDER BY stamptime DESC LIMIT 0,2");
+$search_dt = mysqli_fetch_assoc($topic_search);
+mysqli_query($db_main, "INSERT INTO polls(post_id_root,value,define_set) VALUES($search_dt[postid],'$_DATA[poll_question]','question')");
 
+mysqli_query($db_main, "INSERT into polls(post_id_root,value,define_set) VALUES($search_dt[postid],'$_DATA[choice_selection]','choice_selection');");
+
+mysqli_query($db_main, "INSERT into polls(post_id_root,value,define_set) VALUES($search_dt[postid],'$_DATA[choice_addition]','choice_addition');");
+
+foreach($_DATA as $key => $value){
+if(preg_match("#^poll_choice([0-9]+)#",$key)){
+mysqli_query($db_main,"INSERT INTO polls(post_id_root,value,define_set) VALUES($search_dt[postid],'$value','poll_choice')");
+}}
+
+}                   
+
+       
+         }else{    echo $error;  }     
 }
-}
-}  
+
+}  $_SESSION['db_query'] = "posted content-anything"; setcookie("limbooo[0]", "k", time()+1);  
+
 }      
 
 if(isset($_SPIN['parent_comment'])){
@@ -205,8 +205,8 @@ echo $error;
 
 }
 } 
- 
- }else{header("Location:index.php");}
+header("Location:index.php?phase=2"); 
+}else{header("Location:index.php");}
 
 }else{header("Location:index.php");}
 

@@ -185,3 +185,7 @@ a.button_samp{font-size:11px;padding:4px 8px;margin:4px;display:inline-block;wid
 .optionbox span{margin-left:5px;}
 #content{display:none}
 #widthfix #content{display:block}
+td.poll_choosy{width:350px;}
+.poll_choosy input[type=radio]{vertical-align:middle;}
+.poll_choosy h4{background:#334054}
+.poll_choices .optionbox:first-child{background:transparent none;}
