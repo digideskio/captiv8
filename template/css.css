@@ -189,3 +189,4 @@ td.poll_choosy{width:350px;}
 .poll_choosy input[type=radio]{vertical-align:middle;}
 .poll_choosy h4{background:#334054}
 .poll_choices .optionbox:first-child{background:transparent none;}
+#session_list textarea{width:100%;padding:6px;background:#e8e8e8;border:1px solid #e0e0e0;color:#000;text-shadow:0 0;box-shadow: 0 0;}

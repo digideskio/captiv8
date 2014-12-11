@@ -30,7 +30,7 @@ some, or even most, of the
 kind of social media we
 have, but we have all of
 them lumped in one site. <br><br>
-Signing up is totally free and will take less than a minute at the most.</p><div class='bottom_menu'><a href='?direct=signup' class='side1'>Sign Up</a><a href='' id='close_button1' class='side2'>Close</a></div>",   // 6 - next, up, some fake sample terms and conditions lol 
+Signing up is totally free and will take less than a minute at the most.</p><div class='bottom_menu'><a href='?direct=signup' class='side1'>Sign Up</a><a href='toggle' class='side2 prompt'>Close</a></div>",   // 6 - next, up, some fake sample terms and conditions lol 
 '<h3>Terms and conditions</h3>
 <div class="boxxed">
 <p>Welcome to our online store! Captivate and its associates provide their services to you subject to the following conditions. You are bound by the rules of these within any page of http://captivate.ws. </p>

@@ -1,3 +1,5 @@
+var sync;
+
 $("body").on("click",".index_post .votes a",function(event){ event.preventDefault();
 
 //get data of poster with regards to this vote
@@ -11,10 +13,13 @@ $(this).parent().find("a").toggleClass("vote_selected");//toggle both at the sam
 $(this).toggleClass("vote_selected");
 }
 
-}).on("click","input.poll_choice",function(){
-if($(this).parent().parent().hasClass("is_radio")){
-$.get("template/simcheck.php",{"poll_vote": $(this).val() , "post_que":$(this).attr("ref")},function(data){
-alert(data);  }
+}).on("click",".poll_choices a.prompt",function(event){event.preventDefault();
+ if($(this).parent().hasClass("is_radio")){
+var $choice_ref = [$(this).parent().find("input.poll_choice:checked").attr('ref'),$(this).parent().find("input.poll_choice:checked").attr('value'),$(this).parent()];
+//topic id where poll was posted, id of poll choice, and then the content where this will rightfully be appended into   ^^
+$.get("template/simcheck.php",{"poll_vote": $choice_ref[1] , "post_que": $choice_ref[0] },function(data){
+$choice_ref[2].html(data);
 });
-
+}
 });
+                          

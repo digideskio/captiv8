@@ -35,25 +35,12 @@ echo "<body>";
 require_once("template/nd2.php");
 
 // I'm gonna make an internal menu
-if(count($_SESSION) > 0 || count($_COOKIE) > 0){  echo "<div id='session_list'><h3>List of currently open session/cookie variables, among other things</h3><p>";
-foreach($_SESSION as $key => $chest){
-if(is_array($chest)){}else{
-echo "<u>". $key ."</u> - ". $chest . "<br>"; }
-}
-foreach($_COOKIE as $key2 => $chest2){
-if(is_array($_COOKIE[$key2])){             $y = 0;
-foreach($_COOKIE[$key2] as $subkey => $subchest){ $y++;
-echo "<u>" . $key2 . " [ ".$y." ] </u> - " . $subchest . "<br>";
-}
-}else{echo "<u>". $key2 ."</u> - ". $chest2 . "<br>";}
-} //next, number of array rows under certain arrays
-echo "<br><strong>Next in the sequence under \$nx:</strong> " . count($nx);
-echo "</p></div>";} 
+require_once("template/site_properties.php");
 
 echo "</body>";
 echo "</html>";     
 /*end actual content*/     //session_unset();
 
-if(isset($_SESSION['login_q']) && isset($_SESSION['salt_q'])){mysqli_free_result($logged_query);}
+if(isset($_SESSION['login_q']) && isset($_SESSION['salt_q'])){mysqli_free_result($logged_query);}  
 
 ?>

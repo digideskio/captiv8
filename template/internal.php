@@ -109,15 +109,12 @@ $clone[$z] = $_SPIN[$key];             //increment array key
                                                           
    
 }
-if(is_array($_POST)){
-clear_array($_SESSION,"free_sess_"); 
-} 
    $user_query = mysqli_query($db_main, "SELECT * FROM users"); //for the automatic functions 
    while($query_key = mysqli_fetch_assoc($user_query)){ //reset login attempts
    
 $difference = (time() - strtotime($query_key['login_att_last']));
 $dialdown = round($difference / (3600));
-if($difference >= 18000) {$dialdown = 0; }
+if($difference >= 18000) {$dialdown = 0; }  //this would-be site could be dead :(
 if($dialdown > 1){mysqli_query($db_main, "UPDATE users SET login_attempts='$dialdown' WHERE username='$query_key[username]'");  }
 }  mysqli_free_result($user_query);  
 
@@ -181,7 +178,11 @@ if(!isset($_SESSION['db_query'])){
    }
    }
    
-if(isset($_SESSION['login_q'])){mysqli_query($db_main, "UPDATE users SET last_active_at=now() WHERE username='$_MICRORFID[login_q]'");    }
+if(isset($_SESSION['login_q'])){mysqli_query($db_main, "UPDATE users SET last_active_at=now() WHERE username='$_MICRORFID[login_q]'");    
+$logged_user_data = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_MICRORFID[login_q]'");
+$logged_zen = mysqli_fetch_assoc($logged_user_data);
+
+}
 if(isset($_GET['thread_view'])){
 $_TRIM = hack_free($_GET['thread_view']);
 preg_match("#^(.{3,50})_([A-Za-z0-9]{10})$#",$_TRIM,$_SPLIT);

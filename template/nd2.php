@@ -352,6 +352,7 @@ unset($_SESSION[$nkey]);
   setcookie("glimpse","yuo",time()+1);
   }    
   if(!isset($_SESSION['login_q'])){setcookie('incorrect_password_notice','incorrect',time()+1);}
+  clear_array($_SESSION,"free_sess_");
   
   if($_SESSION['db_query'] == "posted content-anything"){
   $latest = mysqli_query($db_main, "SELECT * FROM posts WHERE bywhom = '".$_MICRORFID['login_q']."' ORDER BY stamptime DESC");

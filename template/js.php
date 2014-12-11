@@ -188,7 +188,13 @@ $("#attach_poll_q").html("MANAGE ATTACHED POLL");
 
 }
 if($(this).attr("href") == "toggle"){
-$(this).parent().next(".spoiler").toggle(); }
+if($(this).parent().next().is(".spoiler")){$(this).parent().next(".spoiler").toggle();}
+if($(this).parent().parent().is("#first1")){
+$("#first1").toggle();
+}
+ 
+
+}
 
 if($(this).attr("href") == "add-poll" && !($("#black_overlay").length)){
 $("body").prepend($black_layer[0] + $black_layer[1]).css("overflow","hidden");
