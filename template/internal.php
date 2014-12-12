@@ -1,4 +1,5 @@
-<?php
+<?php                              
+
 
 mysqli_set_charset($db_main,"UTF8");
 

@@ -94,7 +94,7 @@ mysqli_free_result($poll_vote_check);
 if(isset($_GET['vote_action'])){
 $vote = ($_GET['vote_action'] == "up") ? "1" : "0";
 //check to see if the user's already voted
-$vote_q = mysqli_query($sync, "SELECT * FROM votes_q WHERE bywhom='".$_monitored['login_q']."' AND which_post='$_FILTERED[post_que]'");
+$vote_q = mysqli_query($sync, "SELECT * FROM votes_q WHERE bywhom='".$_MONITORED['login_q']."' AND which_post='$_FILTERED[post_que]'");
 $post_check = mysqli_query($sync, "SELECT * FROM posts WHERE postid=$_FILTERED[post_que]");
 $post_dt = mysqli_fetch_assoc($post_check);
 $residual = ($vote == "1") ? array($post_dt['upvotes']+1,$post_dt['downvotes']-1,1) : array($post_dt['upvotes']-1,$post_dt['downvotes']+1,0); //changed his mind, therefore upvotes should be 1 higher and downvotes 1 lower, and vice versa depending on how he voted.
@@ -102,8 +102,10 @@ if(mysqli_num_rows($vote_q) > 0){
 $vote_dt = mysqli_fetch_assoc($vote_q);
 
 if($vote_dt['vote'] == $vote){//trying to unvote where you vote
-$vote_a = mysqli_query($sync, "DELETE FROM votes_q WHERE which_post='$_FILTERED[post_que]' AND bywhom='$_monitored[login_q]'");
+$vote_a = mysqli_query($sync, "DELETE FROM votes_q WHERE which_post='$_FILTERED[post_que]' AND bywhom='$_MONITORED[login_q]'");
 if($vote_a){
+
+
 $msgs = array("notice" => "Unvoted!"); 
 }
 }else{
@@ -117,7 +119,7 @@ $msgs = array("notice" => "Changed your mind and ".$_FILTERED['vote_action'] . "
 
 
 }else{//but if not
-$vote_a = mysqli_multi_query($sync, "INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_monitored[login_q]',now(),'".$_GET['post_que']."','$vote');UPDATE posts SET ".$_FILTERED['vote_action']."votes='$residual[2]' WHERE postid=".$post_dt['postid']."");    //in here we only need the first result
+$vote_a = mysqli_multi_query($sync, "INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MONITORED[login_q]',now(),'".$_GET['post_que']."','$vote');UPDATE posts SET ".$_FILTERED['vote_action']."votes='$residual[2]' WHERE postid=".$post_dt['postid']."");    //in here we only need the first result
 if($vote_a){$msgs = array("notice" => $_FILTERED['vote_action'] . "voted!");
 
 $msgs = array("notice" => $_FILTERED['vote_action'] . "voted!");}else{echo mysqli_error($sync);}     
