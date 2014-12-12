@@ -64,7 +64,7 @@ setcookie("glimpse","asd",time()-1);
 if(isset($_GET['direct'])){ //all actions
 
 
-if(compare_dz($_GET['verify'],$_SESSION['temp_n'])){ //check for session hash 
+if(isset($_GET['verify']) && compare_dz($_GET['verify'],$_SESSION['temp_n'])){ //check for session hash 
 
 if($_SERVER["REQUEST_METHOD"] == "POST" && $_GET['direct'] == "login"){ //session hash required
 
@@ -210,7 +210,7 @@ header("Location:index.php?phase=2");
 
 }else{header("Location:index.php");}
 
-}else{if($_GET['verify'] !== $_SESSION['temp_n']){
+}else{if(isset($_GET['verify']) && $_GET['verify'] !== $_SESSION['temp_n']){
 header("Location:index.php");
 }}
 
