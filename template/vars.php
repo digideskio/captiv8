@@ -2,6 +2,7 @@
 
 //text references
 //remember that they will show up as $nx[n] where n = its position in the sequence -1
+$spack = "";
 $nx = array(  //english
 "username..." /*1 - username pre-click text*/,
 "password" /* 2- password pre-click text*/,

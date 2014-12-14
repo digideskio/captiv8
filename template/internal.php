@@ -102,10 +102,10 @@ substr($snipe,$nd);
   
 if($_SERVER['REQUEST_METHOD'] == "POST"){foreach($_POST as $key => $room){ $z++;
 $_SPIN[$key] = preg_replace("/[\n]/","<br>",$_POST[$key]); 
-$_DATA[$key] = mysqli_real_escape_string($db_main,$_SPIN[$key]);
+$_DATA[$key] = $_SPIN[$key];
 $_SESSION['free_sess_' . $key] =  $_SPIN[$key]; //post name array key, filtered and also a free session!
 $clone[$z] = $_SPIN[$key];             //increment array key
-
+                   //lol spin and data are essentially the same thing
    }
                                                           
    
