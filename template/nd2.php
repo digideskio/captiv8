@@ -70,22 +70,29 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_GET['direct'] == "login"){ //sessio
 
 
 
-$mas1 = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_SPIN[usernorm]'"); //call it
+$mas1 = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_DATA[usernorm]'"); //call it
 $mas2 = mysqli_fetch_assoc($mas1);
 foreach($mas2 as $keyn => $valuen){
 $mn[$keyn] = $valuen;
 }      
 
 $nick = hash('sha512',$mn['salt'] . $_SPIN['pwrdnorm']);
-$gravy = substr($nick, 0, 40);  //make a nice meal
-   echo $gravy . "<br>" . $mn['password'] . "<br>" . $mn['salt'] . "<br>" . $_SPIN['pwrdnorm'];    
+$gravy = substr($nick, 0, 40);  //make a nice meal 
 
 /*criteria to stop XSS and brute force attacks:
 - Stop consequent logins at X
 - filter characters
 
 in this case I am going to have a reset of all login_attempt logs in the database each refresh after an hour from the last login attempt. I should probably set it to where you could only have one login attempt per hour on an account if you failed logging in more than 5 times within an hour. That's a little paranoid though
-*/                           
+*/    
+ //reset login attempts
+   
+$difference = (time() - strtotime($mas2['login_att_last']));
+$dialdown = round($difference / 3600);
+if($difference >= 18000) {$dialdown = 0; } 
+mysqli_query($db_main, "UPDATE users SET login_attempts='$dialdown' WHERE username='$mas2[username]'");     
+
+                
 
 if($mas2['login_attempts'] < 5){   
 if(compare_dz($gravy,$mn['password'])){ //successful log in    
@@ -107,13 +114,15 @@ $_SESSION['que_em'] = mysqli_error($db_main);
 } 
 $_SESSION['log_num'] = $mas3; 
 setcookie("inc_ombination", "Incorrect user/password combination", time()+1);       
-header("Location: index.php");}
+}
 
-
+header("Location: index.php"); 
 }
     
 
-}else{setcookie("inc_ombination", "This account is temporarily locked. Please wait no more than an hour to log in again.", time()+1); header("Location: index.php");      //Don't want to get it further than that. Such lazy
+}else{setcookie("inc_ombination", "This account is temporarily locked. Please wait no more than an hour to log in again.", time()+1); 
+
+header("Location: index.php");      //Don't want to get it further than that. Such lazy
 }
 
  mysqli_free_result($mas1);
@@ -205,13 +214,18 @@ echo $error;
 
 }
 } 
-header("Location:index.php?phase=2"); 
-}else{header("Location:index.php");}
+//header("Location:index.php?phase=2"); 
+}else{
+//header("Location:index.php");
+}
 
-}else{header("Location:index.php");}
+}else{
+//header("Location:index.php");
+
+}
 
 }else{if(isset($_GET['verify']) && $_GET['verify'] !== $_SESSION['temp_n']){
-header("Location:index.php");
+//header("Location:index.php");
 }}
 
 //if not, then it's just direct

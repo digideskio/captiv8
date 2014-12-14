@@ -75,19 +75,39 @@ if(isset($_GET['post_que']) && compare_dz($salt['password'],$_SESSION['salt_q'])
 
 if(isset($_GET['poll_vote'])){  //live polling
 //get which id they voted on and check to see that it's a valid poll entry
-$get_poll = mysqli_query($sync, "SELECT * FROM polls WHERE post_id_root=$_FILTERED[post_que] AND data_id=$_FILTERED[poll_vote] AND define_set='poll_choice'");
+$poll_settings = mysqli_query($sync, "SELECT * FROM polls WHERE post_id_root=$_FILTERED[post_que] AND define_set != 'poll_choice'");
+while($settings_dt = mysqli_fetch_assoc($poll_settings)){
+$p_nats[$settings_dt['define_set']] = $settings_dt['value'];
+}
+$get_poll = mysqli_query($sync, "SELECT * FROM polls WHERE post_id_root=$_FILTERED[post_que] AND data_id=$_FILTERED[poll_vote] AND define_set='poll_choice'");  //more like, the poll vote data
+$poll_choice_zen = mysqli_fetch_assoc($get_poll);
 if(mysqli_num_rows($get_poll) > 0){
-$poll_vote_check = mysqli_query($sync, "SELECT * FROM pollvotes_q WHERE bywhom='$_MONITORED[login_q]' AND which_poll='$_FILTERED[post_que]'"); //check if they've already voted
+$poll_vote_check = mysqli_query($sync, "SELECT * FROM pollvotes_q WHERE bywhom='$_MONITORED[login_q]' AND which_poll='$_FILTERED[post_que]'");
 
-if(mysqli_num_rows($poll_vote_check) < 1){
-//$poll_vote_q[1] = mysqli_query($sync, "INSERT INTO pollvotes_q(bywhom,timeof,choice_id,which_poll) VALUES('$_MONITORED[login_q]',now(),'$_FILTERED[poll_vote]','$_FILTERED[post_que]')");
-}                               
+
+
+ //check if they've already voted
+ if(mysqli_num_rows($poll_vote_check) < 1){
+$poll_vote_q[1] = mysqli_query($sync, "INSERT INTO pollvotes_q(bywhom,timeof,choice_id,which_poll) VALUES('$_MONITORED[login_q]',now(),'$_FILTERED[poll_vote]','$_FILTERED[post_que]')");      
+$update = $poll_choice_zen['votes'] + 1;
+$poll_vote_q[2] = mysqli_query($sync, "UPDATE polls SET votes='$update' WHERE data_id='$poll_choice_zen[data_id]'");  
+if($poll_vote_q[1] && $poll_vote_q[2]){
+echo "Successfully voted!";
+}     else{echo $error;}
+}else{echo "You already voted";} 
+
+
+//or not
+
+                              
 
 
 }
-echo "not dead!";
+
 mysqli_free_result($get_poll);
 mysqli_free_result($poll_vote_check);
+mysqli_free_result($poll_settings);
+
 }     
 
 //votes

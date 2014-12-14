@@ -1,6 +1,5 @@
 <?php    
-if((count($_SESSION) > 0 || count($_COOKIE) > 0) && isset($_SESSION['login_q'])
-){if(compare_dz($logged_zen['password'],$_SESSION['salt_q'])){
+if((count($_SESSION) > 0 || count($_COOKIE) > 0) && isset($_SESSION['login_q']) ){if(compare_dz($logged_zen['password'],$_SESSION['salt_q'])){
 include("template/admin_djs.php");
 
 echo "<div id='session_list'><h3>List of currently open session/cookie variables, among other things</h3><p>";
@@ -19,7 +18,7 @@ echo "<br><strong>Next in the sequence under \$nx:</strong> " . count($nx);
 echo "</p>
 <p><textarea class='flick' style='width:100%;' id='sql_parse'>Run any SQL queries here, as you wish... Press ENTER to submit it</textarea><span id='sql_results'></span></p>
 
-</div>";       }
+</div>";       } 
 } 
 
 ?>

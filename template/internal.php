@@ -110,14 +110,7 @@ $clone[$z] = $_SPIN[$key];             //increment array key
                                                           
    
 }
-   $user_query = mysqli_query($db_main, "SELECT * FROM users"); //for the automatic functions 
-   while($query_key = mysqli_fetch_assoc($user_query)){ //reset login attempts
-   
-$difference = (time() - strtotime($query_key['login_att_last']));
-$dialdown = round($difference / (3600));
-if($difference >= 18000) {$dialdown = 0; }  //this would-be site could be dead :(
-if($dialdown > 1){mysqli_query($db_main, "UPDATE users SET login_attempts='$dialdown' WHERE username='$query_key[username]'");  }
-}  mysqli_free_result($user_query);  
+
 
 if(isset($_SESSION['login_q']) && isset($_SESSION['salt_q'])){
 $logged_query = mysqli_query($db_main,"SELECT * FROM users WHERE username='$_SESSION[login_q]'");
@@ -327,5 +320,6 @@ return $date2;
 //other user's permissions in the poll
 //show who voted in which
 //mysqli_query($db_main, "ALTER TABLE posts ADD COLUMN(upvotes INT NOT NULL DEFAULT 1,downvotes INT NOT NULL DEFAULT 0)");
+//mysqli_query($db_main, "ALTER TABLE polls ADD COLUMN(votes INT NOT NULL DEFAULT 0)");
 
    ?>                                                               

@@ -181,7 +181,6 @@ $("#input_save").prepend("<input type='hidden' name='"+$(this).attr('name')+"' v
 }
 });
 $("#black_overlay").empty().detach();
-$("body").css("overflow-y","auto");
 $("#attach_poll_q").html("MANAGE ATTACHED POLL");
 }
 
@@ -197,7 +196,7 @@ $("#first1").toggle();
 }
 
 if($(this).attr("href") == "add-poll" && !($("#black_overlay").length)){
-$("body").prepend($black_layer[0] + $black_layer[1]).css("overflow","hidden");
+$("body").prepend($black_layer[0] + $black_layer[1]);
 $("#content").appendTo("#widthfix");  //keep the dynamicity?
 
 
