@@ -40,8 +40,7 @@ function compare_dz($a, $b) {
 
 
 function hack_free($data) {
-   
-                          global $db_main;
+  global $db_main;
   if(is_array($data)){  //check if it's array
   foreach($data as $key => $value){     //then loop for each data
 
@@ -72,11 +71,12 @@ define('index_page_check', preg_match("#index.php([\072]([0-9]){0,15})*$#", extr
 define('logged_in_check',(isset($_SESSION['login_q'])));
 
 function clear_array(&$listof, $search = "", $value_search = ""){
+if(is_array($listof)){
 foreach($listof as $key => $value){
 if(strlen($search) > 0 || strlen($value_search) > 0){
 
 if(preg_match("#^".$search."#",$key)){unset($listof[$key]);}
-}
+}}
 }}
  
 foreach($_SESSION as $mkey => $mvalue){ //reiterate each session and array 
@@ -125,7 +125,7 @@ $username = $_FILTERED['profile'];
 $profile_query = mysqli_query($db_main, "SELECT * FROM users WHERE username='$username'"); $matched = mysqli_fetch_assoc($profile_query);
 if($profile_query){
 
-}else{header("Location:index.php");}
+}else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 
 }
 
@@ -226,19 +226,13 @@ get_posts($q_dt['postid'],$tid_call,"25",$chain-1);
 
 if($q_req){mysqli_free_result($q_req);}}else{
 
-
-
-
-
 // last solution, and then i'm gonna contemplate ragequitting
 //moral of the story? Never use recursive functions unless you clearly know your parameters.
-//also life is absurd. And i'm pathetic for staying up all night and not being able to solve silly problems like this
-//I really need to regulate
-//seriously... regulate.
 
 
 function refer($top_ancestor){  global $db_main,$thread_data,$_MONITORED;
-$_SESSION['need_wraps'] = 1;
+$_SESSION['need_wraps'] = 1;   //some DOM wrapping I wanted to implement
+//can't quite explain it in my head
 echo "<div class='margin'>";
 }
 //get selected comment
@@ -249,14 +243,14 @@ if(mysqli_num_rows($get_selected_comment) == "1"){
 if(mysqli_num_rows($get_comments_above_selected) > 0){
   $q_parents = mysqli_fetch_assoc($get_comments_above_selected);
 refer($q_parents['postid']); 
-}else{header("Location:index.php");}
+}else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 echo "<div class='contentbox comment_box selected'><table><tr>
 <td class='user_info'><h4><a href='index.php?profile=".$q_dt['bywhom']."'>".$q_dt['bywhom']."</a></h4></td><td><p class='post_text'>".$q_dt['content']."
 <span class='side_info'>- Posted <a href='?thread_view=".$_GET['thread_view']."&comment=".$q_dt['topic_hash'] ."'>". date(dflt_date_f, strtotime($q_dt['stamptime'])) ."</a></span>
 </p>";
 if(isset($_SESSION['login_q'])){echo "<div class='opts_block' alt='".$q_dt['postid']."'>";echo "<a href='#' class='comment_opts rad comment_q-u' id='post_".$q_dt['postid']."' name='post_".$q_dt['postid']."'>Reply</a><a href='#' class='comment_opts rad edit' id='edit_".$q_dt['postid']."'>Edit</a>";echo "</div>";}
 echo "</td></tr></table></div>";
-}else{header("Location:index.php");}
+}else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 
 //get all child posts of single-referred-post comment
 $get_child_comments = mysqli_query($db_main, "SELECT * FROM posts WHERE parent='$_SESSION[original_post_query]' AND thread_id='$thread_data[postid]' ORDER BY stamptime DESC LIMIT 0,25");
@@ -268,7 +262,7 @@ get_posts($sync_children['postid'],$thread_data['postid']);
 mysqli_free_result($get_child_comments);
 }
 
-   refer($pid_call,$special_select);  
+   refer($pid_call);  
    
    for($i = 0;$i <= $_SESSION['need_wraps'];$i++){
 echo "</div>";

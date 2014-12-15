@@ -56,10 +56,10 @@ if(isset($_GET['thread_view'])){
 if($view_thread && ($thread_data['cnttype'] == "1")){     
                              
 
-echo "<div class='contentbox' id='thread_main'><h3>".$thread_data['title']." <small>by <a href='index.php?profile=".$thread_data['bywhom']."'>nolvorite</a> at <span class='white'>". date(dflt_date_f, strtotime($thread_data['stamptime']))."</span></small></h3>";      //".$thread_data['']."
-if(strlen($thread_data['content']) >= 3){echo "<p>".$thread_data['content']."</p>";  }
+echo "<div class='contentbox' id='thread_main'><h3>".$thread_data['title']." <small>by <a href='index.php?profile=".$thread_data['bywhom']."'>".$thread_data['bywhom']."</a> at <span class='white'>". date(dflt_date_f, strtotime($thread_data['stamptime']))."</span></small></h3>";      //".$thread_data['']."
+if(strlen($thread_data['content']) > 3){echo "<p>".$thread_data['content']."</p>";  }
 echo "</div>";
-//reply to thread
+//reply-action to thread
 if(isset($_SESSION['login_q'])){
 echo "<div id='thread_reply' class='contentbox'><form action='index.php?direct=new_post&verify=".hack_free($_SESSION['temp_n'])."' method='POST'>
 <input type='hidden' value='". $thread_data['postid'] ."' name='parent_comment'>
@@ -174,7 +174,7 @@ get_posts($comment_loop['postid'],$thread_data['postid']);        echo "</div>";
 }
 
 mysqli_free_result($snipe8);
-mysqli_free_result($view_thread); }else{header("Location:index.php");}
+mysqli_free_result($view_thread); }else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 }else{
 if(isset($_GET['comment'])){
 $search_for_thread = mysqli_query($db_main, "SELECT * FROM posts WHERE topic_hash='$_FILTERED[comment]' ORDER BY stamptime DESC");
@@ -183,7 +183,7 @@ $post_data = mysqli_fetch_assoc($search_for_thread);
 $thread_query = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$post_data[thread_id]'");
 $thread_dt = mysqli_fetch_assoc($thread_query);
 header("Location:index.php?thread_view=" . $thread_dt['thread_nick'] . "_" . $thread_dt['topic_hash'] . "&comment=" . $_GET['comment']);
-}else{header("Location:index.php");}
+}else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 }
 }
 
@@ -227,7 +227,7 @@ $snipe13 = mysqli_fetch_assoc($snipe12);   //find original thread
 //first, find the comment ancestor's post info
 //check to see if its parent is the thread
 
-$post_tree_msg = ($snipe9['parent'] == $post_loop['thread_id']) ? array("to thread",$snipe11['topic_hash'],$snipe11['thread_nick'],$snipe11['title']) : array("in a comment under",$snipe13['topic_hash'],$snipe13['thread_nick'],$snipe13['title']);         //check if parent of current comment is thread id
+$post_tree_msg = ($snipe9['parent'] !== $post_loop['thread_id']) ? array("to thread",$snipe13['topic_hash'],$snipe13['thread_nick'],$snipe13['title']) : array("in a comment under",$snipe13['topic_hash'],$snipe13['thread_nick'],$snipe13['title']);         //check if parent of current comment is thread id
 
 //I really need to be more logistical about this
 
@@ -248,9 +248,9 @@ echo "<td class='side_info'></td></tr>";
 echo "</table></div>";
 
 mysqli_free_result($query_2);
-mysqli_free_result($snipe7);
+if(isset($snipe_7)){mysqli_free_result($snipe7);    }
 
-}else{header("Location:index.php");}
+}else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 mysqli_free_result($profile_query);
 }
 

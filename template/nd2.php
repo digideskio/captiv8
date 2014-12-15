@@ -116,13 +116,13 @@ $_SESSION['log_num'] = $mas3;
 setcookie("inc_ombination", "Incorrect user/password combination", time()+1);       
 }
 
-header("Location: index.php"); 
+header("Location: index.php"); $_SESSION['error' .rand(56,1515)] = extraurl(); 
 }
     
 
 }else{setcookie("inc_ombination", "This account is temporarily locked. Please wait no more than an hour to log in again.", time()+1); 
 
-header("Location: index.php");      //Don't want to get it further than that. Such lazy
+header("Location: index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();      //Don't want to get it further than that. Such lazy
 }
 
  mysqli_free_result($mas1);
@@ -158,12 +158,10 @@ if(isset($snowglobes)){//if posting a new thread
 foreach($matched as $key => $value){ 
 
 if($value == "1"){  
-
-var_dump($_DATA);
   
  //users posting into their own snowglobe
 
-if((preg_match("#^(.){3,150}$#", $_SPIN['tcha1']) === 0) || strlen($_SPIN['tcha2']) > 65335 || ($_POST['tcha1'] == $nx['17']) || $_POST['tcha2'] == $nx['18']){header("Location:index.php");}
+if((preg_match("#^(.){3,150}$#", $_SPIN['tcha1']) === 0) || strlen($_SPIN['tcha2']) > 65335 || ($_POST['tcha1'] == $nx['17']) || $_POST['tcha2'] == $nx['18']){header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 
 
   
@@ -196,7 +194,7 @@ mysqli_query($db_main,"INSERT INTO polls(post_id_root,value,define_set) VALUES($
 if(isset($_SPIN['parent_comment'])){
 $tree_roots = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$_SPIN[parent_comment]'");
 $piece = mysqli_fetch_assoc($tree_roots);      //get parent of post. Just to recheck, ya know. That's right! For the settings! My goodness I work like a turtle.
-if($piece['settings'] > 4){header("Location:index.php");mysqli_free_result($tree_roots);}
+if($piece['settings'] > 4){header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();mysqli_free_result($tree_roots);}
 
 $post_async = mysqli_query($sync, "SELECT * FROM posts WHERE bywhom='$MICRORFID[login_q]' ORDER BY stamptime DESC LIMIT 0,10");
 $async_dt = mysqli_fetch_assoc($post_async); //get latest post for whatever reference you must.
@@ -214,18 +212,18 @@ echo $error;
 
 }
 } 
-//header("Location:index.php?phase=2"); 
+header("Location:index.php?phase=2"); 
 }else{
-//header("Location:index.php");
+header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();
 }
 
 }else{
-//header("Location:index.php");
+header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();
 
 }
 
 }else{if(isset($_GET['verify']) && $_GET['verify'] !== $_SESSION['temp_n']){
-//header("Location:index.php");
+header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();
 }}
 
 //if not, then it's just direct
@@ -348,7 +346,14 @@ admin_notifs = on                           8*/
 if(isset($_COOKIE['limbooo'][0])){
   if($_GET['phase'] == "1"){
   if($_SESSION['db_query'] = "user registration"){
-  $sn = mysqli_query($db_main, "INSERT INTO users(username,password,email,joindate,fullname,admin_notifs,month2,day2,year2) VALUES('$_SESSION[reg_dt1]','$_SESSION[reg_dt2]','$_SESSION[reg_dt3]',now(),'$_SESSION[reg_dt4]','$_SESSION[reg_dt8]','$_SESSION[reg_dt6]','$_SESSION[reg_dt5]','$_SESSION[reg_dt7]'); INSERT INTO sg_settings(a1_check,a2_check,a3_check,a4_check,a5_check) VALUES('all','all','all','self','self')");  foreach($_SESSION as $nkey => $nvalue){
+  
+  //saltin'
+  $salt = substr(sha1(md5(base64_encode(microtime() - mt_rand(1,microtime())*mt_rand(.01,1)))),0,20);      //pendulum
+  $kripke = substr(hash('sha512', $salt . $_SESSION['reg_dt2']), 0, 40);
+  
+  $sn = mysqli_multi_query($db_main, "INSERT INTO users(username,password,email,joindate,fullname,admin_notifs,month2,day2,year2,salt) 
+  VALUES('$_MONITORED[reg_dt1]','$kripke','$_MONITORED[reg_dt3]',now(),'$_MONITORED[reg_dt4]','$_MONITORED[reg_dt8]','$_MONITORED[reg_dt6]','$_MONITORED[reg_dt5]','$_MONITORED[reg_dt7]','$salt'); INSERT INTO sg_settings(a1_check,a2_check,a3_check,a4_check,a5_check) VALUES('all','all','all','self','self')");  
+  foreach($_MONITORED as $nkey => $nvalue){
 if(preg_match("#^reg[_]dt[\055\1370-9a-z]+#", $nkey)){
 unset($_SESSION[$nkey]);
 } } 
@@ -373,13 +378,14 @@ unset($_SESSION[$nkey]);
   $actual = mysqli_fetch_assoc($latest);
   mysqli_query($db_main,"INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MICRORFID[login_q]',CURRENT_TIMESTAMP,'$actual[postid]',1)");
   if($actual['cnttype'] == "1"){
-  header("Location:index.php?thread_view=". $actual['thread_nick'] . "_" . $actual['topic_hash']);
+header("Location:index.php?thread_view=". $actual['thread_nick'] . "_" . $actual['topic_hash']);
   }
   
   if($actual['cnttype'] == "2"){
-  $tree_roots = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$actual[thread_id]' AND bywhom = '$_MONITORED[login_q]' ORDER BY stamptime DESC");
+  $tree_roots = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$actual[thread_id]' ORDER BY stamptime DESC");
   $piece = mysqli_fetch_assoc($tree_roots);
-  header("Location:index.php?thread_view=".$piece['thread_nick']."_".$piece['topic_hash']."&comment=" . $actual['topic_hash']);
+
+ header("Location:index.php?thread_view=".$piece['thread_nick']."_".$piece['topic_hash']);
   mysqli_free_result($tree_roots);
   }
   mysqli_free_result($latest);
@@ -387,7 +393,7 @@ unset($_SESSION[$nkey]);
   unset($_SESSION['db_query']);
 
   }  
-  }else{header("Location:index.php");}
+  }else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 }
 
 
