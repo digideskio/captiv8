@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 14, 2014 at 09:50 PM
+-- Generation Time: Dec 15, 2014 at 03:17 AM
 -- Server version: 5.6.12-log
 -- PHP Version: 5.4.16
 
@@ -55,7 +55,7 @@ INSERT INTO `polls` (`post_id_root`, `value`, `data_id`, `define_set`, `votes`) 
 (88, 'To be or not to be...', 69, 'question', 0),
 (88, 'true', 70, 'choice_selection', 0),
 (88, 'false', 71, 'choice_addition', 0),
-(88, '...Or is it?', 72, 'poll_choice', 0),
+(88, '...Or is it?', 72, 'poll_choice', 1),
 (88, 'Is the question.', 73, 'poll_choice', 0),
 (89, 'Test poll question', 74, 'question', 0),
 (89, 'true', 75, 'choice_selection', 0),
@@ -76,14 +76,16 @@ CREATE TABLE IF NOT EXISTS `pollvotes_q` (
   `which_poll` int(11) NOT NULL,
   `vote_id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`vote_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 --
 -- Dumping data for table `pollvotes_q`
 --
 
 INSERT INTO `pollvotes_q` (`bywhom`, `timeof`, `choice_id`, `which_poll`, `vote_id`) VALUES
-('nolvorite', '2014-12-14 15:03:32', 78, 89, 5);
+('nolvorite', '2014-12-14 15:03:32', 78, 89, 5),
+('nolvorite', '2014-12-14 16:10:10', 72, 88, 6),
+('nolvorite', '2014-12-14 15:03:32', 78, 89, 8);
 
 -- --------------------------------------------------------
 
@@ -110,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `downvotes` int(11) NOT NULL DEFAULT '0',
   `post_type` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`postid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=91 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=93 ;
 
 --
 -- Dumping data for table `posts`
@@ -177,7 +179,9 @@ INSERT INTO `posts` (`content`, `cnttype`, `msgtype`, `forwhom`, `parent`, `post
 ('it''s not a free will question, it''s a destiny question', 1, NULL, 'self', 0, 87, '2014-12-08 01:15:59', 'nolvorite', 'Wait...', 'Wait___', 'dd73afeb21', 1, NULL, NULL, 1, 0, 0),
 ('Sigh... with a poll. again. soz', 1, NULL, 'self', 0, 88, '2014-12-08 01:22:44', 'nolvorite', 'Test question', 'Test_question', '6845525f04', 1, NULL, NULL, 1, 0, 0),
 ('I swear right', 1, NULL, 'self', 0, 89, '2014-12-08 01:24:52', 'nolvorite', 'Soz....', 'Soz____', 'a1f4d23957', 1, NULL, NULL, 1, 0, 0),
-('Test post', 1, NULL, 'self', 0, 90, '2014-12-12 19:46:39', 'nolvorite', 'Test post', 'Test_post', '19adda3671', 1, NULL, NULL, 1, 0, 0);
+('Test post', 1, NULL, 'self', 0, 90, '2014-12-12 19:46:39', 'nolvorite', 'Test post', 'Test_post', '19adda3671', 1, NULL, NULL, 1, 0, 0),
+('Replyyyy', 2, NULL, 'n-a', 90, 91, '2014-12-15 03:16:15', 'nolvorite', '', '', 'bba3a58208', 1, 90, NULL, 1, 0, 0),
+('And again', 2, NULL, 'n-a', 91, 92, '2014-12-15 03:16:23', 'nolvorite', 'Comments', 'Comments', 'bb3e86f54d', 1, 90, NULL, 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -253,7 +257,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`username`, `password`, `isvalidated`, `email`, `userid`, `joindate`, `fullname`, `admin_notifs`, `root_admin_status`, `month2`, `day2`, `year2`, `salt`, `login_attempts`, `login_att_last`, `last_active_at`, `last_activity`) VALUES
-('nolvorite', 'd83ab46b4325d8bcd1102188c38d8a098b23a168', 1, 'hns_marcon@hotmail.com', 1, '2014-11-14 23:52:34', 'Hans Marcon', 'on', '1', 4, 9, 1996, '6c478c525f517a7ab838', '0', '2014-12-11 14:32:53', '2014-12-14 15:29:16', NULL),
+('nolvorite', 'd83ab46b4325d8bcd1102188c38d8a098b23a168', 1, 'hns_marcon@hotmail.com', 1, '2014-11-14 23:52:34', 'Hans Marcon', 'on', '1', 4, 9, 1996, '6c478c525f517a7ab838', '0', '2014-12-11 14:32:53', '2014-12-14 21:16:33', NULL),
 ('test_user4aaaasd', 'c08c7f680792684058eafc92e8e1e85e07617eff', NULL, 'asdasdas@asda.asdas', 27, '2014-11-13 21:16:30', 'asdas asdas', 'on', NULL, 12, 16, 1994, 'aad763cbecdacccb1f63', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 ('test_9', '6e1d3ee1ec90c3617dc4aff58fe39bba75a8b68e', NULL, 'laskdla@alsdkalsd.asdjas', 31, '2014-11-14 23:21:41', 'asdajsdjaks asdjaks', 'on', NULL, 4, 19, 1996, '3aab2407326f6ada6661', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 ('asdasdas', 'ef659ade9df94a0bc3e792ec9e2f81095d375a48', NULL, 'hns_marcon@hotmail.coma', 32, '2014-11-13 21:16:30', 'asdasd asd asdas', 'on', NULL, 11, 15, 1999, 'e64ec838d0dba46ea10a', '0', '2014-12-02 00:06:50', '0000-00-00 00:00:00', NULL);
@@ -271,7 +275,7 @@ CREATE TABLE IF NOT EXISTS `votes_q` (
   `vote` int(1) NOT NULL DEFAULT '1',
   `v_id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`v_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=85 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=89 ;
 
 --
 -- Dumping data for table `votes_q`
@@ -340,7 +344,11 @@ INSERT INTO `votes_q` (`bywhom`, `timeof`, `which_post`, `vote`, `v_id`) VALUES
 ('nolvorite', '2014-12-07 19:22:45', 88, 1, 75),
 ('', '2014-12-12 13:32:06', 58, 0, 78),
 ('nolvorite', '2014-12-12 13:37:39', 89, 1, 83),
-('nolvorite', '2014-12-12 13:46:40', 90, 1, 84);
+('nolvorite', '2014-12-12 13:46:40', 90, 1, 84),
+('nolvorite', '2014-12-14 21:16:15', 0, 1, 85),
+('nolvorite', '2014-12-14 21:16:16', 91, 1, 86),
+('nolvorite', '2014-12-14 21:16:23', 0, 1, 87),
+('nolvorite', '2014-12-14 21:16:24', 92, 1, 88);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

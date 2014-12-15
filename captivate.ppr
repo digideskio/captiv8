@@ -1,0 +1,77 @@
+[Config]
+Compilator.SaveAll=0
+Compilator.Capture=0
+Compilator.HideOutput=0
+Compilator.LogType=0
+DefaultDir=C:\wamp\www\captiv8
+DefaultCPIndex=0
+LogtoEnd=1
+DontOpen=0
+AbsolutePath=0
+FileFormat=0
+ProjectFilesOnly=0
+[Project tree]
+New project
+	+All files
+		-High priority
+			template\vars.php
+			template\simcheck.php
+			template\nd2.php
+			template\nd1.php
+			template\js.php
+			template\internal.php
+		+Medium Priority
+			template\vars.php
+			template\css.css
+			template\extra_bottom_content.php
+			template\news_feed.php
+		+Low priority
+			template\jquery-ui.js
+			template\jquery-.js
+			template\idx_1.php
+			index.php
+			template\admin_djs.php
+[Open project files]
+0=index.php
+1=template\site_properties.php
+2=template\simcheck.php
+3=template\nd2.php
+4=template\nd1.php
+5=template\js.php
+6=template\internal.php
+7=template\idx_1.php
+8=template\css.css
+9=template\news_feed.php
+[Selected Project Files]
+Main=
+Selected=template\news_feed.php
+[index.php]
+TopLine=39
+Caret=43,46
+[template\site_properties.php]
+TopLine=1
+Caret=128,20
+[template\simcheck.php]
+TopLine=65
+Caret=1,80
+[template\nd2.php]
+TopLine=1
+Caret=1,1
+[template\nd1.php]
+TopLine=1
+Caret=1,1
+[template\js.php]
+TopLine=1
+Caret=1,1
+[template\internal.php]
+TopLine=1
+Caret=1,1
+[template\idx_1.php]
+TopLine=1
+Caret=1,1
+[template\css.css]
+TopLine=184
+Caret=17,198
+[template\news_feed.php]
+TopLine=35
+Caret=16,62

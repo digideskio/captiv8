@@ -190,3 +190,10 @@ td.poll_choosy{width:350px;}
 .poll_choosy h4{background:#334054}
 .poll_choices .optionbox:first-child{background:transparent none;}
 #session_list textarea{width:100%;padding:6px;background:#e8e8e8;border:1px solid #e0e0e0;color:#000;text-shadow:0 0;box-shadow: 0 0;}
+.optionbox.results{padding:8px 12px;}
+
+/*poll bar*/
+.poll_bar{height:11px;background:#334054;border-top:1px solid #556378;border-bottom:1px solid #26303F;box-shadow:0 -2px 1px #26303F}
+.poll_bar.leftc,.poll_bar.rightc{width:15px;}
+.poll_bar.result{width:150px;}    
+.poll_choices .optionbox.vote_select{background-color:#535F70;}
