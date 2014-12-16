@@ -91,7 +91,7 @@ Signing up is totally free and will take less than a minute at the most.</p><div
 "View all of your currently used services", //13 - view all currently used services 
 "Edit your profile" // 14 - profile link at user_menu dropdown
 , "Viewing Profile" // 15 - 
-, "More Options" // 16 - More uptions under menu
+, "OPTIONS" // 16 - More uptions under menu
 , "Joined " // 17 - 
 , "Thoughts you might have right now, post it here!"     //on the new post - 18
 , "...Even explain it in detail, if you like!"//19
@@ -118,6 +118,7 @@ Signing up is totally free and will take less than a minute at the most.</p><div
 //let's make it up to 20 questions maximum
 
 "<h3>Poll maker</h3><input type='text' class='largeform flick pollquestion' value='Insert poll question here...' name='poll_question'><h3>Poll choices<span> - You must have at least two</span></h3><input type='text' class='largeform flick' value='Add a choice here' name='poll_choice'><input type='text' class='largeform flick' value='Add a choice here' name='poll_choice'><a href='add-more-choices' class='prompt button_samp rad'>Add more choices...</a><h3>Poll options</h3><div class='optionbox'><input type='checkbox' name='choice_addition'><span>Make anyone able to add poll choices</span></div><div class='optionbox'><input type='checkbox' name='choice_selection'><span>Only one poll choice allowed for each user</span></div><a href='finished-poll-q' class='greened prompt button_samp rad'>Finish poll questions</a>"
+, "You are not friends with this user. <a href='add-friend' class='prompt button_samp rad'>ADD AS FRIEND</a>"
 );
 $dobordate = "<select name='day2' class='largeform'><option value='0'>--</option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option><option value='11'>11</option><option value='12'>12</option><option value='13'>13</option><option value='14'>14</option><option value='15'>15</option><option value='16'>16</option><option value='17'>17</option><option value='18'>18</option><option value='19'>19</option><option value='20'>20</option><option value='21'>21</option><option value='22'>22</option><option value='23'>23</option><option value='24'>24</option><option value='25'>25</option><option value='26'>26</option><option value='27'>27</option><option value='28'>28</option><option value='29'>29</option><option value='30'>30</option><option value='31'>31</option></select> 
   <select name='month2' class='largeform'><option value='0'>--</option><option value='1'>January</option><option value='2'>February</option><option value='3'>March</option><option value='4'>April</option><option value='5'>May</option><option value='6'>June</option><option value='7'>July</option><option value='8'>August</option><option value='9'>September</option><option value='10'>October</option><option value='11'>November</option><option value='12'>December</option></select> 

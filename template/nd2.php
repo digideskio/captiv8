@@ -34,6 +34,7 @@ if(index_page_check && logged_in_check){echo $nx['29'];}
       echo "<div class='box space1'></div>";
 echo "</td><td width='99%' id='vc2'>";
 
+
 require_once("template/idx_1.php");
 require_once("template/news_feed.php");
   
@@ -100,7 +101,7 @@ $_SESSION['login_q'] = $_SPIN['usernorm'];
 $_SESSION['salt_q'] = $mn['password'];
 $_SESSION['db_query'] = "user login";
 setcookie("limbooo[0]", "k", time()+1);
-header("Location: index.php?phase=2");
+header("Location: index.php?phase=2"); 
 }else{
 
 if($mas1){ //login attempts for valid usernames     
@@ -116,13 +117,14 @@ $_SESSION['log_num'] = $mas3;
 setcookie("inc_ombination", "Incorrect user/password combination", time()+1);       
 }
 
-header("Location: index.php"); $_SESSION['error' .rand(56,1515)] = extraurl(); 
+ $_SESSION['error' .rand(56,1515)] = extraurl(); 
 }
     
 
 }else{setcookie("inc_ombination", "This account is temporarily locked. Please wait no more than an hour to log in again.", time()+1); 
 
-header("Location: index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();      //Don't want to get it further than that. Such lazy
+header("Location: index.php"); 
+$_SESSION['error' .rand(56,1515)] = extraurl();      //Don't want to get it further than that. Such lazy
 }
 
  mysqli_free_result($mas1);

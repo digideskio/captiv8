@@ -190,7 +190,13 @@ header("Location:index.php?thread_view=" . $thread_dt['thread_nick'] . "_" . $th
 
 if(isset($_GET['profile'])){    //viewing a profile
 if($profile_query){
-echo "<div class='contentbox profile_main'><table><tr class='row_1'><td class='side_1' width='99%'><h3>".$nx[14].": <span class='nix1'>". $matched['username'] ."</span></h3> <span class='drop'><span class='uplink nix1'>(".$nx[15].")</span></span></td><td class='side_2' width='1%' style='min-width:200px;'>".$nx[16]. date(dflt_date_f, strtotime($matched['joindate'])) . "</td></tr>";  //row 1
+echo "<div class='contentbox profile_main'><table><tr class='row_1'><td class='side_1' width='99%'><h3>".$nx[14].": 
+<span class='nix1'>". $matched['username'] ."</span></h3>";
+if(isset($_SESSION['login_q'])){
+echo " <span id='check_friend_status' class='flick side_links' ref1='".$_MONITORED['login_q']."' ref2='".$matched['username']."'>Loading friendship status...</span>";
+}
+
+echo"</td><td class='side_2' width='1%' style='min-width:200px;'>".$nx[16]. date(dflt_date_f, strtotime($matched['joindate'])) . "</td></tr>";  //row 1
 
 echo "<tr class='row_2'><td class='side_1' width='99%'><div class='auto_filler'>";
 echo "<h3 class='content_q'> ".$matched['username']."'s posts </h3>";

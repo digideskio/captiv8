@@ -139,8 +139,24 @@ if($(this).hasClass("a1") && $(this).next("input").prop("checked",false)){$(this
 });
 });
 
-             var $black_layer = ["<div id='black_overlay'><div id='widthfix'>","</div></div>"];     
+
+<?php if(preg_match("#profile[=](.+)$#",extraurl())){require_once("template/profile_sync.js");} ?> 
+
+             var $black_layer = ["<div id='black_overlay'><div id='widthfix'>","</div></div>"];  
+
+function text(){   x = 0;    dots = "";
+setInterval(function(){   x++; for(i = 1;i <=x; i++){
+dots = (x > 3) ? "." : "." + dots;   if(x > 3){x = 0;}
+};
+$("a.prompt").html("LOADING" + dots);
+  
+},200);  
+}
+      
+
+ 
 $("body").on('click',".prompt",function(event){event.preventDefault();
+
 if($(this).attr("href") == "one-liner"){
 $("#post_k input[name=tcha1]").val("<?php echo $nx['27'] ?>");$("#post_k textarea[name=tcha2]").toggle("200",function(){$(this).attr("style","display:block;box-shadow:0 0 6px #556378")}).removeClass("flick").val("<?php echo $nx['28'] ?>").end();  
 }
@@ -149,6 +165,13 @@ if($("input[name=poll_choice]").length < 21 && $("input[name=poll_choice]").eq(-
 $(this).before("<input type='text' class='largeform flick' value='Add a choice here' name='poll_choice'>");
 }
 }
+
+if($(this).attr("href") == "add-friend"){  
+$(this).addClass("greened");   
+text(); 
+ 
+}
+
 if($(this).attr("href") == "finished-poll-q"){
 refs = "pass";
 for(i=0;i<=$("input[name=poll_choice]").length;i++){

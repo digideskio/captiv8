@@ -39,9 +39,10 @@ require_once("template/site_properties.php");
 
 echo "</body>";
 echo "</html>";     
-/*end actual content*/     //session_unset();
+/*end actual content*/   //  session_unset();
+clear_array($_SESSION, "error");
 
-clear_array($_SESSION, "asda");
+
 
 if(isset($_SESSION['login_q']) && isset($_SESSION['salt_q'])){mysqli_free_result($logged_query);}  
 

@@ -5,23 +5,29 @@ session_start();
 
 $sync = mysqli_connect("localhost","root","","captiv8");  
 
-function hack_free($data){           global $sync;
+require_once("vars.php");
+
+function hack_free($data,$start = "0"){           global $sync; $child_count = $start;
    
-  
   if(is_array($data)){  //check if it's array
-  foreach($data as $key => $value){     //then loop for each data
+  for($i = 0;$i <= count($data)-1;$i++){     //then loop for each data
 
-  if(is_array($data[$key])){   //check for more kids
-  foreach($value as $key => $value2){
-  hack_free($value2);  }
-  }else{
-      $data[$key] = trim($value);
-  $data[$key] = stripslashes($value);
-  $data[$key] = htmlspecialchars($value);       /*le filters*/
-    $data[$key] = mysqli_real_escape_string($sync,$value);  
+  if(is_array($data[$i])){   //check for more kids
+  for($i = 0;$i <= count($data[$i])-1;$i++){
+  hack_free($value2[$i],$child_count++);  
+  }
+  }else{    
+                              $array_view = [];  
 
-  
-  return $data[$key];  //return it  
+     for($i = 0;$i <= count($data)-1;$i++){ 
+      $data[$i] = trim($data[$i]);
+  $data[$i] = stripslashes($data[$i]);
+  $data[$i] = htmlspecialchars($data[$i]);       /*le filters*/
+    $data[$i] = mysqli_real_escape_string($sync,$data[$i]);
+    
+    if(count($array_view) > 0){ $array_view = array_merge(array($i => $data[$i]), $array_view);}else{ $array_view = array($i => $data[$i]);  }
+ }
+ return($array_view); 
   }
   }
   }else{
@@ -63,15 +69,30 @@ if(mysqli_num_rows($mns) > 0 ){echo "taken";}
 mysqli_free_result($mns);
 }
 
+
 if(isset($_SESSION['login_q'])){  //logged in? This is for all the AJAX functions when you're logged in
 
 
 $salt_check = mysqli_query($sync, "SELECT * FROM users WHERE username='$_SESSION[login_q]'");
 $salt = mysqli_fetch_assoc($salt_check);
 
-if(isset($_GET['post_que']) && compare_dz($salt['password'],$_SESSION['salt_q'])){      //extra measures man
+if(compare_dz($salt['password'],$_SESSION['salt_q'])){      //extra measures man
 
 //and we're in
+
+if(isset($_GET['friend_status'])){
+//who should we look up first
+//oh right
+//well it doesn't really matter
+$check_2 = mysqli_query($sync, "SELECT * FROM users WHERE username='".$_FILTERED['friend_status'][1]."'");
+$check_3 = mysqli_fetch_assoc($check_2);
+//first check for null, then check for values
+if(empty($check_3['friends'])){
+echo $nx['32'];
+}
+}
+
+if(isset($_GET['post_que'])){
 
 if(isset($_GET['poll_vote'])){  //live polling
 //get which id they voted on and check to see that it's a valid poll entry
@@ -160,7 +181,7 @@ echo json_encode($msgs);
 mysqli_free_result($vote_q);  mysqli_free_result($post_check);
 }
 
-}
+}    }
 mysqli_free_result($salt_check);
 }
 
