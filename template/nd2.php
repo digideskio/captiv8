@@ -202,8 +202,8 @@ $post_async = mysqli_query($sync, "SELECT * FROM posts WHERE bywhom='$MICRORFID[
 $async_dt = mysqli_fetch_assoc($post_async); //get latest post for whatever reference you must.
 
 
-$post_nip = mysqli_multi_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,parent,postid,stamptime,bywhom,title,thread_nick,topic_hash,thread_id) 
-VALUES('$_DATA[tcha2]','2','n-a','$piece[postid]','0',CURRENT_TIMESTAMP,'$_MONITORED[login_q]','$_DATA[tcha1]','$thread_nick','$topic_hash','$_DATA[thread_id]');INSERT INTO votes_q(bywhom,timeof,which_post) VALUES('$_MONITORED[login_q]',CURRENT_TIMESTAMP,'$async_dt[postid]')");
+$post_nip = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,parent,postid,stamptime,bywhom,title,thread_nick,topic_hash,thread_id) 
+VALUES('$_DATA[tcha2]','2','n-a','$piece[postid]','0',CURRENT_TIMESTAMP,'$_MONITORED[login_q]','$_DATA[tcha1]','$thread_nick','$topic_hash','$_DATA[thread_id]');");
 if($post_nip){header("Location:index.php?phase=2");
 $_SESSION['db_query'] = "posted content-anything";
 setcookie("limbooo[0]", "k", time()+1);
@@ -355,9 +355,7 @@ if(isset($_COOKIE['limbooo'][0])){
   
   $sn = mysqli_query($db_main, "INSERT INTO users(username,password,email,joindate,fullname,admin_notifs,month2,day2,year2,salt) 
   VALUES('$_MONITORED[reg_dt1]','$kripke','$_MONITORED[reg_dt3]',now(),'$_MONITORED[reg_dt4]','$_MONITORED[reg_dt8]','$_MONITORED[reg_dt6]','$_MONITORED[reg_dt5]','$_MONITORED[reg_dt7]','$salt');");  
-  $sn2 = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_MONITORED[reg_dt1]'");
-  $sn3 = mysqli_fetch_assoc($sn2);
-  mysqli_query($db_main, "INSERT INTO sg_settings(id,a1_check,a2_check,a3_check,a4_check,a5_check) VALUES('user_".$sn3['userid']."','all','all','all','self','self')");
+  mysqli_query($db_main, "INSERT INTO sg_settings(id,a1_check,a2_check,a3_check,a4_check,a5_check) VALUES('user_".$_MONITORED['login_q']."','all','all','all','self','self')");
   foreach($_MONITORED as $nkey => $nvalue){
 if(preg_match("#^reg[_]dt[\055\1370-9a-z]+#", $nkey)){
 unset($_SESSION[$nkey]);

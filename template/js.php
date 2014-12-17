@@ -1,5 +1,5 @@
 <script type="text/javascript">
-(function ( $ ) {   
+ (function ( $ ) {   
     //this is soooo tacky      
 
 
@@ -29,7 +29,11 @@ return str.replace( /^\s+/, "" );
 $.rtrim = function( str ) {
 return str.replace( /\s+$/, "" );
 };
-}( jQuery ));     //my first jquery function
+}( jQuery ));   
+
+</script>
+<script type="text/javascript">
+  //my first jquery function
 $(document).ready(function(){
 //get current timezone of user
 

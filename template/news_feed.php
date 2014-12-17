@@ -13,20 +13,23 @@ $zoom = "SELECT * FROM posts WHERE bywhom='$logged_dt[username]' AND cnttype=1";
 //i'm gonna have to put it in a session
 //clear it when the person followss new people
 //that way it's only going to have to search once
-
-if(!isset($_SESSION['content_pool'])){
 $que_posts[6] = mysqli_query($db_main, "SELECT * FROM sg_permissions WHERE towhom='$_MONITORED[login_q]'");
+if(!isset($_SESSION['content_pool'])){
+
     $xn = 0;
 while($que_others_posts = mysqli_fetch_assoc($que_posts[6])){     $xn++;
 //sort em'
 $_SESSION['content_pool'][preg_replace("#[ :]+#","",$que_others_posts['access_type'])] = array($xn => $que_others_posts);
 }
 }
+if(mysqli_num_rows($que_posts[6]) > 0){
 for($i = 1;$i <= count($_SESSION['content_pool']);$i++){
 foreach($_SESSION['content_pool']['friendsnowglobe'] as $friends_feed){
  $zoom .= " UNION SELECT * FROM posts WHERE bywhom='".$friends_feed['granted_by']."' AND cnttype=1";            //I have a feeling this is horribly inefficient
- } }                                                      
-            var_dump($_SESSION['content_pool']);
+ } }
+ }       
+                                                
+
 $que_posts[0] = mysqli_query($db_main, $zoom . " ORDER by stamptime DESC LIMIT 0,15");
 while($que_own = mysqli_fetch_assoc($que_posts[0])){
 
@@ -131,7 +134,8 @@ echo"<span class='votes'><a href='up' class='vote_" .$select_class[0] . "'><img 
 };       
 
 for($i = count($que_posts)-1;$i >= 0;$i--){
-mysqli_free_result($que_posts[$i]);
+if(isset($que_posts[$i])){
+mysqli_free_result($que_posts[$i]);        }
 }
 clear_array($poll_dt);
 

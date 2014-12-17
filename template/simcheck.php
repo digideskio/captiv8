@@ -7,14 +7,15 @@ $sync = mysqli_connect("localhost","root","","captiv8");
 
 require_once("vars.php");
 
-function hack_free($data,$start = "0"){           global $sync; $child_count = $start;
+function hack_free(&$data,$start = "0"){           global $sync; $child_count = $start;
    
   if(is_array($data)){  //check if it's array
-  for($i = 0;$i <= count($data)-1;$i++){     //then loop for each data
+  foreach($data as $i => $value){     //then loop for each data
+  //why was I using for to reiterate each value instead of foreach again
 
   if(is_array($data[$i])){   //check for more kids
-  for($i = 0;$i <= count($data[$i])-1;$i++){
-  hack_free($value2[$i],$child_count++);  
+  for($j = 0;$j <= count($data[$i])-1;$j++){
+  hack_free($value2[$i][$j],$child_count++);  
   }
   }else{    
                               $array_view = [];  
@@ -27,7 +28,7 @@ function hack_free($data,$start = "0"){           global $sync; $child_count = $
     
     if(count($array_view) > 0){ $array_view = array_merge(array($i => $data[$i]), $array_view);}else{ $array_view = array($i => $data[$i]);  }
  }
- return($array_view); 
+ return $array_view; 
   }
   }
   }else{
@@ -150,12 +151,10 @@ $poll_vote_q[2] = mysqli_query($sync, "UPDATE polls SET votes='$update' WHERE da
 if($poll_vote_q[1] && $poll_vote_q[2]){
 
 }     else{echo $error;}
-}else{}
+}
 //or not
 }
 
-
-}else{
 
 }
 //show poll results
