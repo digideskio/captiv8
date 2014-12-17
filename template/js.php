@@ -1,4 +1,35 @@
 <script type="text/javascript">
+(function ( $ ) {   
+    //this is soooo tacky      
+
+
+$.fn.loadingtext = function(text = "LOADING",dot_nums = 3){
+  
+
+//this.html("LOADING");
+
+var agent = this;
+return this.each(function(){
+ $this = $(this);
+dots($this);
+
+});  
+function dots($this){       x = 0;    dots = "";
+setInterval(function(){      for(i = 0;i <=x; i++){
+dots = (x > 3) ? "." : "." + dots;  
+};    if(dots.length > dot_nums){dots = "";}
+$this.html(text + dots);
+},200);
+} 
+
+} 
+ $.ltrim = function( str ) {
+return str.replace( /^\s+/, "" );
+};
+$.rtrim = function( str ) {
+return str.replace( /\s+$/, "" );
+};
+}( jQuery ));     //my first jquery function
 $(document).ready(function(){
 //get current timezone of user
 
@@ -144,14 +175,6 @@ if($(this).hasClass("a1") && $(this).next("input").prop("checked",false)){$(this
 
              var $black_layer = ["<div id='black_overlay'><div id='widthfix'>","</div></div>"];  
 
-function text(){   x = 0;    dots = "";
-setInterval(function(){   x++; for(i = 1;i <=x; i++){
-dots = (x > 3) ? "." : "." + dots;   if(x > 3){x = 0;}
-};
-$("a.prompt").html("LOADING" + dots);
-  
-},200);  
-}
       
 
  
@@ -167,8 +190,7 @@ $(this).before("<input type='text' class='largeform flick' value='Add a choice h
 }
 
 if($(this).attr("href") == "add-friend"){  
-$(this).addClass("greened");   
-text(); 
+$(this).addClass("greened").loadingtext();   
  
 }
 
