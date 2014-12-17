@@ -1,3 +1,4 @@
+
 <script type="text/javascript">      /*
 $("input[name=url_id]").keyup(function(){
 $("#checkn1").load("template/simcheck.php?id=1", {"search_1": $(this).val()}); 

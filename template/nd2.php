@@ -3,8 +3,8 @@
 //lesson 2: try to plan first.
 //try a method that you think is most likely to be effective instead of being creative, if you're new
 
-
-echo "<div id='header'><a href='index.php' id='logo'><img src='".$dir."2.png'></a><div id='panel'>";       
+      
+echo "<span class='clear' id='nook'></span><div id='header'><a href='index.php' id='logo'><img src='".$dir."2.png'></a><div id='panel'>";       
 if(!isset($_SESSION['login_q'])){       //not logged in to a user account, essentially. Should probably make this more elaborate too                       
 
 echo "<form action='index.php?verify=". $_SESSION['temp_n'] ."&direct=login' id='login' method='post'><input type='text' value='".$nx[0]."' name='usernorm' class='flick'><input type='password' name='pwrdnorm' value='".$nx[1]."' class='flick'><input type='submit' value='".$nx[2]."' class='dt1space'>
@@ -353,8 +353,11 @@ if(isset($_COOKIE['limbooo'][0])){
   $salt = substr(sha1(md5(base64_encode(microtime() - mt_rand(1,microtime())*mt_rand(.01,1)))),0,20);      //pendulum
   $kripke = substr(hash('sha512', $salt . $_SESSION['reg_dt2']), 0, 40);
   
-  $sn = mysqli_multi_query($db_main, "INSERT INTO users(username,password,email,joindate,fullname,admin_notifs,month2,day2,year2,salt) 
-  VALUES('$_MONITORED[reg_dt1]','$kripke','$_MONITORED[reg_dt3]',now(),'$_MONITORED[reg_dt4]','$_MONITORED[reg_dt8]','$_MONITORED[reg_dt6]','$_MONITORED[reg_dt5]','$_MONITORED[reg_dt7]','$salt'); INSERT INTO sg_settings(a1_check,a2_check,a3_check,a4_check,a5_check) VALUES('all','all','all','self','self')");  
+  $sn = mysqli_query($db_main, "INSERT INTO users(username,password,email,joindate,fullname,admin_notifs,month2,day2,year2,salt) 
+  VALUES('$_MONITORED[reg_dt1]','$kripke','$_MONITORED[reg_dt3]',now(),'$_MONITORED[reg_dt4]','$_MONITORED[reg_dt8]','$_MONITORED[reg_dt6]','$_MONITORED[reg_dt5]','$_MONITORED[reg_dt7]','$salt');");  
+  $sn2 = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_MONITORED[reg_dt1]'");
+  $sn3 = mysqli_fetch_assoc($sn2);
+  mysqli_query($db_main, "INSERT INTO sg_settings(id,a1_check,a2_check,a3_check,a4_check,a5_check) VALUES('user_".$sn3['userid']."','all','all','all','self','self')");
   foreach($_MONITORED as $nkey => $nvalue){
 if(preg_match("#^reg[_]dt[\055\1370-9a-z]+#", $nkey)){
 unset($_SESSION[$nkey]);

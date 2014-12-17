@@ -190,7 +190,13 @@ $(this).before("<input type='text' class='largeform flick' value='Add a choice h
 }
 
 if($(this).attr("href") == "add-friend"){  
-$(this).addClass("greened").loadingtext();   
+
+$(this).addClass("greened").loadingtext();
+$.get("template/simcheck.php",{"friend_status[]":[$("#check_friend_status").attr("ref1"),$("#check_friend_status").attr("ref2")],"action":"fr_req"}).done(function(data){
+$("#check_friend_status").html(data);
+});   
+
+
  
 }
 

@@ -78,18 +78,50 @@ $salt = mysqli_fetch_assoc($salt_check);
 
 if(compare_dz($salt['password'],$_SESSION['salt_q'])){      //extra measures man
 
-//and we're in
+//and we're in                                                                               
 
 if(isset($_GET['friend_status'])){
 //who should we look up first
 //oh right
 //well it doesn't really matter
-$check_2 = mysqli_query($sync, "SELECT * FROM users WHERE username='".$_FILTERED['friend_status'][1]."'");
+
+//all the friends actions
+$check_2 = mysqli_query($sync, "SELECT * FROM users WHERE username='".$_FILTERED['friend_status'][0]."'");
 $check_3 = mysqli_fetch_assoc($check_2);
 //first check for null, then check for values
-if(empty($check_3['friends'])){
-echo $nx['32'];
+if($salt['userid'] !== $check_3['userid']){    //not the same account, duh
+//check for snowglobe permissions
+$sea_rchin = mysqli_query($sync,"SELECT * FROM sg_permissions WHERE access_type='friend snowglobe' AND towhom='$_MONITORED[login_q]' AND granted_by='$check_3[username]'");
+if(mysqli_num_rows($sea_rchin) < 1){
+if(!preg_match("#".$salt['userid']."#",$check_3['friends']) && !isset($_GET['action'])){ 
+echo "<a href='add-friend' class='prompt button_samp rad'>Follow ".$check_3['username']."'s snowglobe</a>";
+}else{         //not friends, and decided to give a friend request, and requestee's snowglobe is private
+//this seems too much like facebook. eugh
+//I want to change it to something else
+//More like a twitter/IG kinda thing. Technically i'm still copying, but still
+
+//get snowglobe settings
+$snowglobe_check[0] = mysqli_query($sync, "SELECT * FROM sg_settings WHERE id='user_".$check_3['userid']."'");
+$snowglobe_check[1] = mysqli_fetch_assoc($snowglobe_check[0]);
+
+//a1_check is to see if people can follow/see the posted content of the snowglobe
+
+if($snowglobe_check[1]['a1_check'] == "all"){    //public profile
+ //later i'll have an option where a user could have a person following him follow the person who followed first
+ unset($_SESSION['content_pool']);
+$ng = mysqli_query($sync, "INSERT INTO sg_permissions(access_type,towhom,date_g,granted_by) VALUES('friend snowglobe','$_MONITORED[login_q]',now(),'$check_3[username]')");
+if($ng){
+echo "<a href='add-friend' class='prompt button_samp rad greened'>Followed.</a>";  }
 }
+
+}
+ mysqli_free_result($snowglobe_check[0]);
+}else{
+echo "<a href='add-friend' class='prompt button_samp rad greened'>Followed.</a>"; 
+}
+
+}
+ mysqli_free_result($check_2);
 }
 
 if(isset($_GET['post_que'])){

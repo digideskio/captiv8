@@ -31,9 +31,7 @@ echo "<input type='checkbox' checked='checked' name='sg_1' snowglobe='".$nx['20'
 //as for the rest...
 $passes = mysqli_query($db_main, "SELECT * FROM sg_permissions WHERE towhom='$_MONITORED[login_q]'");
 $stack = mysqli_fetch_assoc($passes);
-while($permit = $stack){//i'll have to do something funky for admin permissions later
-echo "<input type='checkbox' name='sg_". $stack['access_type'] ."'>";
-}
+
 mysqli_free_result($passes);
 
 echo "
@@ -194,7 +192,7 @@ echo "<div class='contentbox profile_main'><table><tr class='row_1'><td class='s
 <span class='nix1'>". $matched['username'] ."</span></h3>";
 if(isset($_SESSION['login_q'])){
 echo " <span id='check_friend_status' class='flick side_links' ref1='".$_MONITORED['login_q']."' ref2='".$matched['username']."'>Loading friendship status...</span>";
-}
+}                                                                    
 
 echo"</td><td class='side_2' width='1%' style='min-width:200px;'>".$nx[16]. date(dflt_date_f, strtotime($matched['joindate'])) . "</td></tr>";  //row 1
 

@@ -197,5 +197,5 @@ td.poll_choosy{width:350px;}
 .poll_bar.leftc,.poll_bar.rightc{width:15px;}
 .poll_bar.result{width:150px;}    
 .poll_choices .optionbox.vote_select{background-color:#535F70;}
-a.side_links{text-decoration:none;font-size:11px;}
-#check_friend_status a.button_samp{margin:-2px 0 0 0;font-size:10px;}
+a.side_links{text-decoration:none;font-size:11px}
+#check_friend_status a.button_samp{margin:0;font-size:10px;font-weight:normal;padding:1px 4px 3px}
