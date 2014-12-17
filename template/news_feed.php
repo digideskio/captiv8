@@ -47,7 +47,10 @@ $que_posts[2] = mysqli_query($db_main, "SELECT * FROM votes_q WHERE which_post='
 $que_vote =  mysqli_fetch_assoc($que_posts[2]);
 if($que_vote['vote'] > 0){
 $vote = "yes";
-}else{$vote = "no";}
+}else{
+$vote = (mysqli_num_rows($que_posts[2]) > 0) ? "no" : "none";  
+
+}
                 
 
 }else{ //if there were no votes made in this topic(EXCLUDING the user's own, which would be yes when created
@@ -116,14 +119,16 @@ echo"</div>";
 
 $this_voted_on = [];
 
-}else{
+}else{    
 
-for($i = count($poll_dt);$i >= 4;$i--){    //i'll have to sort by most popular choices later, probably? On the one hand, they need to be as unbiased as possible
 
-echo "<div class='optionbox'><input type='".$selection_type."' name='pc_".$poll_dt[$i]['post_id_root']."' value='".$poll_dt[$i]['data_id']."' ref='".$poll_dt[$i]['post_id_root']."' class='poll_choice'><span>".$poll_dt[$i]['value']."</span>
+
+foreach($poll_dt['poll_choice'] as $i => $j){    //i'll have to sort by most popular choices later, probably? On the one hand, they need to be as unbiased as possible
+
+echo "<div class='optionbox'><input type='".$selection_type."' name='pc_".$poll_dt['poll_choice'][$i]['post_id_root']."' value='".$poll_dt['poll_choice'][$i]['data_id']."' ref='".$poll_dt['poll_choice'][$i]['post_id_root']."' class='poll_choice'><span>".$poll_dt['poll_choice'][$i]['value']."</span>
 
 </div>";
-}
+}       
 
 echo "<a href='vote' class='prompt button_samp rad'>VOTE!</a></span>";
 

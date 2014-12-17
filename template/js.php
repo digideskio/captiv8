@@ -1,5 +1,4 @@
-<script type="text/javascript">
- (function ( $ ) {   
+<!--<script>(function ( $ ) {   
     //this is soooo tacky      
 
 
@@ -29,11 +28,10 @@ return str.replace( /^\s+/, "" );
 $.rtrim = function( str ) {
 return str.replace( /\s+$/, "" );
 };
-}( jQuery ));   
-
-</script>
+}( jQuery ));     //my first jquery function
+</script> --!>
 <script type="text/javascript">
-  //my first jquery function
+
 $(document).ready(function(){
 //get current timezone of user
 
@@ -195,8 +193,8 @@ $(this).before("<input type='text' class='largeform flick' value='Add a choice h
 
 if($(this).attr("href") == "add-friend"){  
 
-$(this).addClass("greened").loadingtext();
-$.get("template/simcheck.php",{"friend_status[]":[$("#check_friend_status").attr("ref1"),$("#check_friend_status").attr("ref2")],"action":"fr_req"}).done(function(data){
+$(this).addClass("greened");
+$.get("template/simcheck.php",{"friend_status[]":[$("#check_friend_status").attr("ref1"),$("#check_friend_status").attr("ref2")],"action":"sg_req"}).done(function(data){
 $("#check_friend_status").html(data);
 });   
 

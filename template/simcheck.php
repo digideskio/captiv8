@@ -87,6 +87,8 @@ if(isset($_GET['friend_status'])){
 //well it doesn't really matter
 
 //all the friends actions
+
+
 $check_2 = mysqli_query($sync, "SELECT * FROM users WHERE username='".$_FILTERED['friend_status'][0]."'");
 $check_3 = mysqli_fetch_assoc($check_2);
 //first check for null, then check for values
@@ -94,7 +96,7 @@ if($salt['userid'] !== $check_3['userid']){    //not the same account, duh
 //check for snowglobe permissions
 $sea_rchin = mysqli_query($sync,"SELECT * FROM sg_permissions WHERE access_type='friend snowglobe' AND towhom='$_MONITORED[login_q]' AND granted_by='$check_3[username]'");
 if(mysqli_num_rows($sea_rchin) < 1){
-if(!preg_match("#".$salt['userid']."#",$check_3['friends']) && !isset($_GET['action'])){ 
+if(!isset($_GET['action'])){ 
 echo "<a href='add-friend' class='prompt button_samp rad'>Follow ".$check_3['username']."'s snowglobe</a>";
 }else{         //not friends, and decided to give a friend request, and requestee's snowglobe is private
 //this seems too much like facebook. eugh
@@ -102,7 +104,7 @@ echo "<a href='add-friend' class='prompt button_samp rad'>Follow ".$check_3['use
 //More like a twitter/IG kinda thing. Technically i'm still copying, but still
 
 //get snowglobe settings
-$snowglobe_check[0] = mysqli_query($sync, "SELECT * FROM sg_settings WHERE id='user_".$check_3['userid']."'");
+$snowglobe_check[0] = mysqli_query($sync, "SELECT * FROM sg_settings WHERE id='user_".$check_3['userid']."'") or die($error);
 $snowglobe_check[1] = mysqli_fetch_assoc($snowglobe_check[0]);
 
 //a1_check is to see if people can follow/see the posted content of the snowglobe
@@ -116,7 +118,7 @@ echo "<a href='add-friend' class='prompt button_samp rad greened'>Followed.</a>"
 }
 
 }
- mysqli_free_result($snowglobe_check[0]);
+
 }else{
 echo "<a href='add-friend' class='prompt button_samp rad greened'>Followed.</a>"; 
 }
@@ -177,6 +179,9 @@ mysqli_free_result($poll_settings);
 //votes
 if(isset($_GET['vote_action'])){
 $vote = ($_GET['vote_action'] == "up") ? "1" : "0";
+
+
+
 //check to see if the user's already voted
 $vote_q = mysqli_query($sync, "SELECT * FROM votes_q WHERE bywhom='".$_MONITORED['login_q']."' AND which_post='$_FILTERED[post_que]'");
 $post_check = mysqli_query($sync, "SELECT * FROM posts WHERE postid=$_FILTERED[post_que]");
@@ -195,16 +200,26 @@ $msgs = array("notice" => "Unvoted!");
 }else{
 
 
-$vote_a = mysqli_multi_query($sync, "UPDATE votes_q SET timeof=now(),vote='$vote' WHERE which_post='$_FILTERED[post_que]';UPDATE posts SET upvotes=$residual[0],downvotes=$residual[1] WHERE postid=$post_dt[postid]");
-if($vote_a){
+$vote_a = mysqli_query($sync, "UPDATE votes_q SET timeof=now(),vote='$vote' WHERE which_post='$_FILTERED[post_que]';");
+$vote_b = mysqli_query($sync, "UPDATE posts SET upvotes=$residual[0],downvotes=$residual[1] WHERE postid=$post_dt[postid]");
+if($vote_a && $vote_b){
 
 $msgs = array("notice" => "Changed your mind and ".$_FILTERED['vote_action'] . "voted!");          
 }else{echo mysqli_error($sync);}}
 
 
-}else{//but if not
-$vote_a = mysqli_multi_query($sync, "INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MONITORED[login_q]',now(),'".$_GET['post_que']."','$vote');UPDATE posts SET ".$_FILTERED['vote_action']."votes='$residual[2]' WHERE postid=".$post_dt['postid']."");    //in here we only need the first result
-if($vote_a){$msgs = array("notice" => $_FILTERED['vote_action'] . "voted!");
+
+
+}else{
+
+
+
+//but if not
+$vote_a = mysqli_query($sync, "INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MONITORED[login_q]',now(),'".$_GET['post_que']."','$vote');"); 
+   //in here we only need the first result
+   $residual_2 = ($vote == "1") ? $post_dt['upvotes']+1 : $post_dt['downvotes']+1;       
+$vote_b = mysqli_query($sync, "UPDATE posts SET ".$_FILTERED['vote_action']."votes='$residual_2' WHERE postid=$post_dt[postid] AND bywhom='$_MONITORED[login_q]'");
+if($vote_a && $vote_b){$msgs = array("notice" => $_FILTERED['vote_action'] . "voted!");
 
 $msgs = array("notice" => $_FILTERED['vote_action'] . "voted!");}else{echo mysqli_error($sync);}     
 }
