@@ -14,76 +14,78 @@ ProjectFilesOnly=0
 New project
 	+All files
 		+High priority
-			template\vars.php
 			template\simcheck.php
 			template\nd2.php
-			template\nd1.php
 			template\js.php
 			template\internal.php
+			template\index_feed.js
 		+Medium Priority
-			template\vars.php
 			template\css.css
 			template\extra_bottom_content.php
 			template\news_feed.php
+			template\vars.php
+			template\vars.php
 		+Low priority
 			template\jquery-ui.js
 			template\jquery-.js
 			template\idx_1.php
 			index.php
 			template\admin_djs.php
+			template\nd1.php
 [Open project files]
 0=index.php
 1=template\site_properties.php
 2=template\simcheck.php
-3=template\nd2.php
-4=template\nd1.php
-5=template\js.php
-6=template\idx_1.php
-7=template\news_feed.php
-8=template\vars.php
+3=template\idx_1.php
+4=template\news_feed.php
+5=template\css.css
+6=template\internal.php
+7=template\extra_bottom_content.php
+8=template\index_feed.js
 9=template\profile_sync.js
-10=template\css.css
-11=template\internal.php
-12=template\extra_bottom_content.php
+10=template\nd2.php
+11=template\js.php
+12=template\autorelays.js
 [Selected Project Files]
 Main=
-Selected=template\simcheck.php
+Selected=template\autorelays.js
 [index.php]
-TopLine=23
-Caret=54,25
+TopLine=15
+Caret=62,47
 [template\site_properties.php]
 TopLine=1
-Caret=128,20
+Caret=3,2
 [template\simcheck.php]
-TopLine=74
-Caret=17,101
-[template\nd2.php]
-TopLine=336
-Caret=127,360
-[template\nd1.php]
-TopLine=1
-Caret=1,1
-[template\js.php]
-TopLine=172
-Caret=38,196
+TopLine=110
+Caret=106,110
 [template\idx_1.php]
-TopLine=175
-Caret=70,197
-[template\news_feed.php]
-TopLine=39
-Caret=128,60
-[template\vars.php]
-TopLine=104
-Caret=822,122
-[template\profile_sync.js]
 TopLine=1
-Caret=129,1
+Caret=41,12
+[template\news_feed.php]
+TopLine=37
+Caret=44,51
 [template\css.css]
-TopLine=173
-Caret=35,201
+TopLine=168
+Caret=67,204
 [template\internal.php]
-TopLine=280
-Caret=10,319
+TopLine=275
+Caret=1,286
 [template\extra_bottom_content.php]
 TopLine=1
 Caret=1,1
+[template\index_feed.js]
+TopLine=1
+Caret=24,7
+[template\profile_sync.js]
+TopLine=1
+Caret=65,4
+[template\nd2.php]
+TopLine=16
+Caret=21,27
+[template\js.php]
+TopLine=26
+Caret=29,41
+[template\autorelays.js]
+TopLine=1
+Caret=58,15
+BookMark9=120,14
