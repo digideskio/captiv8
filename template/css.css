@@ -56,7 +56,7 @@ button.a1{background:transparent url('img/7.png') no-repeat scroll top left;}
 button.a2{background:transparent url('img/8.png') no-repeat scroll top left;}
 button.dc{width:12px;height:10px;display:inline;vertical-align:middle;margin:0 2px;border:0}
 .optionbox.tos_1{padding:6px 6px 0;font-size:11px;}
-.optionbox,.quick_links a,.posts_t1,#thread_main p{background:transparent url('img/4.png') repeat-x scroll top left;}
+.optionbox,.quick_links a,.posts_t1,#thread_main p,.notifs{background:transparent url('img/4.png') repeat-x scroll top left;}
 /*set the dashed lines background*/
 .contentbox input[type=text],.contentbox select{border-bottom:2px solid #556378}
 td{vertical-align:top}
@@ -199,3 +199,6 @@ td.poll_choosy{width:350px;}
 .poll_choices .optionbox.vote_select{background-color:#535F70;}
 a.side_links{text-decoration:none;font-size:11px}
 #check_friend_status a.button_samp{margin:0;font-size:10px;font-weight:normal;padding:1px 4px 3px}
+div.bar_1{padding:10px 25px;color:#fff;}
+.notifs{padding:5px 10px;font-family:"Tahoma","sans-serif";}
+#notifications .spacer a:first-child.notifs{background-image:none;} 

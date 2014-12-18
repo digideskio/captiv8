@@ -19,8 +19,18 @@ echo "</div></div>"  ;               }else{  //actually logged in. I know, such 
 //menu
 echo "<div id='user_menu'>
                                                   
-<span class='drop'><div class='left uplink'>".$nx[11].", <a class='username' href='index.php?profile=". $_MONITORED['login_q'] ."'>". $_MONITORED['login_q'] ."</a>.  </div><div class='dropdown_content rad'><span class='quick_links'><a href='index.php?find=usedservices&query=". $_MONITORED['login_q'] ."'>".$nx[12]."</a><a href='index.php?query=". $_MONITORED['login_q'] ."'>".$nx[13]."</a></span></div></span>  
+<span class='drop'><div class='left uplink'>".$nx[11].", <a class='username' href='index.php?profile=". $_MONITORED['login_q'] ."'>". $_MONITORED['login_q'] ."</a>.  </div><div class='dropdown_content rad'><span class='quick_links'><a href='index.php?find=usedservices&query=". $_MONITORED['login_q'] ."'>".$nx[12]."</a><a href='index.php?query=". $_MONITORED['login_q'] ."'>".$nx[13]."</a></span></div></span>";
+//Notifications
+echo "<span class='drop'><div class='left uplink' id='notifs_bar'><a href='index.php?query=nolvorite&notifs=all'>Notifications</a> </div>";
+echo "<div class='dropdown_content rad' id='notifications'>";
+$notifs_grab = mysqli_query($db_main, "SELECT * FROM notifications WHERE towhom='$_MONITORED[login_q]'");
+if(mysqli_num_rows($notifs_grab) > 0){}else{echo "<div class='bar_1'>You have no new notifications</div>";
 
+}
+mysqli_free_result($notifs_grab);
+echo"</div>";
+echo"</span>";
+echo"
 </div>";}            
 
 // welcome note                                                                            
@@ -379,6 +389,19 @@ unset($_SESSION[$nkey]);
   if($_SESSION['db_query'] == "posted content-anything"){
   $latest = mysqli_query($db_main, "SELECT * FROM posts WHERE bywhom = '".$_MICRORFID['login_q']."' ORDER BY stamptime DESC");
   $actual = mysqli_fetch_assoc($latest);
+  
+  $clasp_tip = ($actual['parent'] !== 0) ? $actual['parent'] : $actual['postid'];   //check to see if it's a thread to refer for a notification
+  
+  $parent_clasp = mysqli_query($db_main, "SELECT * FROM posts WHERE postid=$clasp_tip ORDER BY stamptime DESC"); $_SESSION['abc'] = mysqli_num_rows($parent_clasp);  $parent_call = mysqli_fetch_assoc($parent_clasp);
+  if(mysqli_num_rows($parent_clasp) > 0 && compare_dz($parent_call['forwhom'],"self") !== 0){  //check if it's either a reply to a comment, or not a thread to your own snowglobe, so that it wouldn't be
+  //a redundant notification               
+  //i'm getting the most recent comment with $parent_call
+  $url_nu = ($actual['cnttype'] == "1") ? "thread_view=" . $actual['thread_nick'] . "_" . $actual['topic_hash'] : "comment=" . $actual['topic_hash'];      
+  $parent_type = ($parent_call['cnttype'] == "2") ? ["thread",substr(hack_free($parent_call['title']),0,30),"index.php?" .$url_nu] : ["comment",substr(hack_free($parent_call['content']),0,30),"index.php?comment=" . $actual['topic_hash']];
+
+  $notif_add = mysqli_query($db_main, "INSERT INTO notifications(content,url,towhom) VALUES('<a href=\'index.php?profile=".$_MONITORED['login_q']."\'>".$_MONITORED['login_q']."</a> replied to your ".$parent_type[0].": ".$parent_type[1]."','$parent_type[2]','$parent_call[bywhom]')");    
+  if(!$notif_add){$_SESSION['sql_error'] = mysqli_error($db_main);} 
+  }
   mysqli_query($db_main,"INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MICRORFID[login_q]',CURRENT_TIMESTAMP,'$actual[postid]',1)");
   if($actual['cnttype'] == "1"){
 header("Location:index.php?thread_view=". $actual['thread_nick'] . "_" . $actual['topic_hash']);
@@ -388,10 +411,13 @@ header("Location:index.php?thread_view=". $actual['thread_nick'] . "_" . $actual
   $tree_roots = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$actual[thread_id]' ORDER BY stamptime DESC");
   $piece = mysqli_fetch_assoc($tree_roots);
 
+
  header("Location:index.php?thread_view=".$piece['thread_nick']."_".$piece['topic_hash']);
   mysqli_free_result($tree_roots);
   }
-  mysqli_free_result($latest);
+  
+     mysqli_free_result($parent_clasp);
+  mysqli_free_result($latest); 
   }
   unset($_SESSION['db_query']);
 

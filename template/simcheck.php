@@ -6,7 +6,33 @@ session_start();
 $sync = mysqli_connect("localhost","root","","captiv8");  
 
 require_once("vars.php");
+function time_rounds($date){
+$diff = time() - strtotime($date);
+if($diff < 60){
 
+$date2 = "Less than a minute ago";
+}    
+if($diff < 3600 && $diff > 59){     $scheck = plural(floor($diff/(3600*24)));
+$date2 = floor($diff/(60)) . " minute".plural(floor($diff/(60)))." ago";                                  
+}
+if($diff < 3600*24 && $diff > 3599){   $scheck = plural(floor($diff/(3600*24)));
+$date2 = floor($diff/(3600)) . " hour".plural(floor($diff/(3600)))." ago";                                  
+}
+if($diff < 3600*24*7 && $diff > (3600*24)-1){
+$scheck = plural(floor($diff/(3600*24)));
+$date2 = floor($diff/(3600*24)) . " day".$scheck." ago";                                  
+}
+if($diff < 3600*24*7*30 && $diff > (3600*24*7)-1){   $scheck = plural(floor($diff/(3600*24*7)));
+$date2 = floor($diff/(3600*24*7)) . " week".$scheck." ago";                                  
+}
+if($diff < 3600*24*7*365 && $diff > (3600*24*7*30)-1){  $scheck = plural(floor($diff/(3600*24*30)));
+$date2 = floor($diff/(3600*24*30)) . " month".$scheck." ago";                                  
+}
+if($diff > (3600*24*7*365)-1){ $scheck = plural(floor($diff/(3600*24)));
+$date2 = floor($diff/(3600*24*7*365)) . " year".$scheck." ago";                                  
+}
+return $date2;
+}
 function hack_free(&$data,$start = "0"){           global $sync; $child_count = $start;
    
   if(is_array($data)){  //check if it's array
@@ -78,6 +104,33 @@ $salt_check = mysqli_query($sync, "SELECT * FROM users WHERE username='$_SESSION
 $salt = mysqli_fetch_assoc($salt_check);
 
 if(compare_dz($salt['password'],$_SESSION['salt_q'])){      //extra measures man
+
+if(isset($_GET['nm_time'])){
+if($_GET['nm_time'] == "notifs"){
+$notifs_grab = mysqli_query($sync, "SELECT * FROM notifications WHERE towhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,10");
+if(mysqli_num_rows($notifs_grab) > 0){
+
+//$("#notifications .spacer").html().append("<a href='"+ data.notifs[i]['url'] +"'><div class='notifs'>"+ data.notifs[i]['content'] +"</div></a>");      
+$x= -1;
+while($notifs_zen = mysqli_fetch_assoc($notifs_grab)){    $x++;
+$pawn[$x] = $notifs_zen;
+}
+
+
+
+echo json_encode(array("result" => "new","notifs" => $pawn),JSON_UNESCAPED_SLASHES);    
+/*
+$.each(data.notifs,function(i,v){
+$("#notifications .spacer").html().append("<a href='"+ data.notifs[i]['url'] +"'><div class='notifs'>"+ data.notifs[i]['content'] +"</div></a>");
+});    */
+
+}else{
+
+$msgs = array("result" => "nonew");
+echo json_encode($msgs);
+
+}
+}}
 
 //and we're in                                                                               
 
@@ -292,5 +345,5 @@ else{       echo "Remember, letters, numbers, a hyphen and an underscore only an
 if($_GET['id'] == "2"){ 
 echo "Time will be shown as " . date($_REQUEST['search_2'], $_SERVER['REQUEST_TIME']);
 }
-  exit();   */      
+  exit();   */                     
 ?>

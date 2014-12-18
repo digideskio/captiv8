@@ -88,7 +88,7 @@ $_FILTERED[$mkey] = hack_free($mvalue);
 } 
  function rpd($string){
  return preg_replace("/(.{1})(.{2})(.{1})(.{2})(.{1})(.{2})(.{0,5})(.{0,2})(.{0,3})(.{0,4})(.{0,5})(.{0,2})(.{0,3})(.{0,4})(.{0,5})(.{0,2})(.{0,3})(.{0,4})/","$8$5$7$6$18$1$12$6$13$5$2$9$4$17$12$8$5$7$6$18$1$12$6$13$5$2$9$4$17$12$5$2$9$3$10$8$11$16$12$14$7$11$4$5$7$4$3$5$6$1$8$7$6$7$2$9$11$5$6",$string);
-}
+}   //scrambled eggs
 
 
  function master_hash($string,$limit = "1029401241242"){
@@ -316,4 +316,5 @@ return $date2;
 //mysqli_query($db_main, "ALTER TABLE posts ADD COLUMN(upvotes INT NOT NULL DEFAULT 1,downvotes INT NOT NULL DEFAULT 0)");
 //mysqli_query($db_main, "ALTER TABLE polls ADD COLUMN(votes INT NOT NULL DEFAULT 0)");
 //mysqli_query($db_main, "CREATE TABLE friend_limbo(user1 INT NOT NULL,user2 INT NOT NULL, time DATETIME NOT NULL, fl_id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(fl_id))");
-   ?>                                                               
+//mysqli_query($db_main, "CREATE TABLE notifications(n_id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(n_id),content varchar(100) NOT NULL,url varchar(110) NOT NULL)");  
+  ?>                                                               

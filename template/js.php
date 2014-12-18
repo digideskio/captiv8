@@ -1,4 +1,4 @@
-<!--<script>(function ( $ ) {   
+<!-- <script>(function ( $ ) {   
     //this is soooo tacky      
 
 
@@ -29,7 +29,7 @@ $.rtrim = function( str ) {
 return str.replace( /\s+$/, "" );
 };
 }( jQuery ));     //my first jquery function
-</script> --!>
+</script> -->
 <script type="text/javascript">
 
 $(document).ready(function(){
@@ -83,7 +83,7 @@ $("#user_menu .left,#user_menu .right").each(function(){
 if($(this).is(".left:first")){ //left will probably always be the first div but still
 $(this).css("border-right","1px solid #26303F");
 if($(this).next("div").is(":not('.left')") || $(this).is(":only-child")){
-$(this).after("<div class='left'>&nbsp;</div>");
+$(this).after("<div class='left boxxy'>&nbsp;</div>");
 $(this).next("div.left").css("border-left","1px solid #38475D");
 }  
 /* if($(this).is(:first)){
@@ -100,10 +100,16 @@ $(this).prev("div.right").css("border-left","1px solid #26303F");
 
 if($(this).is(".left:not(':first')")){
 $(this).css("border-left","1px solid #38475D");
+if($(this).is(":not('.boxxy')")){
+if($(this).parent().is("span.drop")){
+$(this).parent().prev().find(".boxxy").detach();
+}
+
+}
 }
 
 
-});    $("#user_menu div,#left1 div.box").wrapInner("<div class='spacer' />");
+});    $("#user_menu .left,#user_menu .right,#user_menu .dropdown_content,#left1 div.box").wrapInner("<div class='spacer' />");
 
 
 
@@ -172,6 +178,8 @@ if($(this).hasClass("a1") && $(this).next("input").prop("checked",false)){$(this
 });
 });
 
+
+<?php if(isset($_SESSION['login_q'])){require_once("template/autorelays.js");} ?> 
 
 <?php if(preg_match("#profile[=](.+)$#",extraurl())){require_once("template/profile_sync.js");} ?> 
 
