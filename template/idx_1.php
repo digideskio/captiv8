@@ -194,7 +194,7 @@ if(isset($_SESSION['login_q'])){
 echo " <span id='check_friend_status' class='flick side_links' ref1='".$_MONITORED['login_q']."' ref2='".$matched['username']."'>Loading friendship status...</span>";
 }                                                                    
 
-echo"</td><td class='side_2' width='1%' style='min-width:200px;'>".$nx[16]. date(dflt_date_f, strtotime($matched['joindate'])) . "</td></tr>";  //row 1
+echo"</td><td class='side_2' width='1%' style='min-width:200px;'>Last active ".time_rounds($matched['last_active_at'])."</td></tr>";  //row 1
 
 echo "<tr class='row_2'><td class='side_1' width='99%'><div class='auto_filler'>";
 echo "<h3 class='content_q'> ".$matched['username']."'s posts </h3>";
@@ -245,9 +245,19 @@ mysqli_free_result($snipe8);   mysqli_free_result($snipe10);   mysqli_free_resul
 }
 
 
-}
+}         //<dt></dt><dd></dd>
 echo "</div></td>";                                                        
-echo "<td class='side_info'></td></tr>";
+echo "<td class='side_info'>  <div class='spacer'>
+
+
+
+".$nx[16]. date(dflt_date_f, strtotime($matched['joindate'])) . " 
+<h3>Personal Information</h3>
+              <blockquote>
+<dt>Full Name</dt><dd>".$matched['fullname']."</dd>
+</blockquote>
+</div>
+</td></tr>";
 
 echo "</table></div>";
 

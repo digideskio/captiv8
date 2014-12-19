@@ -19,7 +19,7 @@ textarea{resize:vertical;background:#344256;border:1px dashed #556378;display:bl
 textarea:focus,input:focus{color:#fff;box-shadow:0 0 10px #556378;outline:0;}
 input:focus{background:#303947;border-bottom:2px solid #47586F;border-top:2px solid #272B32;color:#fff;}
 h3,p{margin:0;padding:3px;}
-input[type=submit],input[type=submit]:focus,.signup-a,.comment_opts,.button_samp{background:#5389B4;color:#27404C;text-shadow:0 1px 0 #74B7D1;border-top:2px solid #69A7C8;border-bottom:2px solid #2F3743;font:bold 15px "lucida sans unicode",arial,"sans serif";cursor:pointer}
+input[type=submit],input[type=submit]:focus,.signup-a,.comment_opts,.button_samp,#clear{background:#5389B4;color:#27404C;text-shadow:0 1px 0 #74B7D1;border-top:2px solid #69A7C8;border-bottom:2px solid #2F3743;font:bold 15px "lucida sans unicode",arial,"sans serif";cursor:pointer}
 a.signup-a:focus{box-shadow:0 0 10px #556378}
 #welcomemsg{background:#323B49;border-top:2px solid #292E35;border-bottom:2px solid #3C4D64;font-size:10px;}
 #welcomemsg a{border-top:2px solid transparent}
@@ -201,4 +201,12 @@ a.side_links{text-decoration:none;font-size:11px}
 #check_friend_status a.button_samp{margin:0;font-size:10px;font-weight:normal;padding:1px 4px 3px}
 div.bar_1{padding:10px 25px;color:#fff;}
 .notifs{padding:5px 10px;font-family:"Tahoma","sans-serif";}
-#notifications .spacer a:first-child.notifs{background-image:none;} 
+#notifs_bar .note{color:#00FE9B;}
+#notifications .spacer a:first-child .notifs{background-image:none;} 
+ #notifications .spacer a{text-decoration:none}
+#notifications .spacer a .notifs{color:#f0f0f0}
+#notifications .spacer a a{text-decoration:underline;color:#69C2A8}
+#notifications .spacer #clear{padding:4px 0;display:block;text-align:center;font-weight:normal;margin-top:3px;font-size:13px}
+.contentbox td.side_info{vertical-align:top}
+.contentbox td.side_info .spacer{padding:8px 14px}
+tr.row_2 td.side_info .spacer{font:11px "Tahoma","Arial","Sans-serif";color:#fff;text-align:left}

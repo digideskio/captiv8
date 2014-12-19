@@ -281,7 +281,7 @@ year2 = 1998                               6
 admin_notifs = on                           7
 */
          // post submission
-
+                                        
 
 $mns = mysqli_query($sync, "SELECT * FROM users WHERE username='".$_SPIN['username2']."'"); 
 //data validity check on the server side
@@ -366,6 +366,7 @@ if(isset($_COOKIE['limbooo'][0])){
   $sn = mysqli_query($db_main, "INSERT INTO users(username,password,email,joindate,fullname,admin_notifs,month2,day2,year2,salt) 
   VALUES('$_MONITORED[reg_dt1]','$kripke','$_MONITORED[reg_dt3]',now(),'$_MONITORED[reg_dt4]','$_MONITORED[reg_dt8]','$_MONITORED[reg_dt6]','$_MONITORED[reg_dt5]','$_MONITORED[reg_dt7]','$salt');");  
   mysqli_query($db_main, "INSERT INTO sg_settings(id,a1_check,a2_check,a3_check,a4_check,a5_check) VALUES('user_".$_MONITORED['login_q']."','all','all','all','self','self')");
+  mysqli_query($db_main, "INSERT INTO sg_permissions(access_type,towhom,granted_by) VALUES('friend snowglobe','$_MONITORED[reg_dt1]','$_MONITORED[reg_dt1]')");
   foreach($_MONITORED as $nkey => $nvalue){
 if(preg_match("#^reg[_]dt[\055\1370-9a-z]+#", $nkey)){
 unset($_SESSION[$nkey]);
@@ -374,6 +375,8 @@ unset($_SESSION[$nkey]);
   if(!$sn){echo "<div class='contentbox'> <h3>SQL error</h3><p>" .mysqli_error($db_main) . "</p></div>";
 
   }else{
+  
+
   header("Location:index.php?phase=2");
   } }
   

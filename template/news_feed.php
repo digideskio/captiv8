@@ -6,31 +6,16 @@ echo "<div id='news_feed'>";
 //the logged user's own posts, and every snowglobe he's subscribed to           
 
 //first get the user's own posts, then find every access type with this user's id and access type for snowglobe_(#snowglobeid)
-$zoom = "SELECT * FROM posts WHERE bywhom='$logged_dt[username]' AND cnttype=1";
-
 //have to find an efficient way to load the most recent posts
 //among other ways of assortment
 //i'm gonna have to put it in a session
 //clear it when the person followss new people
-//that way it's only going to have to search once
+//that way it's only going to have to search once   
 $que_posts[6] = mysqli_query($db_main, "SELECT * FROM sg_permissions WHERE towhom='$_MONITORED[login_q]'");
-if(!isset($_SESSION['content_pool'])){
 
-    $xn = 0;
-while($que_others_posts = mysqli_fetch_assoc($que_posts[6])){     $xn++;
-//sort em'
-$_SESSION['content_pool'][preg_replace("#[ :]+#","",$que_others_posts['access_type'])] = array($xn => $que_others_posts);
-}
-}
-if(mysqli_num_rows($que_posts[6]) > 0){
-for($i = 1;$i <= count($_SESSION['content_pool']);$i++){
-foreach($_SESSION['content_pool']['friendsnowglobe'] as $friends_feed){
- $zoom .= " UNION SELECT * FROM posts WHERE bywhom='".$friends_feed['granted_by']."' AND cnttype=1";            //I have a feeling this is horribly inefficient
- } }
- }       
-                                                
+                                   
 
-$que_posts[0] = mysqli_query($db_main, $zoom . " ORDER by stamptime DESC LIMIT 0,15");
+$que_posts[0] = mysqli_query($db_main,"SELECT * FROM posts INNER JOIN sg_permissions ON posts.bywhom = sg_permissions.granted_by AND sg_permissions.towhom = 'nolvorite' WHERE sg_permissions.access_type = 'friend snowglobe' AND posts.cnttype=1 ORDER BY stamptime DESC LIMIT 0,40");
 while($que_own = mysqli_fetch_assoc($que_posts[0])){
 
 //begin posts
@@ -58,7 +43,7 @@ $vote = (mysqli_num_rows($que_posts[2]) > 0) ? "no" : "none";
 $vote = "yes";
 
 
-
+                                                           
 }
 $que_posts[3] = mysqli_query($db_main, "SELECT * FROM polls where post_id_root='$que_own[postid]' ORDER by (CASE 'define_set' WHEN 'question' THEN 1 WHEN 'choice_selection' THEN 2 WHEN 'choice_addition' THEN 3 WHEN 'poll_choice' THEN 4 ELSE 25 END) DESC");      //check to see if it has a poll, also have the poll questions be last
 $select_class[0] = ($vote == "yes" && isset($que_posts[2]) > 0) ? "selected" : "";

@@ -39,20 +39,28 @@ function compare_dz($a, $b) {
 }
 
 
-function hack_free($data) {
-  global $db_main;
+function hack_free(&$data,$start = "0"){           global $db_main; $child_count = $start;
+   
   if(is_array($data)){  //check if it's array
-  foreach($data as $key => $value){     //then loop for each data
+  foreach($data as $i => $value){     //then loop for each data
+  //why was I using for to reiterate each value instead of foreach again
 
-  if(is_array($data[$key])){   //check for more kids
-  foreach($value as $key => $value2){
-  hack_free($value2);  }
-  }else{
-      $data[$key] = trim($value);
-  $data[$key] = stripslashes($value);
-  $data[$key] = htmlspecialchars($value);       /*le filters*/
-  $data[$key] = mysqli_real_escape_string($db_main,$value);  
-  return $data[$key];  //return it  
+  if(is_array($data[$i])){   //check for more kids
+  for($j = 0;$j <= count($data[$i])-1;$j++){
+  hack_free($value2[$i][$j],$child_count++);  
+  }
+  }else{    
+                              $array_view = [];  
+
+     for($i = 0;$i <= count($data)-1;$i++){ 
+      $data[$i] = trim($data[$i]);
+  $data[$i] = stripslashes($data[$i]);
+  $data[$i] = htmlspecialchars($data[$i]);       /*le filters*/
+    $data[$i] = mysqli_real_escape_string($db_main,$data[$i]);
+    
+    if(count($array_view) > 0){ $array_view = array_merge(array($i => $data[$i]), $array_view);}else{ $array_view = array($i => $data[$i]);  }
+ }
+ return $array_view; 
   }
   }
   }else{
@@ -60,9 +68,9 @@ function hack_free($data) {
    $data = trim($data);
   $data = stripslashes($data);
   $data = htmlspecialchars($data);
-  $data = mysqli_real_escape_string($db_main,$data);  
+     $data = mysqli_real_escape_string($db_main,$data);  
   return $data;  }
-  }
+}
 
 
 define('dflt_date_f',"F j, Y, g:i A");
