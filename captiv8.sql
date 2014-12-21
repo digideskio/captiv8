@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 17, 2014 at 04:24 PM
+-- Generation Time: Dec 21, 2014 at 07:20 AM
 -- Server version: 5.6.12-log
 -- PHP Version: 5.4.16
 
@@ -39,6 +39,29 @@ CREATE TABLE IF NOT EXISTS `friend_limbo` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE IF NOT EXISTS `notifications` (
+  `n_id` int(11) NOT NULL AUTO_INCREMENT,
+  `content` varchar(100) NOT NULL,
+  `url` varchar(110) NOT NULL,
+  `towhom` varchar(25) DEFAULT NULL,
+  `stamptime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`n_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`n_id`, `content`, `url`, `towhom`, `stamptime`) VALUES
+(1, '<a href=''index.php?profile=nerd''>nerd</a> replied to your thread: Test post', 'index.php?thread_view=_2852f12123', 'nolvorite', '2014-12-17 22:06:46'),
+(2, '<a href=''index.php?profile=nerd''>nerd</a> replied to your comment: Test post', 'index.php?comment=c4fd398dd2', 'nolvorite', '2014-12-17 22:15:46');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `polls`
 --
 
@@ -49,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `polls` (
   `define_set` varchar(20) NOT NULL,
   `votes` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`data_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=79 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=84 ;
 
 --
 -- Dumping data for table `polls`
@@ -70,12 +93,17 @@ INSERT INTO `polls` (`post_id_root`, `value`, `data_id`, `define_set`, `votes`) 
 (88, 'true', 70, 'choice_selection', 0),
 (88, 'false', 71, 'choice_addition', 0),
 (88, '...Or is it?', 72, 'poll_choice', 1),
-(88, 'Is the question.', 73, 'poll_choice', 0),
+(88, 'Is the question.', 73, 'poll_choice', 1),
 (89, 'Test poll question', 74, 'question', 0),
 (89, 'true', 75, 'choice_selection', 0),
 (89, 'true', 76, 'choice_addition', 0),
 (89, '3 and 4', 77, 'poll_choice', 0),
-(89, '1 and 2', 78, 'poll_choice', 1);
+(89, '1 and 2', 78, 'poll_choice', 2),
+(138, 'Do animals have legs?', 79, 'question', 0),
+(138, 'true', 80, 'choice_selection', 0),
+(138, 'false', 81, 'choice_addition', 0),
+(138, 'Are they more like, limbs?', 82, 'poll_choice', 1),
+(138, 'Depends.', 83, 'poll_choice', 0);
 
 -- --------------------------------------------------------
 
@@ -90,7 +118,7 @@ CREATE TABLE IF NOT EXISTS `pollvotes_q` (
   `which_poll` int(11) NOT NULL,
   `vote_id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`vote_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
 
 --
 -- Dumping data for table `pollvotes_q`
@@ -99,7 +127,10 @@ CREATE TABLE IF NOT EXISTS `pollvotes_q` (
 INSERT INTO `pollvotes_q` (`bywhom`, `timeof`, `choice_id`, `which_poll`, `vote_id`) VALUES
 ('nolvorite', '2014-12-14 15:03:32', 78, 89, 5),
 ('nolvorite', '2014-12-14 16:10:10', 72, 88, 6),
-('nolvorite', '2014-12-14 15:03:32', 78, 89, 8);
+('nolvorite', '2014-12-14 15:03:32', 78, 89, 8),
+('nerd', '2014-12-17 15:46:35', 78, 89, 9),
+('nerd', '2014-12-17 15:46:41', 73, 88, 10),
+('nolvorite', '2014-12-19 11:09:49', 82, 138, 11);
 
 -- --------------------------------------------------------
 
@@ -126,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `downvotes` int(11) NOT NULL DEFAULT '0',
   `post_type` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`postid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=118 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=139 ;
 
 --
 -- Dumping data for table `posts`
@@ -190,9 +221,8 @@ INSERT INTO `posts` (`content`, `cnttype`, `msgtype`, `forwhom`, `parent`, `post
 ('repluuuuu', 1, NULL, 'self', 0, 60, '2014-12-04 01:37:30', 'nolvorite', 'test ', 'test_', '120ffce301', 1, NULL, NULL, 1, 0, 0),
 ('One flips out, and then they both do. (yu-gi-oh joke--ikr)', 1, NULL, 'self', 0, 61, '2014-12-04 01:43:05', 'nolvorite', '(One-liner) [Two Penguin Soldiers meet in a bar.]', '_One-liner___Two_Penguin_Soldiers_meet_in_a_bar__', '1ff77ba424', 1, NULL, NULL, 1, 0, 0),
 ('Muchacha!', 1, NULL, 'self', 0, 62, '2014-12-05 01:55:01', 'nolvorite', 'Muchacho', 'Muchacho', 'e6c64e50b1', 1, NULL, NULL, 1, 0, 0),
-('it''s not a free will question, it''s a destiny question', 1, NULL, 'self', 0, 87, '2014-12-08 01:15:59', 'nolvorite', 'Wait...', 'Wait___', 'dd73afeb21', 1, NULL, NULL, 1, 0, 0),
-('Sigh... with a poll. again. soz', 1, NULL, 'self', 0, 88, '2014-12-08 01:22:44', 'nolvorite', 'Test question', 'Test_question', '6845525f04', 1, NULL, NULL, 1, 0, 0),
-('I swear right', 1, NULL, 'self', 0, 89, '2014-12-08 01:24:52', 'nolvorite', 'Soz....', 'Soz____', 'a1f4d23957', 1, NULL, NULL, 1, 0, 0),
+('Sigh... with a poll. again. soz', 1, NULL, 'self', 0, 88, '2014-12-08 01:22:44', 'nolvorite', 'Test question', 'Test_question', '6845525f04', 1, NULL, NULL, 2, 0, 0),
+('I swear right', 1, NULL, 'self', 0, 89, '2014-12-08 01:24:52', 'nolvorite', 'Soz....', 'Soz____', 'a1f4d23957', 1, NULL, NULL, 1, 1, 0),
 ('Test post', 1, NULL, 'self', 0, 90, '2014-12-12 19:46:39', 'nolvorite', 'Test post', 'Test_post', '19adda3671', 1, NULL, NULL, 1, 0, 0),
 ('Replyyyy', 2, NULL, 'n-a', 90, 91, '2014-12-15 03:16:15', 'nolvorite', '', '', 'bba3a58208', 1, 90, NULL, 1, 0, 0),
 ('And again', 2, NULL, 'n-a', 91, 92, '2014-12-15 03:16:23', 'nolvorite', 'Comments', 'Comments', 'bb3e86f54d', 1, 90, NULL, 1, 0, 0),
@@ -219,7 +249,28 @@ INSERT INTO `posts` (`content`, `cnttype`, `msgtype`, `forwhom`, `parent`, `post
 ('If you feel the urge to freak do the jitterbug', 2, NULL, 'n-a', 90, 114, '2014-12-15 05:31:17', 'nerd', '', '', '131f77271a', 1, 90, NULL, 1, 0, 0),
 ('If you feel the urge to freak do the jitterbug', 2, NULL, 'n-a', 90, 115, '2014-12-15 05:37:19', 'nerd', '', '', 'c6f6d3f4fb', 1, 90, NULL, 1, 0, 0),
 ('If you feel the urge to freak do the jitterbug', 2, NULL, 'n-a', 90, 116, '2014-12-15 05:38:11', 'nerd', '', '', 'd5da65c5d9', 1, 90, NULL, 1, 0, 0),
-('If you feel the urge to freak do the jitterbug', 2, NULL, 'n-a', 90, 117, '2014-12-15 05:44:15', 'nerd', '', '', 'bb5393f08f', 1, 90, NULL, 1, 0, 0);
+('If you feel the urge to freak do the jitterbug', 2, NULL, 'n-a', 90, 117, '2014-12-15 05:44:15', 'nerd', '', '', 'bb5393f08f', 1, 90, NULL, 1, 0, 0),
+('Reply', 2, NULL, 'n-a', 94, 118, '2014-12-17 19:40:03', 'nolvorite', '', '', 'be23c99542', 1, 94, NULL, 1, 0, 0),
+(NULL, 0, NULL, '', 0, 119, '2014-12-17 22:11:33', '', NULL, NULL, NULL, 1, NULL, NULL, 1, 0, 0),
+('make a notification!', 2, NULL, 'n-a', 90, 120, '2014-12-18 03:27:07', 'nerd', '', '', 'f5653750e8', 1, 90, NULL, 1, 0, 0),
+('okay, my bad, forgot the other columns. Try another notification!', 2, NULL, 'n-a', 90, 121, '2014-12-18 03:33:50', 'nerd', '', '', '52613cbd64', 1, 90, NULL, 1, 0, 0),
+('dang it', 2, NULL, 'n-a', 90, 122, '2014-12-18 03:35:02', 'nerd', '', '', '79128f024a', 1, 90, NULL, 1, 0, 0),
+('one sec...', 2, NULL, 'n-a', 90, 123, '2014-12-18 03:36:09', 'nerd', '', '', '976543eda8', 1, 90, NULL, 1, 0, 0),
+('hmmmm', 2, NULL, 'n-a', 90, 124, '2014-12-18 03:36:30', 'nerd', '', '', '22b70358be', 1, 90, NULL, 1, 0, 0),
+('ewwwwww', 2, NULL, 'n-a', 90, 125, '2014-12-18 03:36:54', 'nerd', '', '', 'c61422f14b', 1, 90, NULL, 1, 0, 0),
+('test.....', 2, NULL, 'n-a', 90, 126, '2014-12-18 03:37:26', 'nerd', '', '', 'f6e15a0f93', 1, 90, NULL, 1, 0, 0),
+('This is annoying.', 2, NULL, 'n-a', 90, 127, '2014-12-18 03:42:05', 'nerd', '', '', 'f6ad018d5c', 1, 90, NULL, 1, 0, 0),
+('I mean seriously.', 2, NULL, 'n-a', 90, 128, '2014-12-18 03:45:45', 'nerd', '', '', 'bfca954d5f', 1, 90, NULL, 1, 0, 0),
+('Hmm.....', 2, NULL, 'n-a', 90, 129, '2014-12-18 03:49:26', 'nerd', '', '', '755552445c', 1, 90, NULL, 1, 0, 0),
+('Tesm', 2, NULL, 'n-a', 90, 130, '2014-12-18 03:54:24', 'nerd', '', '', '3893981dc6', 1, 90, NULL, 1, 0, 0),
+('somebody gag me', 2, NULL, 'n-a', 90, 131, '2014-12-18 03:56:26', 'nerd', '', '', 'de53769b21', 1, 90, NULL, 1, 0, 0),
+('I mean it', 2, NULL, 'n-a', 90, 132, '2014-12-18 03:59:00', 'nerd', '', '', 'ea8f74f1bf', 1, 90, NULL, 1, 0, 0),
+('eugh', 2, NULL, 'n-a', 90, 133, '2014-12-18 04:01:39', 'nerd', '', '', '24c1496955', 1, 90, NULL, 1, 0, 0),
+('Test for SQL errors', 2, NULL, 'n-a', 90, 134, '2014-12-18 04:03:50', 'nerd', '', '', '182e910e0a', 1, 90, NULL, 1, 0, 0),
+('or other errors :/', 2, NULL, 'n-a', 90, 135, '2014-12-18 04:05:40', 'nerd', '', '', '922347a11c', 1, 90, NULL, 1, 0, 0),
+('This sucks', 2, NULL, 'n-a', 90, 136, '2014-12-18 04:06:45', 'nerd', '', '', '2852f12123', 1, 90, NULL, 1, 0, 0),
+('Okay this should be the charm', 2, NULL, 'n-a', 90, 137, '2014-12-18 04:15:45', 'nerd', '', '', 'c4fd398dd2', 1, 90, NULL, 1, 0, 0),
+('Again', 1, NULL, 'self', 0, 138, '2014-12-19 16:24:12', 'nolvorite', 'Test poll question', 'Test_poll_question', 'ee4bb77fed', 1, NULL, NULL, 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -230,18 +281,24 @@ INSERT INTO `posts` (`content`, `cnttype`, `msgtype`, `forwhom`, `parent`, `post
 CREATE TABLE IF NOT EXISTS `sg_permissions` (
   `access_type` varchar(30) NOT NULL,
   `towhom` varchar(30) NOT NULL,
-  `date_g` date NOT NULL,
+  `date_g` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `granted_by` varchar(35) NOT NULL,
   `sgp_id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`sgp_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
 
 --
 -- Dumping data for table `sg_permissions`
 --
 
 INSERT INTO `sg_permissions` (`access_type`, `towhom`, `date_g`, `granted_by`, `sgp_id`) VALUES
-('friend snowglobe', 'nolvorite', '2014-12-16', 'nerd', 1);
+('friend snowglobe', 'nolvorite', '2014-12-16 00:00:00', 'nerd', 1),
+('friend snowglobe', 'nerd', '2014-12-17 00:00:00', 'nolvorite', 2),
+('friend snowglobe', 'nolvorite', '0000-00-00 00:00:00', 'nolvorite', 3),
+('friend snowglobe', 'test_user4aaaasd', '0000-00-00 00:00:00', 'test_user4aaaasd', 4),
+('friend snowglobe', 'test_9', '0000-00-00 00:00:00', 'test_9', 5),
+('friend snowglobe', 'asdasdas', '0000-00-00 00:00:00', 'asdasdas', 6),
+('friend snowglobe', 'nerd', '0000-00-00 00:00:00', 'nerd', 7);
 
 -- --------------------------------------------------------
 
@@ -305,11 +362,11 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`username`, `password`, `isvalidated`, `email`, `userid`, `joindate`, `fullname`, `admin_notifs`, `root_admin_status`, `month2`, `day2`, `year2`, `salt`, `login_attempts`, `login_att_last`, `last_active_at`, `last_activity`) VALUES
-('nolvorite', 'd83ab46b4325d8bcd1102188c38d8a098b23a168', 1, 'hns_marcon@hotmail.com', 1, '2014-11-14 23:52:34', 'Hans Marcon', 'on', '1', 4, 9, 1996, '6c478c525f517a7ab838', '0', '2014-12-15 13:31:51', '2014-12-17 01:15:20', NULL),
+('nolvorite', 'd83ab46b4325d8bcd1102188c38d8a098b23a168', 1, 'hns_marcon@hotmail.com', 1, '2014-11-14 23:52:34', 'Hans Marcon', 'on', '1', 4, 9, 1996, '6c478c525f517a7ab838', '0', '2014-12-15 13:31:51', '2014-12-20 20:38:08', NULL),
 ('test_user4aaaasd', 'c08c7f680792684058eafc92e8e1e85e07617eff', NULL, 'asdasdas@asda.asdas', 27, '2014-11-13 21:16:30', 'asdas asdas', 'on', NULL, 12, 16, 1994, 'aad763cbecdacccb1f63', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 ('test_9', '6e1d3ee1ec90c3617dc4aff58fe39bba75a8b68e', NULL, 'laskdla@alsdkalsd.asdjas', 31, '2014-11-14 23:21:41', 'asdajsdjaks asdjaks', 'on', NULL, 4, 19, 1996, '3aab2407326f6ada6661', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 ('asdasdas', 'ef659ade9df94a0bc3e792ec9e2f81095d375a48', NULL, 'hns_marcon@hotmail.coma', 32, '2014-11-13 21:16:30', 'asdasd asd asdas', 'on', NULL, 11, 15, 1999, 'e64ec838d0dba46ea10a', '0', '2014-12-02 00:06:50', '0000-00-00 00:00:00', NULL),
-('nerd', '0989807af1ccfc712499519ebcb0e742b0597918', NULL, 'nerd@nerd.nerd', 36, '2014-12-14 22:10:24', 'John Hammercock', 'on', NULL, 6, 5, 1976, '9f5106ab7ebfe0e42b9a', '0', '2014-12-14 22:10:24', '2014-12-14 23:53:08', NULL);
+('nerd', '0989807af1ccfc712499519ebcb0e742b0597918', NULL, 'nerd@nerd.nerd', 36, '2014-12-14 22:10:24', 'John Hammercock', 'on', NULL, 6, 5, 1976, '9f5106ab7ebfe0e42b9a', '0', '2014-12-17 21:26:35', '2014-12-18 00:06:07', NULL);
 
 -- --------------------------------------------------------
 
@@ -324,7 +381,7 @@ CREATE TABLE IF NOT EXISTS `votes_q` (
   `vote` int(1) NOT NULL DEFAULT '1',
   `v_id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`v_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=135 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=163 ;
 
 --
 -- Dumping data for table `votes_q`
@@ -392,8 +449,8 @@ INSERT INTO `votes_q` (`bywhom`, `timeof`, `which_post`, `vote`, `v_id`) VALUES
 ('nolvorite', '2014-12-06 23:13:55', 64, 1, 72),
 ('nolvorite', '2014-12-07 19:22:45', 88, 1, 75),
 ('', '2014-12-12 13:32:06', 58, 0, 78),
-('nolvorite', '2014-12-12 13:37:39', 89, 1, 83),
-('nolvorite', '2014-12-12 13:46:40', 90, 1, 84),
+('nolvorite', '2014-12-17 16:32:06', 89, 0, 83),
+('nolvorite', '2014-12-17 15:42:44', 90, 1, 84),
 ('nolvorite', '2014-12-14 21:16:15', 0, 1, 85),
 ('nolvorite', '2014-12-14 21:16:16', 91, 1, 86),
 ('nolvorite', '2014-12-14 21:16:23', 0, 1, 87),
@@ -443,7 +500,34 @@ INSERT INTO `votes_q` (`bywhom`, `timeof`, `which_post`, `vote`, `v_id`) VALUES
 ('nerd', '2014-12-14 23:38:11', 0, 1, 131),
 ('nerd', '2014-12-14 23:38:11', 116, 1, 132),
 ('nerd', '2014-12-14 23:44:16', 0, 1, 133),
-('nerd', '2014-12-14 23:44:16', 117, 1, 134);
+('nerd', '2014-12-14 23:44:16', 117, 1, 134),
+('nolvorite', '2014-12-17 13:40:03', 0, 1, 135),
+('nolvorite', '2014-12-17 13:40:04', 118, 1, 136),
+('nolvorite', '2014-12-17 14:20:55', 94, 1, 137),
+('nolvorite', '2014-12-17 14:20:58', 101, 1, 138),
+('nerd', '2014-12-17 15:42:44', 90, 1, 139),
+('nerd', '2014-12-17 15:44:38', 87, 1, 140),
+('nerd', '2014-12-17 16:32:06', 89, 0, 142),
+('nerd', '2014-12-17 16:13:28', 88, 1, 143),
+('nerd', '2014-12-17 21:27:07', 120, 1, 144),
+('nerd', '2014-12-17 21:33:50', 121, 1, 145),
+('nerd', '2014-12-17 21:35:03', 122, 1, 146),
+('nerd', '2014-12-17 21:36:10', 123, 1, 147),
+('nerd', '2014-12-17 21:36:30', 124, 1, 148),
+('nerd', '2014-12-17 21:36:54', 125, 1, 149),
+('nerd', '2014-12-17 21:37:26', 126, 1, 150),
+('nerd', '2014-12-17 21:42:06', 127, 1, 151),
+('nerd', '2014-12-17 21:45:46', 128, 1, 152),
+('nerd', '2014-12-17 21:49:27', 129, 1, 153),
+('nerd', '2014-12-17 21:54:24', 130, 1, 154),
+('nerd', '2014-12-17 21:56:27', 131, 1, 155),
+('nerd', '2014-12-17 21:59:01', 132, 1, 156),
+('nerd', '2014-12-17 22:01:39', 133, 1, 157),
+('nerd', '2014-12-17 22:03:51', 134, 1, 158),
+('nerd', '2014-12-17 22:05:41', 135, 1, 159),
+('nerd', '2014-12-17 22:06:46', 136, 1, 160),
+('nerd', '2014-12-17 22:15:46', 137, 1, 161),
+('nolvorite', '2014-12-19 10:24:14', 138, 1, 162);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
