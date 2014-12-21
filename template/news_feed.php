@@ -49,7 +49,7 @@ $que_posts[3] = mysqli_query($db_main, "SELECT * FROM polls where post_id_root='
 $select_class[0] = ($vote == "yes" && isset($que_posts[2]) > 0) ? "selected" : "";
 $select_class[1] = ($vote == "no" && isset($que_posts[2]) > 0) ? "selected" : ""; 
 $content_blur = preg_match("#^[ ]+$#",$que_own['content']) ? "" : "<p>".$que_own['content'] ."<span class='bywhom'> (Posted in your own snowglobe)</span></p>";
-echo "<div class='contentbox index_post' alt='".$que_own['postid']."'><table><tr><td width='1%' class='left_side'><strong><a href='index.php?profile=".$que_own['bywhom'] ."'>".$que_own['bywhom'] ."</a></strong></td><td>";
+echo "<div class='contentbox index_post' alt='".$que_own['postid']."'><table><tr><td width='1%' class='left_side'><strong><a href='index.php?profile=".$que_own['bywhom'] ."'>".$que_own['bywhom'] ."</a></strong></td><td class='content'>";
 $title_code_patt = "#^[\050](One-liner)[\051]([ ]{0,5})[\133](.+)[\135]#";
 if(preg_match($title_code_patt,$que_own['title'])){
 preg_match($title_code_patt,$que_own['title'],$matches);
@@ -59,7 +59,9 @@ echo "<strong>". $matches[3] ." <a class='prompt' href='toggle'>(Click here...)<
 
 echo"<span class='spoiler'>".$content_blur."</span>";
 }
-}else{echo "<strong>" .$que_own['title'] . "</strong>".$content_blur .""; }
+}else{
+$wraps = (empty($content_blur)) ? ["<strong>","</strong>"] : ["<div class='r_title'>","</div>"];
+echo $wraps[0] .$que_own['title'] . $wraps[1].$content_blur .""; }
 
 //POLLS
 
