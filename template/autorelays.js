@@ -11,12 +11,7 @@ url: "template/simcheck.php",
 data: {"nm_time":"notifs"},
 success: function(data){  
 
-  $('.notifs').each(function(){
-$zen = $(this).attr('alt');    
-if($(this).parent().is(":not('a')")){
-$(this).wrap("<a href='"+ $zen +"' />");    //that was painful
-}
-});
+
 
 if(data.result == "new"){
 if($("#notifs_bar .spacer a").next().is(":not('.note')")){
@@ -37,6 +32,14 @@ $("#notifications .spacer").html( $zin + "<a href='clear' class='prompt' id='cle
 
                 
 }else{} 
+
+  $('.notifs').each(function(){
+$zen = $(this).attr('alt');    
+if($(this).parent().is(":not('a')")){
+$(this).wrap("<a href='"+ $zen +"' />");    //that was painful
+}
+});
+
 },dataType: "json"        
 });
 

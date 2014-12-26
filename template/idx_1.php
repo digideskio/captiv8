@@ -256,6 +256,10 @@ echo "<td class='side_info'>  <div class='spacer'>
               <blockquote>
 <dt>Full Name</dt><dd>".$matched['fullname']."</dd>
 </blockquote>
+
+<h3>Q & A</h3>";
+
+echo" 
 </div>
 </td></tr>";
 

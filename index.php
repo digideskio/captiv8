@@ -11,8 +11,7 @@ nd2.php - everything inside <body>
  -idx_1.php - profile view, post view, etc
  -idx_2.php - 
 
-*/              
-  
+*/        
 /*db configurations*/   
 $db_main = mysqli_connect("localhost","root","","captiv8");     
 // mysqli_query($db_main,"");
@@ -23,6 +22,9 @@ $y = mysqli_query($db_main, "CREATE TABLE posts(content MEDIUMTEXT,cnttype INT N
 /*html header, etc*/
 require_once("template/vars.php"); // text template    
 require_once("template/internal.php"); // form actions, database registering, etc cetera, also site configurations -- the main hub, I guess
+
+
+
 
 echo "<!DOCTYPE html><html>";
 echo "<head>";

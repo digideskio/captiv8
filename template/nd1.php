@@ -12,6 +12,11 @@
 
 /*html start*/
 echo "<title>";
+
+if(isset($_GET['query']) && count($_GET) == 1 && compare_dz($logged_dt['password'],$_SESSION['salt_q'])){
+echo "Editing Profile and Settings";
+}
+
 if(isset($_GET['direct']) || preg_match("#index.php([\072]([0-9]){0,15})*$#", extraurl())){
 
 if(isset($_GET['direct'])){if($_GET['direct'] == "signup"){

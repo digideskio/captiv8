@@ -11,6 +11,9 @@ if($(this).prop("value","")){}
       
        
 <?php if(index_page_check){ include("template/index_feed.js");} ?>    
+
+<?php if(isset($logged_dt)) include("template/profile_edit.js");     ?>
+
 $("#post_k input[type=submit]").click(function(){
 if($("#post_k input[name=tcha1]").val() == $("#post_k input[name=tcha1]").prop("defaultValue")){return false;alert('Please provide a title.')}else{
 if($("#post_k textarea[name=tcha2]").val() == $("#post_k textarea[name=tcha2]").prop("defaultValue")){$("#post_k textarea[name=tcha2]").val(" ");}

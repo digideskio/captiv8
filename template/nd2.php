@@ -30,6 +30,10 @@ if(mysqli_num_rows($notifs_grab) > 0){}else{echo "<div class='bar_1'>You have no
 mysqli_free_result($notifs_grab);
 echo"</div>";
 echo"</span>";
+
+//right side
+
+
 echo"
 </div>";}            
 
@@ -44,6 +48,67 @@ if(index_page_check && logged_in_check){echo $nx['29'];}
       echo "<div class='box space1'></div>";
 echo "</td><td width='99%' id='vc2'>";
 
+//edit profile action, and all the other actions for query= [ ]
+if(isset($_GET['query'])){
+if(count($_GET) == 1 && compare_dz($logged_dt['password'],$_SESSION['salt_q'])){
+$edu_find = mysqli_query($db_main, "SELECT * FROM education where forwhom='$_MONITORED[login_q]'");
+
+//edit profile
+echo "<form action='index.php?verify=". $_SESSION['temp_n'] ."' method='POST'>";
+echo "<div class='contentbox' id='profile_edit'>";
+echo "<h3>" . $nx[32] ."</h3>";     
+
+echo "<table class='dashed'>";
+echo"<tr>";
+ echo "<td width='50%'>"; 
+echo "<input type='text' class='largeform flick' name='fullname' value='Full name'>"; echo "</td><td class='nam'><strong>Currently:</strong> ".$logged_dt['fullname']." </td>";
+echo "</tr>";
+echo"<tr>";
+ echo "<td width='50%' id='dob-edit'>" . $dobordate; 
+ echo "</td><td class='nam'>Date of Birth</td>";
+echo "</tr>";                                             
+
+
+echo "</table>";                                                   
+
+
+
+
+
+echo "<span id='edu_fill'>";   echo "<h3>Education</h3>";     
+echo "<table class='dashed'>";
+
+echo "<tr><td>";
+
+//create the form
+
+
+      echo "<br>";
+if(mysqli_num_rows($edu_find) < 1){                                
+echo "<p class='notice center'>You have not made any education entries.</p>";
+echo "<div class='panel rad'><table><tr><td width='25%' class='left_side'>College</td><td>";
+     //le education fields           
+     echo "<input class='largeform flick school_search' value='College entered/currently entering...'>";
+
+echo "</td></tr></table></div>";
+
+echo "<div class='panel rad'><table><tr><td width='25%' class='left_side'>High School</td><td>";
+     echo "<input class='largeform flick school_search' value='High school entered/currently entering...'>";
+echo "</td></tr></table></div>";
+
+}else{
+}
+     echo "<br>";
+echo "</tr></td>";  
+
+echo "</table>";
+
+echo "</span>";
+
+
+echo "</div>";
+}
+}
 
 require_once("template/idx_1.php");
 require_once("template/news_feed.php");
@@ -62,6 +127,8 @@ echo "<div class='contentbox'><h3>". $_COOKIE['limbooo'][0] ."</h3><p>". $_COOKI
 
 setcookie("glimpse","asd",time()-1);
 }
+
+
 
 
 //i'm gonna need all these for later reference
@@ -360,7 +427,7 @@ if(isset($_COOKIE['limbooo'][0])){
   if($_SESSION['db_query'] = "user registration"){
   
   //saltin'
-  $salt = substr(sha1(md5(base64_encode(microtime() - mt_rand(1,microtime())*mt_rand(.01,1)))),0,20);      //pendulum
+  $salt = substr(sha1(md5(base64_encode(microtime() - mt_rand(1,microtime())*mt_rand(-1,1)))),0,20);      //pendulum
   $kripke = substr(hash('sha512', $salt . $_SESSION['reg_dt2']), 0, 40);
   
   $sn = mysqli_query($db_main, "INSERT INTO users(username,password,email,joindate,fullname,admin_notifs,month2,day2,year2,salt) 

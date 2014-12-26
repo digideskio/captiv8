@@ -29,8 +29,19 @@ $.rtrim = function( str ) {
 return str.replace( /\s+$/, "" );
 };
 }( jQuery ));     //my first jquery function
+
+
+
 </script> -->
 <script type="text/javascript">
+
+
+function microtime(get_as_float)
+{
+var unixtime_ms = new Date().getTime();
+    var sec = parseInt(unixtime_ms / 1000);
+    return sec + (unixtime_ms - (sec * 1000))/1000 ;
+}
 
 $(document).ready(function(){
 //get current timezone of user
@@ -121,7 +132,37 @@ $(this).val($(this).prop("defaultValue"));
 } }).on('change','.flick',function(){if($(this).hasClass("named") && ($(this).val().length == 0 || $(this).val()==$(this).prop("defaultValue"))){$(this).removeClass("named")}else{$(this).addClass("named")}
 if($(this).val().length == 0){
 $(this).val($(this).prop("defaultValue")); //had to change it to this for textareas
-}});
+}}).on('keydown','.flick',function(){
+<?php if(isset($_SESSION['login_q']) && count($_GET) == 1 && compare_dz($logged_dt['password'],$_SESSION['salt_q'])): ?>  
+
+if($(this).hasClass("school_search")){    
+
+
+//I need to make the wait a certain amount of time after a person is done typing before displaying results
+//In this case i'll set it to 3/4 of a second
+//seems like there's already a jquery function for this but im not sure
+//or I could have just nulled the settimeout function before the last time it was executed
+
+if($(this).attr("time_set")){
+if($(this).attr("time_set2")){     
+ $(this).attr("time_set",$(this).attr("time_set2"));       $(this).attr("time_set2",microtime()); 
+ $diff = $(this).attr("time_set2") - $(this).attr("time_set");
+ }
+ else{$(this).attr("time_set2",microtime());   }
+ 
+}else{$(this).attr("time_set",microtime()); }
+
+if(typeof $diff !== undefined && $diff > .75){
+    $.get('template/simcheck.php',{"action":"school_search","value":$(this).val()},function(data){
+alert(data);
+});
+} }
+   <?php endif; ?>
+//add em'
+});
+
+
+;
 
 /*
 $(".flick").each(function(){
