@@ -192,7 +192,7 @@ a.button_samp{font-size:11px;padding:4px 8px;margin:4px;display:inline-block;wid
 #widthfix #content{display:block}
 td.poll_choosy{width:350px;}
 .poll_choosy input[type=radio]{vertical-align:middle;}
-.poll_choosy h4{background:#334054}
+.poll_choosy h4{background:#334054;border-top:1px solid #292E35;border-bottom:1px solid #63738C;text-align:center}
 .poll_choices .optionbox:first-child{background:transparent none;}
 #session_list textarea{width:100%;padding:6px;background:#e8e8e8;border:1px solid #e0e0e0;color:#000;text-shadow:0 0;box-shadow: 0 0;}
 .optionbox.results{padding:8px 12px;}
@@ -216,7 +216,7 @@ div.bar_1{padding:10px 25px;color:#fff;}
 .contentbox td.side_info .spacer{padding:8px 14px}
 tr.row_2 td.side_info .spacer{font:11px "Tahoma","Arial","Sans-serif";color:#fff;text-align:left}
 .contentbox td.content{vertical-align:top}                                                                
-.r_title{background:#38475D;padding:5px 10px;font-weight:bold;font-size:13px;}
+.r_title{background:#38475D;padding:5px 10px;font:bold 13px "Lucida Sans Unicode";border-top:1px solid #2E3A4D;border-bottom:1px solid #556378}
 #dob-edit select.largeform{width:25%;margin: 2px 10px 2px 0;}
 .dashed{margin-bottom:10px;}
 .dashed td{padding:7px 10px 6px}

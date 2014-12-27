@@ -39,8 +39,37 @@ $pawn[$x] = $notifs_zen;
 }
 
 
+if(!isset($_GET['action'])){
 
-echo json_encode(array("result" => "new","notifs" => $pawn),JSON_UNESCAPED_SLASHES);    
+$search_new = mysqli_query($db_main, "SELECT * FROM notifications WHERE status=0 AND towhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,10");
+
+echo json_encode(array("result" => "new","unread" => mysqli_num_rows($search_new),"notifs" => $pawn),JSON_UNESCAPED_SLASHES);}
+
+else{       //clear notifications
+//10 at a time
+//but delay it
+
+//1 is read, 0 is unread
+
+//delay it for the same amount of time as it would get refreshed, or maybe a little less
+
+$clear_last_10 = mysqli_query($db_main, "UPDATE notifications SET status=1 WHERE towhom IN (SELECT towhom FROM(SELECT towhom FROM notifications WHERE towhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,10)tmp)");
+
+if($clear_last_10){
+
+$search_new = mysqli_query($db_main, "SELECT * FROM notifications WHERE towhom='$_MONITORED[login_q]' AND status=0 ORDER BY stamptime DESC LIMIT 0,10");
+
+
+
+echo json_encode(array("result" => "completed","notifs_left" => mysqli_num_rows($search_new)),JSON_UNESCAPED_SLASHES);
+
+}
+
+}
+
+mysqli_free_result($search_new);    
+
+
 /*
 $.each(data.notifs,function(i,v){
 $("#notifications .spacer").html().append("<a href='"+ data.notifs[i]['url'] +"'><div class='notifs'>"+ data.notifs[i]['content'] +"</div></a>");

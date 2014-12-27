@@ -68,6 +68,13 @@ var nina = $(this).find(".uplink");
 var nina2 = nina.offset().left;
 var nina3 = nina.offset().top + nina.height();
 $(this).find(".dropdown_content").attr("style","left: "+nina2+"px; top: "+nina3+"px;display:block;");
+<?php if(isset($_SESSION['login_q'])): ?>
+if($(this).is("#notifs_drop")){
+$.ajax({url: "template/simcheck.php",data: {"nm_time":"notifs","action":"clearnotifs"}});   }
+
+<?php endif; ?>
+
+
 }, 'mouseleave':function(){
 $(this).find(".dropdown_content").attr("style","display:none");
 }

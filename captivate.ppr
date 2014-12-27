@@ -12,7 +12,7 @@ FileFormat=0
 ProjectFilesOnly=0
 [Project tree]
 captivate
-	-All files
+	+All files
 		+High priority
 			template\simcheck.php
 			template\nd2.php
@@ -24,9 +24,11 @@ captivate
 			template\extra_bottom_content.php
 			template\news_feed.php
 			template\vars.php
-			template\vars.php
 			template\profile_sync.js
 			template\profile_edit.js
+			template\auxiliary.php
+			template\actions.php
+			template\autorelays.js
 		+Low priority
 			template\jquery-ui.js
 			template\jquery-.js
@@ -35,26 +37,70 @@ captivate
 			template\admin_djs.php
 			template\nd1.php
 [Open project files]
-0=..\..\..\Users\H\AppData\Local\Temp\fz3temp-1\AreaWrapper.css
-1=..\..\..\Users\H\AppData\Local\Temp\fz3temp-1\DropDown.css
-2=..\..\..\Users\H\AppData\Local\Temp\fz3temp-1\BlockNotice.css
-3=..\..\..\Users\H\AppData\Local\Temp\fz3temp-1\AutoComplete.css
-4=..\..\..\Users\H\AppData\Local\Temp\fz3temp-1\ProgressBar.css
+0=template\simcheck.php
+1=template\nd2.php
+2=template\js.php
+3=template\internal.php
+4=template\index_feed.js
+5=template\css.css
+6=template\extra_bottom_content.php
+7=template\news_feed.php
+8=template\vars.php
+9=template\profile_sync.js
+10=template\profile_edit.js
+11=template\auxiliary.php
+12=template\jquery-ui.js
+13=template\jquery-.js
+14=template\idx_1.php
+15=template\autorelays.js
 [Selected Project Files]
 Main=
-Selected=..\..\..\Users\H\AppData\Local\Temp\fz3temp-1\ProgressBar.css
-[..\..\..\Users\H\AppData\Local\Temp\fz3temp-1\AreaWrapper.css]
+Selected=template\autorelays.js
+[template\simcheck.php]
+TopLine=101
+Caret=60,32
+[template\nd2.php]
+TopLine=7
+Caret=41,143
+[template\js.php]
 TopLine=1
 Caret=1,1
-[..\..\..\Users\H\AppData\Local\Temp\fz3temp-1\DropDown.css]
+[template\internal.php]
 TopLine=1
 Caret=1,1
-[..\..\..\Users\H\AppData\Local\Temp\fz3temp-1\BlockNotice.css]
+[template\index_feed.js]
 TopLine=1
 Caret=1,1
-[..\..\..\Users\H\AppData\Local\Temp\fz3temp-1\AutoComplete.css]
+[template\css.css]
+TopLine=172
+Caret=96,195
+[template\extra_bottom_content.php]
 TopLine=1
 Caret=1,1
-[..\..\..\Users\H\AppData\Local\Temp\fz3temp-1\ProgressBar.css]
+[template\news_feed.php]
+TopLine=1
+Caret=1,1
+[template\vars.php]
+TopLine=1
+Caret=1,1
+[template\profile_sync.js]
+TopLine=1
+Caret=1,1
+[template\profile_edit.js]
+TopLine=1
+Caret=1,1
+[template\auxiliary.php]
+TopLine=1
+Caret=1,1
+[template\jquery-ui.js]
+TopLine=1
+Caret=1,1
+[template\jquery-.js]
+TopLine=1
+Caret=1,1
+[template\idx_1.php]
+TopLine=1
+Caret=1,1
+[template\autorelays.js]
 TopLine=1
 Caret=1,1
