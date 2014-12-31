@@ -1,6 +1,3 @@
 Captivate
 =======
-Essentially the source code for the new social media web API that i'm working on.
-If you want to collab on the project, either PM me here or on skype, my username's nolvorite over there too.
-
-I work like a turtle.
+Essentially the source code for the new social media website that i'm working on. To be able to use the site, you're going to have to export captiv8.sql into a database.
