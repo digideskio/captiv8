@@ -23,8 +23,13 @@ echo "<div id='user_menu'>
 //Notifications
 echo "<span class='drop' id='notifs_drop'><div class='left uplink' id='notifs_bar'><a href='index.php?query=nolvorite&notifs=all'>Notifications</a> </div>";
 echo "<div class='dropdown_content rad' id='notifications'>";
-$notifs_grab = mysqli_query($db_main, "SELECT * FROM notifications WHERE towhom='$_MONITORED[login_q]'");
-if(mysqli_num_rows($notifs_grab) > 0){}else{echo "<div class='bar_1'>You have no new notifications</div>";
+$notifs_grab = mysqli_query($db_main, "SELECT * FROM notifications WHERE towhom='$_MONITORED[login_q]' LIMIT 0,10");
+if(mysqli_num_rows($notifs_grab) > 0){
+ while($notifs_iterate = mysqli_fetch_assoc($notifs_grab)){
+echo "<a href='". $notifs_iterate['url'] ."'> <div class='notifs'>". preg_replace('#^<a href(.+)>(.+)<(.+)>(.+)$#','<span>$2</span> $4',$notifs_iterate['content']) ."</div></a>";
+}
+
+}else{echo "<div class='bar_1'>You have no new notifications</div>";
 
 }
 mysqli_free_result($notifs_grab);

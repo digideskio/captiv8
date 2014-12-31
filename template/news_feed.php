@@ -54,7 +54,7 @@ $title_code_patt = "#^[\050](One-liner)[\051]([ ]{0,5})[\133](.+)[\135]#";
 if(preg_match($title_code_patt,$que_own['title'])){
 preg_match($title_code_patt,$que_own['title'],$matches);
 if($matches[1] == "One-liner"){
-echo "<strong>". $matches[3] ." <a class='prompt' href='toggle'>(Click here...)</a></strong>";
+echo "<strong>". $matches[3] ." <a class='prompt' href='toggle'>Click here...</a></strong>";
 
 
 echo"<span class='spoiler'>".$content_blur."</span>";
@@ -119,7 +119,7 @@ echo "<div class='optionbox'><input type='".$selection_type."' name='pc_".$poll_
 
 echo "<a href='vote' class='prompt button_samp rad'>VOTE!</a></span>";
 
-echo "</td>";}       }
+}     }                  echo "</td>";
 
 echo"<td width='1%' class='right_side'><span class='right side_info' alt='" .$que_own['postid'] . "'><a href='index.php?thread_view=".$que_own['thread_nick']."_".$que_own['topic_hash']."' class='topic_link'>".time_rounds($que_own['stamptime'])."</a><span class='score'> (".$score."%)</span>";
 echo"<span class='votes'><a href='up' class='vote_" .$select_class[0] . "'><img src='template/img/up.png'></a><a href='down' class='vote_" .$select_class[1] . "'><img src='template/img/down.png'></a></span></span></td></tr></table></div>";

@@ -37,16 +37,21 @@ unset($_SESSION[$nkey]);
   $latest = mysqli_query($db_main, "SELECT * FROM posts WHERE bywhom = '".$_MICRORFID['login_q']."' ORDER BY stamptime DESC");
   $actual = mysqli_fetch_assoc($latest);
   
-  $clasp_tip = ($actual['parent'] !== 0) ? $actual['parent'] : $actual['postid'];   //check to see if it's a thread to refer for a notification
+  $clasp_tip = ($actual['parent'] != 0) ? $actual['parent'] : $actual['postid'];   //check to see if it's a thread to refer for a notification
   
-  $parent_clasp = mysqli_query($db_main, "SELECT * FROM posts WHERE postid=$clasp_tip ORDER BY stamptime DESC"); $_SESSION['abc'] = mysqli_num_rows($parent_clasp);  $parent_call = mysqli_fetch_assoc($parent_clasp);
-  if(mysqli_num_rows($parent_clasp) > 0 && compare_dz($parent_call['forwhom'],"self") !== 0){  //check if it's either a reply to a comment, or not a thread to your own snowglobe, so that it wouldn't be
-  //a redundant notification               
-  //i'm getting the most recent comment with $parent_call
+  $parent_clasp = mysqli_query($db_main, "SELECT * FROM posts WHERE postid=$clasp_tip ORDER BY stamptime DESC"); $_SESSION['abc'] = mysqli_num_rows($parent_clasp); 
+   $parent_call = mysqli_fetch_assoc($parent_clasp);
+  if(mysqli_num_rows($parent_clasp) > 0 && compare_dz($parent_call['forwhom'],"self") !== 0){
+  
+  $parent_check = ($actual['bywhom'] == $parent_call['bywhom']) ? "no" : "yes";
+  $no_notif = ($actual['cnttype'] == 2) ? $parent_check : "yes";
+  //check if it's either a reply to a comment, or not a thread to your own snowglobe, or a reply to your own thread/comment post, so that it wouldn't be a redundant notification               
+  //i'm getting the most recent comment with $parent_call ... I mean its parent post
+  //dang it I have to learn how to do comments better
   $url_nu = ($actual['cnttype'] == "1") ? "thread_view=" . $actual['thread_nick'] . "_" . $actual['topic_hash'] : "comment=" . $actual['topic_hash'];      
-  $parent_type = ($parent_call['cnttype'] == "2") ? ["thread",substr(hack_free($parent_call['title']),0,30),"index.php?" .$url_nu] : ["comment",substr(hack_free($parent_call['content']),0,30),"index.php?comment=" . $actual['topic_hash']];
+  $parent_type = ($parent_call['cnttype'] == 1) ? ["thread",substr(hack_free($parent_call['content']),0,30),"index.php?" .$url_nu] : ["comment",substr($parent_call['content'],0,30),"index.php?comment=" . $actual['topic_hash']];
 
-  $notif_add = mysqli_query($db_main, "INSERT INTO notifications(content,url,towhom) VALUES('<a href=\'index.php?profile=".$_MONITORED['login_q']."\'>".$_MONITORED['login_q']."</a> replied to your ".$parent_type[0].": ".$parent_type[1]."','$parent_type[2]','$parent_call[bywhom]')");    
+  $notif_add = ($no_notif == "no") ? false : mysqli_query($db_main, "INSERT INTO notifications(content,url,towhom) VALUES('<a href=\'index.php?profile=".$_MONITORED['login_q']."\'>".$_MONITORED['login_q']."</a> replied to your ".$parent_type[0].": ".$parent_type[1]."','$parent_type[2]','$parent_call[bywhom]')");    
   if(!$notif_add){$_SESSION['sql_error'] = mysqli_error($db_main);} 
   }
   mysqli_query($db_main,"INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MICRORFID[login_q]',CURRENT_TIMESTAMP,'$actual[postid]',1)");

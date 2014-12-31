@@ -152,26 +152,17 @@ if($q_req){mysqli_free_result($q_req);}}else{
 //moral of the story? Never use recursive functions unless you clearly know your parameters.
 
 
-function refer($top_ancestor){  global $db_main,$thread_data,$_MONITORED;
-$_SESSION['need_wraps'] = 1;   //some DOM wrapping I wanted to implement
-//can't quite explain it in my head
-echo "<div class='margin'>";
-}
-//get selected comment
+
+//get selected comment  
 $get_selected_comment = mysqli_query($db_main, "SELECT * FROM posts WHERE postid=$special_select AND thread_id='$thread_data[postid]'");
 if(mysqli_num_rows($get_selected_comment) == "1"){
  $q_dt = mysqli_fetch_assoc($get_selected_comment);
  $get_comments_above_selected = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$q_dt[parent]' AND thread_id='$thread_data[postid]'");
 if(mysqli_num_rows($get_comments_above_selected) > 0){
   $q_parents = mysqli_fetch_assoc($get_comments_above_selected);
-refer($q_parents['postid']); 
+
 }else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
-echo "<div class='contentbox comment_box selected'><table><tr>
-<td class='user_info'><h4><a href='index.php?profile=".$q_dt['bywhom']."'>".$q_dt['bywhom']."</a></h4></td><td><p class='post_text'>".$q_dt['content']."
-<span class='side_info'>- Posted <a href='?thread_view=".$_GET['thread_view']."&comment=".$q_dt['topic_hash'] ."'>". date(dflt_date_f, strtotime($q_dt['stamptime'])) ."</a></span>
-</p>";
-if(isset($_SESSION['login_q'])){echo "<div class='opts_block' alt='".$q_dt['postid']."'>";echo "<a href='#' class='comment_opts rad comment_q-u' id='post_".$q_dt['postid']."' name='post_".$q_dt['postid']."'>Reply</a><a href='#' class='comment_opts rad edit' id='edit_".$q_dt['postid']."'>Edit</a>";echo "</div>";}
-echo "</td></tr></table></div>";
+
 }else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 
 //get all child posts of single-referred-post comment
@@ -184,11 +175,7 @@ get_posts($sync_children['postid'],$thread_data['postid']);
 mysqli_free_result($get_child_comments);
 }
 
-   refer($pid_call);  
-   
-   for($i = 0;$i <= $_SESSION['need_wraps'];$i++){
-echo "</div>";
-}
+
 
    
 }//end function
@@ -211,4 +198,6 @@ setcookie("limbooo[".$bm."]","a",time()-1);
 //mysqli_query($db_main, "ALTER TABLE polls ADD COLUMN(votes INT NOT NULL DEFAULT 0)");
 //mysqli_query($db_main, "CREATE TABLE friend_limbo(user1 INT NOT NULL,user2 INT NOT NULL, time DATETIME NOT NULL, fl_id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(fl_id))");
 //mysqli_query($db_main, "CREATE TABLE notifications(n_id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(n_id),content varchar(100) NOT NULL,url varchar(110) NOT NULL)");  
+
+ 
   ?>                                                               

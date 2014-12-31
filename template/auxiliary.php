@@ -1,5 +1,7 @@
 <?php
 
+require_once("simple_html_dom.php");
+
 function extraurl(){
 if(strlen($_SERVER['QUERY_STRING']) > 0){$snp = $_SERVER['PHP_SELF'] ."?". $_SERVER['QUERY_STRING'];}else{$snp = $_SERVER['PHP_SELF'];}
 return $snp;

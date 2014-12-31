@@ -32,7 +32,7 @@ return str.replace( /\s+$/, "" );
 
 
 
-</script> -->
+</script> -->     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
 
 
@@ -40,7 +40,7 @@ function microtime(get_as_float)
 {
 var unixtime_ms = new Date().getTime();
     var sec = parseInt(unixtime_ms / 1000);
-    return sec + (unixtime_ms - (sec * 1000))/1000 ;
+    return (get_as_float) ? unixtime_ms/1000 : sec + (unixtime_ms - (sec * 1000))/1000 ;
 }
 
 $(document).ready(function(){
@@ -70,7 +70,9 @@ var nina3 = nina.offset().top + nina.height();
 $(this).find(".dropdown_content").attr("style","left: "+nina2+"px; top: "+nina3+"px;display:block;");
 <?php if(isset($_SESSION['login_q'])): ?>
 if($(this).is("#notifs_drop")){
-$.ajax({url: "template/simcheck.php",data: {"nm_time":"notifs","action":"clearnotifs"}});   }
+$.ajax({url: "template/simcheck.php",data: {"nm_time":"notifs","action":"clearnotifs"},success: function(data){
+$(".notifs .spacer a .note").html("("+data.clear_notifs+") new");
+}});   }
 
 <?php endif; ?>
 
@@ -139,7 +141,7 @@ $(this).val($(this).prop("defaultValue"));
 } }).on('change','.flick',function(){if($(this).hasClass("named") && ($(this).val().length == 0 || $(this).val()==$(this).prop("defaultValue"))){$(this).removeClass("named")}else{$(this).addClass("named")}
 if($(this).val().length == 0){
 $(this).val($(this).prop("defaultValue")); //had to change it to this for textareas
-}}).on('keydown','.flick',function(){
+}}).on('keyup','.flick',function(event){
 <?php if(isset($_SESSION['login_q']) && count($_GET) == 1 && compare_dz($logged_dt['password'],$_SESSION['salt_q'])): ?>  
 
 if($(this).hasClass("school_search")){    
@@ -147,23 +149,20 @@ if($(this).hasClass("school_search")){
 
 //I need to make the wait a certain amount of time after a person is done typing before displaying results
 //In this case i'll set it to 3/4 of a second
-//seems like there's already a jquery function for this but im not sure
+//seems like there's already a jquery function for this but im not sure                
 //or I could have just nulled the settimeout function before the last time it was executed
+    event.stopPropagation();    
+    if($(this).next().is("div")){   // $(this).next("#spark").html($(this).val());         
+ $(this).next("div").load("template/simcheck.php?action=school_search&criteria="+encodeURIComponent($(this).parent().prev().text())+"&search_q=" +encodeURIComponent($(this).val()));
 
-if($(this).attr("time_set")){
-if($(this).attr("time_set2")){     
- $(this).attr("time_set",$(this).attr("time_set2"));       $(this).attr("time_set2",microtime()); 
- $diff = $(this).attr("time_set2") - $(this).attr("time_set");
+
+    }else{
+    $(this).after("<div></div>");    }
+
+
+   
+
  }
- else{$(this).attr("time_set2",microtime());   }
- 
-}else{$(this).attr("time_set",microtime()); }
-
-if(typeof $diff !== undefined && $diff > .75){
-    $.get('template/simcheck.php',{"action":"school_search","value":$(this).val()},function(data){
-alert(data);
-});
-} }
    <?php endif; ?>
 //add em'
 });

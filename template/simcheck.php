@@ -19,6 +19,8 @@ mysqli_free_result($mns);
 }
 
 
+
+
 if(isset($_SESSION['login_q'])){  //logged in? This is for all the AJAX functions when you're logged in
 
 
@@ -27,7 +29,32 @@ $salt = mysqli_fetch_assoc($salt_check);
 
 if(compare_dz($salt['password'],$_SESSION['salt_q'])){      //extra measures man
 
-if(isset($_GET['nm_time'])){
+if(isset($_GET['action']) && isset($_GET['search_q'])){
+
+
+switch($_GET['action']){
+
+case "school_search":   
+
+$select_school = mysqli_query($db_main,"SELECT * FROM school WHERE name LIKE='$_FILTERED[search_q]' and type='$_FILTERED[criteria]'");
+
+if($select_school && mysqli_num_rows($select_school) > 0){} else{
+
+
+echo "<a href='index.php?direct=new_school' class='add-new rad'>Unfortunately, the school is currently not in the directory. Click here to add your school into the current directory</a>";
+
+
+
+} 
+
+  break;
+
+}
+
+}
+                                                 
+
+if(isset($_GET['nm_time'])){              
 if($_GET['nm_time'] == "notifs"){
 $notifs_grab = mysqli_query($db_main, "SELECT * FROM notifications WHERE towhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,10");
 if(mysqli_num_rows($notifs_grab) > 0){
@@ -53,6 +80,9 @@ else{       //clear notifications
 
 //delay it for the same amount of time as it would get refreshed, or maybe a little less
 
+switch($_GET['action']){
+
+case "clearnotifs":
 $clear_last_10 = mysqli_query($db_main, "UPDATE notifications SET status=1 WHERE towhom IN (SELECT towhom FROM(SELECT towhom FROM notifications WHERE towhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,10)tmp)");
 
 if($clear_last_10){
@@ -64,6 +94,12 @@ $search_new = mysqli_query($db_main, "SELECT * FROM notifications WHERE towhom='
 echo json_encode(array("result" => "completed","notifs_left" => mysqli_num_rows($search_new)),JSON_UNESCAPED_SLASHES);
 
 }
+break;
+
+
+
+}
+  
 
 }
 
@@ -221,8 +257,8 @@ $msgs = array("notice" => "Changed your mind and ".$_FILTERED['vote_action'] . "
 //but if not
 $vote_a = mysqli_query($db_main, "INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MONITORED[login_q]',now(),'".$_GET['post_que']."','$vote');"); 
    //in here we only need the first result
-   $residual_2 = ($vote == "1") ? $post_dt['upvotes']+1 : $post_dt['downvotes']+1;       
-$vote_b = mysqli_query($db_main, "UPDATE posts SET ".$_FILTERED['vote_action']."votes='$residual_2' WHERE postid=$post_dt[postid] AND bywhom='$_MONITORED[login_q]'");
+   $residual_2 = ($vote == "1") ? intval($post_dt['upvotes'])+1 : intval($post_dt['downvotes'])+1;       
+$vote_b = mysqli_query($db_main, "UPDATE posts SET ".$_FILTERED['vote_action']."votes='$residual_2' WHERE postid=$post_dt[postid] AND bywhom='$post_dt[bywhom]'");
 if($vote_a && $vote_b){$msgs = array("notice" => $_FILTERED['vote_action'] . "voted!");
 
 $msgs = array("notice" => $_FILTERED['vote_action'] . "voted!");}else{echo mysqli_error($db_main);}     
@@ -296,5 +332,5 @@ else{       echo "Remember, letters, numbers, a hyphen and an underscore only an
 if($_GET['id'] == "2"){ 
 echo "Time will be shown as " . date($_REQUEST['search_2'], $_SERVER['REQUEST_TIME']);
 }
-  exit();   */                     
+  */      exit();                  
 ?>
