@@ -1,7 +1,7 @@
 <?php
 if(index_page_check){
 if(isset($_SESSION['salt_q']) && compare_dz($_SESSION['salt_q'],$logged_dt['password'])){     //personal news feed
-echo "<div id='news_feed'>";
+echo (!isset($_GET['get_more'])) ? "<div id='news_feed'>" : "";
 //data we need to get:
 //the logged user's own posts, and every snowglobe he's subscribed to           
 
@@ -15,8 +15,10 @@ $que_posts[6] = mysqli_query($db_main, "SELECT * FROM sg_permissions WHERE towho
 
                                    
 
-$que_posts[0] = mysqli_query($db_main,"SELECT * FROM posts INNER JOIN sg_permissions ON posts.bywhom = sg_permissions.granted_by AND sg_permissions.towhom = 'nolvorite' WHERE sg_permissions.access_type = 'friend snowglobe' AND posts.cnttype=1 ORDER BY stamptime DESC LIMIT 0,40");
+$que_posts[0] = mysqli_query($db_main,"SELECT * FROM posts INNER JOIN sg_permissions ON posts.bywhom = sg_permissions.granted_by AND sg_permissions.towhom = 'nolvorite' WHERE sg_permissions.access_type = 'friend snowglobe' AND posts.cnttype=1 ORDER BY stamptime DESC LIMIT 0,25");
 while($que_own = mysqli_fetch_assoc($que_posts[0])){
+
+$_SESSION['last_timestamp'] = $que_own['stamptime'];    //get last record for later reference
 
 //begin posts
 
@@ -133,7 +135,8 @@ clear_array($poll_dt);
 
 
 
- echo "</div>";
+ echo (!isset($_GET['get_more'])) ? "</div>" : "";
+
 }
 
 

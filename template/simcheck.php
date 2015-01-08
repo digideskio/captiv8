@@ -29,10 +29,25 @@ $salt = mysqli_fetch_assoc($salt_check);
 
 if(compare_dz($salt['password'],$_SESSION['salt_q'])){      //extra measures man
 
-if(isset($_GET['action']) && isset($_GET['search_q'])){
 
+
+if(isset($_GET['action']))    {
 
 switch($_GET['action']){
+
+case "drag_box":
+if(isset($_GET['screen_max'])){
+if(isset($_SESSION['xpos'])){
+if((intval($_GET['screen_max'][0]) < $_SESSION['xpos']) || (intval($_GET['screen_max'][1]) < $_SESSION['ypos'])){unset($_SESSION['xpos'],$_SESSION['ypos']);}
+}
+}
+if(isset($_GET['offsets'])){ 
+$_SESSION['xpos'] = intval($_GET['offsets'][0]);
+$_SESSION['ypos'] = intval($_GET['offsets'][1]);
+}
+
+
+break;
 
 case "school_search":   
 
@@ -41,17 +56,23 @@ $select_school = mysqli_query($db_main,"SELECT * FROM school WHERE name LIKE='$_
 if($select_school && mysqli_num_rows($select_school) > 0){} else{
 
 
-echo "<a href='index.php?direct=new_school' class='add-new rad'>Unfortunately, the school is currently not in the directory. Click here to add your school into the current directory</a>";
+ if(preg_match("#([-A-Za-z]+)[ ]#",$_FILTERED['search_q'])){  
 
+echo "<a href='index.php?query=".$_MONITORED['login_q']."&dispos=new_school' class='add-new rad'>". $nx[33] ."</a>";
 
+}
 
 } 
 
   break;
+  
+case "wikipedia_search":
+            include("wikipedia_search.php");  
+  
+break;
+  
 
-}
-
-}
+}             }
                                                  
 
 if(isset($_GET['nm_time'])){              
@@ -63,6 +84,7 @@ if(mysqli_num_rows($notifs_grab) > 0){
 $x= -1;
 while($notifs_zen = mysqli_fetch_assoc($notifs_grab)){    $x++;
 $pawn[$x] = $notifs_zen;
+$pawn[$x]['stamptime'] = time_rounds($pawn[$x]['stamptime']); //convert to time-rounds format
 }
 
 

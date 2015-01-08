@@ -2,6 +2,7 @@
 //hmmm
 
 
+setTimeout(function(){
 
 setInterval(function(){
 
@@ -29,7 +30,7 @@ j = data.notifs.length - i;      //reverse it
 //because there's no negative incremental index looping for .each()
 
 if($(".notifs").length != data.notifs.length){ 
-$("#notifications .spacer").prepend("<div alt='"+ data.notifs[j]['url'] +"' class='notifs'>"+data.notifs[j]['content']+"</div>");
+$("#notifications .spacer").prepend("<div alt='"+ data.notifs[j]['url'] +"' class='notifs'>"+data.notifs[j]['content']+"<br><em>"+data.notifs[j]['stamptime']+"</em></div>");
 //$("<a href='"+ data.notifs[i]['url'] +"'><div class='notifs'>Some arbitrary content "+data.notifs[i]['content']+"</div></a>").prependTo("#notifications .spacer");
 }
 });
@@ -44,7 +45,7 @@ $zin = $("#notifications .spacer").html();
   $('.notifs').each(function(){
 $zen = $(this).attr('alt');    
 if($(this).parent().is(":not('a')")){
-//$(this).wrap("<a href='"+ $zen +"' />");    //that was painful
+$(this).wrap("<a href='"+ $zen +"' />");    //that was painful
 }
 });
 
@@ -52,6 +53,6 @@ if($(this).parent().is(":not('a')")){
 });
 
 
-},2500);
+},2500);          }  ,5000 );
           
             

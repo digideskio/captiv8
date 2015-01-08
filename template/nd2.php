@@ -23,13 +23,12 @@ echo "<div id='user_menu'>
 //Notifications
 echo "<span class='drop' id='notifs_drop'><div class='left uplink' id='notifs_bar'><a href='index.php?query=nolvorite&notifs=all'>Notifications</a> </div>";
 echo "<div class='dropdown_content rad' id='notifications'>";
-$notifs_grab = mysqli_query($db_main, "SELECT * FROM notifications WHERE towhom='$_MONITORED[login_q]' LIMIT 0,10");
+$notifs_grab = mysqli_query($db_main, "SELECT * FROM notifications WHERE towhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,10");
 if(mysqli_num_rows($notifs_grab) > 0){
  while($notifs_iterate = mysqli_fetch_assoc($notifs_grab)){
-echo "<a href='". $notifs_iterate['url'] ."'> <div class='notifs'>". preg_replace('#^<a href(.+)>(.+)<(.+)>(.+)$#','<span>$2</span> $4',$notifs_iterate['content']) ."</div></a>";
+ $notifs_iterate['stamptime'] = time_rounds($notifs_iterate['stamptime']);
+echo "<a href='". $notifs_iterate['url'] ."'> <div class='notifs'>". preg_replace('#^<a href(.+)>(.+)<(.+)>(.+)$#','<span>$2</span> $4',$notifs_iterate['content']) ."<br><em>".$notifs_iterate['stamptime']."</em></div></a>";
 }
-
-}else{echo "<div class='bar_1'>You have no new notifications</div>";
 
 }
 mysqli_free_result($notifs_grab);
@@ -40,7 +39,7 @@ echo"</span>";
 
 
 echo"
-</div>";}            
+</div>";}  echo "</div>";          
 
 // welcome note                                                                            
 if(isset($_SESSION['welcome'])){echo "<div class='welcome_note' id='first1'>".$nx[4]."</div>";} 
@@ -54,12 +53,13 @@ if(index_page_check && logged_in_check){echo $nx['29'];}
 echo "</td><td width='99%' id='vc2'>";
 
 //edit profile action, and all the other actions for query= [ ]
-if(isset($_GET['query'])){
-if(count($_GET) == 1 && compare_dz($logged_dt['password'],$_SESSION['salt_q'])){
+if(isset($_GET['query'])){   $check_entry = mysqli_query($db_main,"SELECT * FROM users WHERE username='$_MONITORED[login_q]' AND password='$_MONITORED[salt_q]'");
+if(mysqli_num_rows($check_entry) == 1){ 
+if(count($_GET) == 1){
 $edu_find = mysqli_query($db_main, "SELECT * FROM education where forwhom='$_MONITORED[login_q]'");
 
-//edit profile
-echo "<form action='index.php?verify=". $_SESSION['temp_n'] ."' method='POST'>";
+//editing your own profile
+echo "<form action='index.php?verify=". $_SESSION['temp_n'] ."&action=edit_profile' method='POST'>";
 echo "<div class='contentbox' id='profile_edit'>";
 echo "<h3>" . $nx[32] ."</h3>";     
 
@@ -111,8 +111,30 @@ echo "</table>";
 echo "</span>";
 
 
-echo "</div>";
+echo "</div>";   } else{
+switch($_GET['dispos']){
+case "new_school":
+//time to switch up my coding style
+//I need to get into objects, as it just seems intuitive
+?>
+
+<div class="contentbox visc">
+<h3 class="dashes bottom"><?php echo $nx['34']; //Add a school here
+?></h3>
+<h4>Details - <span><?php echo $nx['35']; ?></span></h4>
+<p>
+<input class="flick largeform" type="text" value="School Name">
+<input class="flick largeform" type="text" value="Type your city's name to narrow down the search...">
+<input type="submit" value="SEARCH SCHOOL" class="prompt">
+</p>
+</div>
+
+<?php
+
+break;
 }
+}
+}     
 }
 
 require_once("template/idx_1.php");

@@ -8,7 +8,7 @@ a{color:#fff;text-decoration:underline;}
 #header{width:100%;height:60px;}
 #logo{width:200px;height:60px;float:left;display:block;}
 #panel{float:left}
-input,.contentbox,.signup-a,.welcome_note,.bottom_menu a,select,textarea,.ui-tooltip,.notice,#user_menu,#login .left,.rad,.spacer{border-radius:4px;}
+input,.contentbox,.signup-a,.welcome_note,.bottom_menu a,select,textarea,.ui-tooltip,.notice,#user_menu,#login .left,.rad,.spacer,.margin{border-radius:4px;}
 #user_menu{background:#2D394A;border-top:2px solid #38475D;border-bottom:2px solid #26303F;box-shadow:0 -2px 2px #2D394B;text-shadow:0 1px 0 #000;color:#7993A7;font:13px "lucida sans unicode",arial,"sans serif";margin:14px 0 0 4px;}
 #user_menu div.left,#user_menu div.right{display:inline-block;}
 .right{float:right;}
@@ -20,7 +20,7 @@ textarea{resize:vertical;background:#344256;border:1px dashed #556378;display:bl
 textarea:focus,input:focus{color:#fff;box-shadow:0 0 10px #556378;outline:0;}
 input:focus{background:#303947;border-bottom:2px solid #47586F;border-top:2px solid #272B32;color:#fff;}
 h3,p{margin:0;padding:3px;}
-input[type=submit],input[type=submit]:focus,.signup-a,.comment_opts,.button_samp,#clear{background:#5389B4;color:#27404C;text-shadow:0 1px 0 #74B7D1;border-top:2px solid #69A7C8;border-bottom:2px solid #2F3743;font:bold 15px "lucida sans unicode",arial,"sans serif";cursor:pointer}
+input[type=submit],input[type=submit]:focus,.signup-a,.comment_opts,.button_samp,#clear{background:#5389B4;color:#27404C;text-shadow:0 1px 0 #74B7D1;border-top:2px solid #69A7C8;border-bottom:2px solid #2F3743;font:bold 12px "lucida sans unicode",arial,"sans serif";cursor:pointer}
 a.signup-a:focus{box-shadow:0 0 10px #556378}
 #welcomemsg{background:#323B49;border-top:2px solid #292E35;border-bottom:2px solid #3C4D64;font-size:10px;}
 #welcomemsg a{border-top:2px solid transparent}
@@ -46,7 +46,7 @@ td#left1{width:200px;}
 a.side1{border-top-left-radius:0;border-bottom-right-radius:0;}
 a.side2{border-top-right-radius:0;border-bottom-left-radius:0}
 #left1 div.box{width:200px}
-#vc2{padding:0px 38px 0 0;}
+#vc2{padding:0px 23px 0 0;}
 .boxxed{padding:8px;height:150px;overflow-y:scroll;}
 .boxxed p{font-size:11px;padding:8px;margin:0}
 .boxxed h4{margin:0;color:#79A8C8;font:bold 13px "Lucida sans unicode",arial,"sans serif";}
@@ -57,13 +57,16 @@ button.a1{background:transparent url('img/7.png') no-repeat scroll top left;}
 button.a2{background:transparent url('img/8.png') no-repeat scroll top left;}
 button.dc{width:12px;height:10px;display:inline;vertical-align:middle;margin:0 2px;border:0}
 .optionbox.tos_1{padding:6px 6px 0;font-size:11px;}
-.optionbox,.quick_links a,.posts_t1,#thread_main p,.notifs,.dashed td{background:transparent url('img/4.png') repeat-x scroll top left;}
+.optionbox,.quick_links a,.posts_t1,#thread_main p,.notifs,.dashed td,.dashes,.contentbox h3:first-child[class]{background:transparent url('img/4.png') repeat-x scroll top left;}
+.contentbox h3.dashes.bottom:first-child{background:transparent url('img/4.png') repeat-x scroll bottom left;}
+.notifs{line-height:18px;}
+.notifs em{text-align:right;display:block;color:#7F8894;text-shadow:0 1px 0 #344256;text-transform:uppercase;font-size:10px;}
 /*set the dashed lines background*/
 .contentbox input[type=text],.contentbox select{border-bottom:2px solid #556378}
 td{vertical-align:top}
 .largeform{font-size:15px;padding:5px 8px;clear:both;margin:3px 0;width:100%}
 
-select.largeform,option.largeform{width:inherit;padding:0}      select.largeform{padding:4px;}
+select.largeform,option.largeform{width:inherit;padding:0}    
 h4.x1{font:bold 16px "Lucida sans unicode",arial,"sans serif";color:#64B0DF;margin:0;padding:4px 10px 10px 4px}
 input[type=submit].largeform{border-bottom:2px solid #2F3743;margin:8px auto 4px;padding:6px 14px 8px;min-width:150px;width:auto;display:block-inline}
 .named{color:#fff}
@@ -152,7 +155,8 @@ a.comment_opts.edit{background:#B58053;border-top:2px solid #C29D70;color:#4D313
 .opts_block{margin-top:5px;}
 #opts_textbox{margin-top:10px;}
 .contentbox h3 small a,span.white{color:#fff}
-.margin{padding-left:25px;}
+.margin{padding-left:20px;}          
+.margin:hover{background:transparent url('img/sep1.png') repeat scroll;}
 .side_info{font:12px "Lucida Sans Unicode";}
 .side_info a{color:#70A0C4;text-decoration:underline;}
 div.contentbox.selected{background:#535F70;border-bottom:2px solid #627085;margin:10px 0;box-shadow:0 3px 3px #536176;}
@@ -199,7 +203,6 @@ td.poll_choosy{width:350px;}
 .poll_choices .optionbox:first-child{background:transparent none;}
 #session_list textarea{width:100%;padding:6px;background:#e8e8e8;border:1px solid #e0e0e0;color:#000;text-shadow:0 0;box-shadow: 0 0;}
 .optionbox.results{padding:8px 12px;}
-
 /*poll bar*/
 .poll_bar{height:11px;background:#334054;border-top:1px solid #556378;border-bottom:1px solid #26303F;box-shadow:0 -2px 1px #26303F}
 .poll_bar.leftc,.poll_bar.rightc{width:15px;}
@@ -214,6 +217,7 @@ div.bar_1{padding:10px 25px;color:#fff;}
  #notifications .spacer a{text-decoration:none}
 #notifications .spacer a .notifs{color:#f0f0f0}
 #notifications .spacer a a,.notifs span{text-decoration:underline;color:#69C2A8}
+#notifications .spacer a:hover .notifs{background-color:#556378}
 #notifications .spacer #clear{padding:4px 0;display:block;text-align:center;font-weight:normal;margin-top:3px;font-size:13px}
 .contentbox td.side_info{vertical-align:top}
 .contentbox td.side_info .spacer{padding:8px 14px}
@@ -229,4 +233,7 @@ tr.row_2 td.side_info .spacer{font:11px "Tahoma","Arial","Sans-serif";color:#fff
 .panel input{border-bottom:2px solid #6C778D;}
 .panel td{background:transparent none;padding:0;}
 .panel .left_side{width:150px;}                                           
-a.add-new{display:block;font-size:11px;background:#38475D;border-top:2px solid #556378;padding:4px 8px;text-decoration:none;margin:3px 0;box-shadow:0 2px 1px #344256}
+.add-new{display:inline-block;font-size:11px;background:#38475D;border-top:1px solid #667086;padding:4px 9px;text-decoration:none;margin:3px 0;border-bottom:1px solid #333D4C;box-shadow:0px 0px 2px #2d394a}     /*damn it I can't stop being a stickler for style after 2 days of designing graphics*/
+.visc.contentbox h4{margin-top:7px;}
+h4 span{font-weight:normal}
+pre{font-size:12px;}

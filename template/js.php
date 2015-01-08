@@ -1,4 +1,4 @@
-<!-- <script>(function ( $ ) {   
+ <script>(function ( $ ) {   
     //this is soooo tacky      
 
 
@@ -32,7 +32,7 @@ return str.replace( /\s+$/, "" );
 
 
 
-</script> -->     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+</script>    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
 
 
@@ -43,14 +43,15 @@ var unixtime_ms = new Date().getTime();
     return (get_as_float) ? unixtime_ms/1000 : sec + (unixtime_ms - (sec * 1000))/1000 ;
 }
 
-$(document).ready(function(){
+$("head").ready(function(){   //gets executed faster than $(document).ready()
 //get current timezone of user
 
 //no background image on last child
 
 
+
 $(".quick_links a:last-child").css("background-image","none");
-$("body,html").css("width",screen.availWidth+ "px");
+
 $("#panel").css("width",screen.availWidth-240 + "px");
 $("#user_menu .uplink").append("<img src='template\/img\/9.png' alt='\(Options\)'>");
 $(".posts_t1:first").addClass("nobg");
@@ -68,13 +69,7 @@ var nina = $(this).find(".uplink");
 var nina2 = nina.offset().left;
 var nina3 = nina.offset().top + nina.height();
 $(this).find(".dropdown_content").attr("style","left: "+nina2+"px; top: "+nina3+"px;display:block;");
-<?php if(isset($_SESSION['login_q'])): ?>
-if($(this).is("#notifs_drop")){
-$.ajax({url: "template/simcheck.php",data: {"nm_time":"notifs","action":"clearnotifs"},success: function(data){
-$(".notifs .spacer a .note").html("("+data.clear_notifs+") new");
-}});   }
 
-<?php endif; ?>
 
 
 }, 'mouseleave':function(){
@@ -236,6 +231,15 @@ if($(this).hasClass("a1") && $(this).next("input").prop("checked",false)){$(this
 
  
 $("body").on('click',".prompt",function(event){event.preventDefault();
+
+if($(this).attr("value") == "SEARCH SCHOOL"){  
+$values = [[$(this).prev("input").prop("defaultValue"),$(this).prev("input").val()],[$(this).prev().prev("input").prop("defaultValue"),$(this).prev().prev("input").val()]]; 
+$zenx = [($values[0][0] == $values[0][1]) ? " " : $values[0][1],($values[1][0] == $values[1][1]) ? " " : $values[1][1]];
+$.get("template/simcheck.php",{"action":"wikipedia_search","data":[$zenx[1],$zenx[0]]},function(data){
+  $(".prompt[value='SEARCH SCHOOL']").after(function(){if($(this).next().is("div") == true){return false;}else{return "<div class='contentbox'>Loading...</div>"}});
+$(".prompt[value='SEARCH SCHOOL']").next("div").html(data);
+});
+}
 
 if($(this).attr("href") == "one-liner"){
 $("#post_k input[name=tcha1]").val("<?php echo $nx['27'] ?>");$("#post_k textarea[name=tcha2]").toggle("200",function(){$(this).attr("style","display:block;box-shadow:0 0 6px #556378")}).removeClass("flick").val("<?php echo $nx['28'] ?>").end();  

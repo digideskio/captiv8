@@ -51,7 +51,7 @@ unset($_SESSION[$nkey]);
   $url_nu = ($actual['cnttype'] == "1") ? "thread_view=" . $actual['thread_nick'] . "_" . $actual['topic_hash'] : "comment=" . $actual['topic_hash'];      
   $parent_type = ($parent_call['cnttype'] == 1) ? ["thread",substr(hack_free($parent_call['content']),0,30),"index.php?" .$url_nu] : ["comment",substr($parent_call['content'],0,30),"index.php?comment=" . $actual['topic_hash']];
 
-  $notif_add = ($no_notif == "no") ? false : mysqli_query($db_main, "INSERT INTO notifications(content,url,towhom) VALUES('<a href=\'index.php?profile=".$_MONITORED['login_q']."\'>".$_MONITORED['login_q']."</a> replied to your ".$parent_type[0].": ".$parent_type[1]."','$parent_type[2]','$parent_call[bywhom]')");    
+  $notif_add = ($no_notif == "no") ? false : mysqli_query($db_main, "INSERT INTO notifications(content,url,towhom) VALUES('<span>".$_MONITORED['login_q']."</span> replied to your ".$parent_type[0].": ".$parent_type[1]."','$parent_type[2]','$parent_call[bywhom]')");    
   if(!$notif_add){$_SESSION['sql_error'] = mysqli_error($db_main);} 
   }
   mysqli_query($db_main,"INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MICRORFID[login_q]',CURRENT_TIMESTAMP,'$actual[postid]',1)");

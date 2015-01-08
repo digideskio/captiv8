@@ -1,6 +1,6 @@
 <?php
 
-require_once("simple_html_dom.php");
+require_once("lib/simple_html_dom.php");
 
 function extraurl(){
 if(strlen($_SERVER['QUERY_STRING']) > 0){$snp = $_SERVER['PHP_SELF'] ."?". $_SERVER['QUERY_STRING'];}else{$snp = $_SERVER['PHP_SELF'];}
@@ -62,7 +62,6 @@ if(preg_match("#^".$search."#",$key)){unset($listof[$key]);}
 if($_SERVER['REQUEST_METHOD'] == "POST"){foreach($_POST as $key => $room){ $z++;
 $_SPIN[$key] = preg_replace("/[\n]/","<br>",$_POST[$key]); 
 $_DATA[$key] = $_SPIN[$key];
-$_SESSION['free_sess_' . $key] =  $_SPIN[$key]; //post name array key, filtered and also a free session!
 $clone[$z] = $_SPIN[$key];             //increment array key
                    //lol spin and data are essentially the same thing
    }
@@ -102,10 +101,10 @@ if($diff < 3600*24*7 && $diff > (3600*24)-1){
 $scheck = plural(floor($diff/(3600*24)));
 $date2 = floor($diff/(3600*24)) . " day".$scheck." ago";                                  
 }
-if($diff < 3600*24*7*30 && $diff > (3600*24*7)-1){   $scheck = plural(floor($diff/(3600*24*7)));
+if($diff < 3600*24*30.46 && $diff > (3600*24*7)-1){   $scheck = plural(floor($diff/(3600*24*7)));
 $date2 = floor($diff/(3600*24*7)) . " week".$scheck." ago";                                  
 }
-if($diff < 3600*24*7*365 && $diff > (3600*24*7*30)-1){  $scheck = plural(floor($diff/(3600*24*30)));
+if($diff < 3600*24*7*365 && $diff > (3600*24*30.46)-1){  $scheck = plural(floor($diff/(3600*24*30)));
 $date2 = floor($diff/(3600*24*30)) . " month".$scheck." ago";                                  
 }
 if($diff > (3600*24*7*365)-1){ $scheck = plural(floor($diff/(3600*24)));
