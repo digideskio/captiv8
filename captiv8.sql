@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 27, 2014 at 05:00 AM
+-- Generation Time: Jan 13, 2015 at 01:40 AM
 -- Server version: 5.6.12-log
 -- PHP Version: 5.4.16
 
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   `stamptime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`n_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
 
 --
 -- Dumping data for table `notifications`
@@ -77,7 +77,21 @@ CREATE TABLE IF NOT EXISTS `notifications` (
 
 INSERT INTO `notifications` (`n_id`, `content`, `url`, `towhom`, `stamptime`, `status`) VALUES
 (1, '<a href=''index.php?profile=nerd''>nerd</a> replied to your thread: Test post', 'index.php?thread_view=_2852f12123', 'nolvorite', '2014-12-17 22:06:46', 1),
-(2, '<a href=''index.php?profile=nerd''>nerd</a> replied to your comment: Test post', 'index.php?comment=c4fd398dd2', 'nolvorite', '2014-12-17 22:15:46', 1);
+(2, '<a href=''index.php?profile=nerd''>nerd</a> replied to your comment: Test post', 'index.php?comment=c4fd398dd2', 'nolvorite', '2014-12-17 22:15:46', 1),
+(3, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your thread: ', 'index.php?comment=4b60367874', 'nerd', '2014-12-28 15:47:55', 1),
+(4, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your comment: Okay this should be the', 'index.php?comment=e1ba3e6d1b', 'nerd', '2014-12-28 16:03:14', 1),
+(5, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your thread: ', 'index.php?comment=3f8dbdee7a', 'nerd', '2014-12-28 16:06:11', 1),
+(6, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your comment: ', 'index.php?comment=bb106a0ebc', 'nerd', '2014-12-28 16:07:07', 1),
+(7, '<a href=''index.php?profile=nerd''>nerd</a> replied to your comment: ', 'index.php?comment=354fd07a14', 'nerd', '2014-12-28 16:08:33', 1),
+(8, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your comment: ', 'index.php?comment=be805506ae', 'nerd', '2014-12-28 16:09:26', 1),
+(9, '<a href=''index.php?profile=nerd''>nerd</a> replied to your comment: Okay this should be the charm', 'index.php?comment=237aba4b41', 'nerd', '2014-12-28 16:10:32', 1),
+(10, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your comment: Okay this should be the', 'index.php?comment=d04238e820', 'nerd', '2014-12-28 16:12:13', 1),
+(11, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your comment: And for legitimacy...', 'index.php?comment=0809dfc8da', 'nolvorite', '2014-12-28 16:57:12', 1),
+(12, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your comment: And for legitimacy...', 'index.php?comment=19a06a3c85', 'nolvorite', '2014-12-28 16:57:42', 1),
+(13, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your comment: And for legitimacy...', 'index.php?comment=5da50d3f9f', 'nolvorite', '2014-12-28 16:59:11', 1),
+(14, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your comment: And for legitimacy...', 'index.php?comment=a56328b3b9', 'nolvorite', '2014-12-28 17:00:51', 1),
+(15, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your comment: Again.', 'index.php?comment=6292754060', 'nolvorite', '2014-12-28 18:27:20', 1),
+(16, '<span>nerd</span> replied to your comment: And for legitimacy...', 'index.php?comment=6a05952fa0', 'nolvorite', '2015-01-03 12:49:08', 1);
 
 -- --------------------------------------------------------
 
@@ -122,7 +136,7 @@ INSERT INTO `polls` (`post_id_root`, `value`, `data_id`, `define_set`, `votes`) 
 (138, 'Do animals have legs?', 79, 'question', 0),
 (138, 'true', 80, 'choice_selection', 0),
 (138, 'false', 81, 'choice_addition', 0),
-(138, 'Are they more like, limbs?', 82, 'poll_choice', 1),
+(138, 'Are they more like, limbs?', 82, 'poll_choice', 2),
 (138, 'Depends.', 83, 'poll_choice', 0);
 
 -- --------------------------------------------------------
@@ -138,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `pollvotes_q` (
   `which_poll` int(11) NOT NULL,
   `vote_id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`vote_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
 
 --
 -- Dumping data for table `pollvotes_q`
@@ -150,7 +164,8 @@ INSERT INTO `pollvotes_q` (`bywhom`, `timeof`, `choice_id`, `which_poll`, `vote_
 ('nolvorite', '2014-12-14 15:03:32', 78, 89, 8),
 ('nerd', '2014-12-17 15:46:35', 78, 89, 9),
 ('nerd', '2014-12-17 15:46:41', 73, 88, 10),
-('nolvorite', '2014-12-19 11:09:49', 82, 138, 11);
+('nolvorite', '2014-12-19 11:09:49', 82, 138, 11),
+('nerd', '2015-01-03 13:19:52', 82, 138, 12);
 
 -- --------------------------------------------------------
 
@@ -177,7 +192,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `downvotes` int(11) NOT NULL DEFAULT '0',
   `post_type` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`postid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=140 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=159 ;
 
 --
 -- Dumping data for table `posts`
@@ -239,8 +254,8 @@ INSERT INTO `posts` (`content`, `cnttype`, `msgtype`, `forwhom`, `parent`, `post
 ('hmm hmm hmm', 1, NULL, 'self', 0, 58, '2014-12-03 03:07:15', 'nolvorite', 'Test for timezone adjustment', 'Test_for_timezone_adjustment', '25b8e1f905', 1, NULL, NULL, 1, 0, 0),
 ('hmm', 1, NULL, 'self', 0, 59, '2014-12-04 01:25:26', 'nolvorite', 'New post btw', 'New_post_btw', '22498c2aff', 1, NULL, NULL, 1, 0, 0),
 ('repluuuuu', 1, NULL, 'self', 0, 60, '2014-12-04 01:37:30', 'nolvorite', 'test ', 'test_', '120ffce301', 1, NULL, NULL, 1, 0, 0),
-('One flips out, and then they both do. (yu-gi-oh joke--ikr)', 1, NULL, 'self', 0, 61, '2014-12-04 01:43:05', 'nolvorite', '(One-liner) [Two Penguin Soldiers meet in a bar.]', '_One-liner___Two_Penguin_Soldiers_meet_in_a_bar__', '1ff77ba424', 1, NULL, NULL, 1, 0, 0),
-('Muchacha!', 1, NULL, 'self', 0, 62, '2014-12-05 01:55:01', 'nolvorite', 'Muchacho', 'Muchacho', 'e6c64e50b1', 1, NULL, NULL, 1, 0, 0),
+('One flips out, and then they both do. (yu-gi-oh joke--ikr)', 1, NULL, 'self', 0, 61, '2014-12-04 01:43:05', 'nolvorite', '(One-liner) [Two Penguin Soldiers meet in a bar.]', '_One-liner___Two_Penguin_Soldiers_meet_in_a_bar__', '1ff77ba424', 1, NULL, NULL, 1, 1, 0),
+('Muchacha!', 1, NULL, 'self', 0, 62, '2014-12-05 01:55:01', 'nolvorite', 'Muchacho', 'Muchacho', 'e6c64e50b1', 1, NULL, NULL, 1, 1, 0),
 ('Sigh... with a poll. again. soz', 1, NULL, 'self', 0, 88, '2014-12-08 01:22:44', 'nolvorite', 'Test question', 'Test_question', '6845525f04', 1, NULL, NULL, 2, 0, 0),
 ('I swear right', 1, NULL, 'self', 0, 89, '2014-12-08 01:24:52', 'nolvorite', 'Soz....', 'Soz____', 'a1f4d23957', 1, NULL, NULL, 1, 1, 0),
 ('Test post', 1, NULL, 'self', 0, 90, '2014-12-12 19:46:39', 'nolvorite', 'Test post', 'Test_post', '19adda3671', 1, NULL, NULL, 1, 0, 0),
@@ -290,8 +305,115 @@ INSERT INTO `posts` (`content`, `cnttype`, `msgtype`, `forwhom`, `parent`, `post
 ('or other errors :/', 2, NULL, 'n-a', 90, 135, '2014-12-18 04:05:40', 'nerd', '', '', '922347a11c', 1, 90, NULL, 1, 0, 0),
 ('This sucks', 2, NULL, 'n-a', 90, 136, '2014-12-18 04:06:45', 'nerd', '', '', '2852f12123', 1, 90, NULL, 1, 0, 0),
 ('Okay this should be the charm', 2, NULL, 'n-a', 90, 137, '2014-12-18 04:15:45', 'nerd', '', '', 'c4fd398dd2', 1, 90, NULL, 1, 0, 0),
-('Again', 1, NULL, 'self', 0, 138, '2014-12-19 16:24:12', 'nolvorite', 'Test poll question', 'Test_poll_question', 'ee4bb77fed', 1, NULL, NULL, 1, 0, 0),
-('Test', 1, NULL, 'self', 0, 139, '2014-12-26 06:25:53', 'nolvorite', 'Hmmmmmmmmm', 'Hmmmmmmmmm', 'b3a9334ded', 1, NULL, NULL, 1, 0, 0);
+('Again', 1, NULL, 'self', 0, 138, '2014-12-19 16:24:12', 'nolvorite', 'Test poll question', 'Test_poll_question', 'ee4bb77fed', 1, NULL, NULL, 1, 1, 0),
+('Test', 1, NULL, 'self', 0, 139, '2014-12-26 06:25:53', 'nolvorite', 'Hmmmmmmmmm', 'Hmmmmmmmmm', 'b3a9334ded', 1, NULL, NULL, 2, 0, 0),
+('stfu noob', 2, NULL, 'n-a', 137, 140, '2014-12-28 21:47:54', 'nolvorite', 'Comments', 'Comments', '4b60367874', 1, 90, NULL, 1, 0, 0),
+('ur my bitch now', 2, NULL, 'n-a', 137, 141, '2014-12-28 22:03:13', 'nolvorite', 'Comments', 'Comments', 'e1ba3e6d1b', 1, 90, NULL, 1, 0, 0),
+('Yup', 2, NULL, 'n-a', 137, 142, '2014-12-28 22:06:10', 'nolvorite', 'Comments', 'Comments', '3f8dbdee7a', 1, 90, NULL, 1, 0, 0),
+('Again', 2, NULL, 'n-a', 137, 143, '2014-12-28 22:07:06', 'nolvorite', 'Comments', 'Comments', 'bb106a0ebc', 1, 90, NULL, 1, 0, 0),
+('And again', 2, NULL, 'n-a', 137, 144, '2014-12-28 22:08:32', 'nerd', 'Comments', 'Comments', '354fd07a14', 1, 90, NULL, 1, 0, 0),
+('Eugh', 2, NULL, 'n-a', 137, 145, '2014-12-28 22:09:25', 'nolvorite', 'Comments', 'Comments', 'be805506ae', 1, 90, NULL, 1, 0, 0),
+('oh right.', 2, NULL, 'n-a', 137, 146, '2014-12-28 22:10:31', 'nerd', 'Comments', 'Comments', '237aba4b41', 1, 90, NULL, 1, 0, 0),
+('And for legitimacy...', 2, NULL, 'n-a', 137, 147, '2014-12-28 22:12:12', 'nolvorite', 'Comments', 'Comments', 'd04238e820', 1, 90, NULL, 1, 0, 0),
+('Test for replying to your own post.', 2, NULL, 'n-a', 147, 148, '2014-12-28 22:57:11', 'nolvorite', 'Comments', 'Comments', '0809dfc8da', 1, 90, NULL, 1, 0, 0),
+('Again?', 2, NULL, 'n-a', 147, 149, '2014-12-28 22:57:41', 'nolvorite', 'Comments', 'Comments', '19a06a3c85', 1, 90, NULL, 1, 0, 0),
+('Nao', 2, NULL, 'n-a', 147, 150, '2014-12-28 22:59:10', 'nolvorite', 'Comments', 'Comments', '5da50d3f9f', 1, 90, NULL, 1, 0, 0),
+('Hmmm', 2, NULL, 'n-a', 147, 151, '2014-12-28 23:00:50', 'nolvorite', 'Comments', 'Comments', 'a56328b3b9', 1, 90, NULL, 1, 0, 0),
+('Again.', 2, NULL, 'n-a', 146, 152, '2014-12-29 00:26:53', 'nolvorite', 'Comments', 'Comments', '76bd3af5eb', 1, 90, NULL, 1, 0, 0),
+('Testing levels.', 2, NULL, 'n-a', 152, 153, '2014-12-29 00:27:19', 'nolvorite', 'Comments', 'Comments', '6292754060', 1, 90, NULL, 1, 0, 0),
+('Again.', 2, NULL, 'n-a', 148, 154, '2014-12-29 00:33:10', 'nolvorite', 'Comments', 'Comments', 'dc7a020920', 1, 90, NULL, 1, 0, 0),
+('Now?', 2, NULL, 'n-a', 154, 155, '2014-12-29 00:34:25', 'nolvorite', 'Comments', 'Comments', '6966e97fe9', 1, 90, NULL, 1, 0, 0),
+('Hmmm', 2, NULL, 'n-a', 147, 156, '2014-12-29 00:34:47', 'nolvorite', 'Comments', 'Comments', 'bf2aa304a2', 1, 90, NULL, 1, 0, 0),
+('eugh', 2, NULL, 'n-a', 156, 157, '2014-12-30 02:25:10', 'nolvorite', 'Comments', 'Comments', '1028a261a2', 1, 90, NULL, 1, 0, 0),
+('Ayyyyyyy', 2, NULL, 'n-a', 147, 158, '2015-01-03 18:49:06', 'nerd', 'Comments', 'Comments', '6a05952fa0', 1, 90, NULL, 1, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `school`
+--
+
+CREATE TABLE IF NOT EXISTS `school` (
+  `s_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `type` varchar(100) NOT NULL,
+  `coordinates` varchar(50) DEFAULT NULL,
+  `motto` varchar(50) DEFAULT NULL,
+  `religiousaffiliations` varchar(50) DEFAULT NULL,
+  `established` varchar(50) DEFAULT NULL,
+  `principal` varchar(50) DEFAULT NULL,
+  `headmaster` varchar(50) DEFAULT NULL,
+  `chaplain` varchar(50) DEFAULT NULL,
+  `faculty` varchar(50) DEFAULT NULL,
+  `grades` varchar(50) DEFAULT NULL,
+  `gender` varchar(50) DEFAULT NULL,
+  `numberofstudents` varchar(50) DEFAULT NULL,
+  `campussize` varchar(50) DEFAULT NULL,
+  `campustype` varchar(50) DEFAULT NULL,
+  `colors` varchar(50) DEFAULT NULL,
+  `athletics` varchar(50) DEFAULT NULL,
+  `mascot` varchar(50) DEFAULT NULL,
+  `rival` varchar(50) DEFAULT NULL,
+  `accreditation` varchar(50) DEFAULT NULL,
+  `averagesatscores` varchar(50) DEFAULT NULL,
+  `averageactscores` varchar(50) DEFAULT NULL,
+  `publication` varchar(50) DEFAULT NULL,
+  `newspaper` varchar(50) DEFAULT NULL,
+  `yearbook` varchar(50) DEFAULT NULL,
+  `tuition` varchar(50) DEFAULT NULL,
+  `website` varchar(50) DEFAULT NULL,
+  `link` varchar(50) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  `schoolboard` varchar(50) DEFAULT NULL,
+  `schooldistrict` varchar(50) DEFAULT NULL,
+  `ncesdistrictid` varchar(50) DEFAULT NULL,
+  `oversight` varchar(50) DEFAULT NULL,
+  `ceebcode` varchar(50) DEFAULT NULL,
+  `ncesschoolid` varchar(50) DEFAULT NULL,
+  `enrollment` varchar(50) DEFAULT NULL,
+  `studenttoteacherratio` varchar(50) DEFAULT NULL,
+  `educationsystem` varchar(50) DEFAULT NULL,
+  `classesoffered` varchar(50) DEFAULT NULL,
+  `schoolcolors` varchar(50) DEFAULT NULL,
+  `athleticsconference` varchar(50) DEFAULT NULL,
+  `teamname` varchar(50) DEFAULT NULL,
+  `usnwrranking` varchar(50) DEFAULT NULL,
+  `feederschools` varchar(50) DEFAULT NULL,
+  `affiliation` varchar(50) DEFAULT NULL,
+  `ed_level` varchar(25) DEFAULT NULL,
+  `schooltype` varchar(50) DEFAULT NULL,
+  `founded` varchar(50) DEFAULT NULL,
+  `assistantprincipals` varchar(50) DEFAULT NULL,
+  `staff` varchar(50) DEFAULT NULL,
+  `language` varchar(50) DEFAULT NULL,
+  `campus` varchar(50) DEFAULT NULL,
+  `rivals` varchar(50) DEFAULT NULL,
+  `communitiesserved` varchar(50) DEFAULT NULL,
+  `formernames` varchar(50) DEFAULT NULL,
+  `endowment` varchar(50) DEFAULT NULL,
+  `president` varchar(50) DEFAULT NULL,
+  `provost` varchar(50) DEFAULT NULL,
+  `academicstaff` varchar(50) DEFAULT NULL,
+  `students` varchar(50) DEFAULT NULL,
+  `undergraduates` varchar(50) DEFAULT NULL,
+  `postgraduates` varchar(50) DEFAULT NULL,
+  `doctoralstudents` varchar(50) DEFAULT NULL,
+  `location` varchar(50) DEFAULT NULL,
+  `sports` varchar(50) DEFAULT NULL,
+  `nickname` varchar(50) DEFAULT NULL,
+  `affiliations` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`s_id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+
+--
+-- Dumping data for table `school`
+--
+
+INSERT INTO `school` (`s_id`, `name`, `type`, `coordinates`, `motto`, `religiousaffiliations`, `established`, `principal`, `headmaster`, `chaplain`, `faculty`, `grades`, `gender`, `numberofstudents`, `campussize`, `campustype`, `colors`, `athletics`, `mascot`, `rival`, `accreditation`, `averagesatscores`, `averageactscores`, `publication`, `newspaper`, `yearbook`, `tuition`, `website`, `link`, `status`, `schoolboard`, `schooldistrict`, `ncesdistrictid`, `oversight`, `ceebcode`, `ncesschoolid`, `enrollment`, `studenttoteacherratio`, `educationsystem`, `classesoffered`, `schoolcolors`, `athleticsconference`, `teamname`, `usnwrranking`, `feederschools`, `affiliation`, `ed_level`, `schooltype`, `founded`, `assistantprincipals`, `staff`, `language`, `campus`, `rivals`, `communitiesserved`, `formernames`, `endowment`, `president`, `provost`, `academicstaff`, `students`, `undergraduates`, `postgraduates`, `doctoralstudents`, `location`, `sports`, `nickname`, `affiliations`) VALUES
+(1, 'Nettleton High School (Arkansas)', '', '35Â°48â€²45â€³N  90Â°38â€²58â€³W    /  35.81250Â°N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '9-12', NULL, '', NULL, 'City; small', NULL, NULL, 'Raider', NULL, 'AdvancED (1965-)', NULL, NULL, NULL, NULL, NULL, NULL, 'nettleton.ar.schoolwebpages.com.', 'http://en.wikipedia.org/wiki/Nettleton_High_School', 'Open', 'Nettleton School Board', 'Nettleton School District', '0510440', 'Arkansas Department of Education (ADE)', '041815', '051044000762', '877Â (2010-11[ 2] )', '13.27', 'ADE Smart Core curriculum', 'Regular, Advanced Placement', 'Â Â Â Â   Black\r\n Â Â Â Â   Gold', '5A East (2012-14)', 'Nettleton Raiders', 'Unranked (2012)', 'Nettleton Junior High School (6-8)', 'Arkansas Activities Association (AAA)', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, 'Jonesboro High School (Arkansas)', '', NULL, NULL, NULL, NULL, 'David Clark', NULL, NULL, NULL, '10â€“12', NULL, '', NULL, NULL, 'Â Â Â Â   Black Â Â Â Â   Gold Â Â Â Â   White', NULL, 'Golden Hurricane', NULL, 'North Central Association (NCA) Commission on Accr', NULL, NULL, NULL, NULL, NULL, NULL, 'www.jps.k12.ar.us', 'http://en.wikipedia.org/wiki/Jonesboro_High_School', NULL, NULL, 'Jonesboro Public Schools', NULL, NULL, NULL, NULL, '1,066Â (2013-14)', NULL, NULL, NULL, NULL, '7A/6A East (2012-14)', NULL, NULL, 'Annie Camp Junior High School\r\n Douglas MacArthur ', NULL, 'High School', 'Public, secondary school', '1899Â (1899 )', 'Shannon Lewis\r\n Brett Brown', '118', 'English', 'Suburban', 'West Memphis High School\r\n Nettleton High School\r\n', 'Jonesboro, tnÂ°', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, 'Texas A&amp;amp;M University', 'Flagship state university\r\n Land-grant university\r\n Sea-grant university\r\n Space-grant university', NULL, NULL, NULL, '1876', NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, 'Â   Â Maroon and white', 'NCAA Division I â€“ SEC', 'Reveille VIII', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'www.tamu.edu', 'http://en.wikipedia.org/wiki/Texas_A%26M_Universit', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'College', NULL, NULL, NULL, NULL, NULL, 'College town/Suburban, 5,500 acres (20Â km2)', NULL, NULL, 'The Agricultural and Mechanical College of Texas (', '$ 7.6 billion(2012)', 'Mark Hussey', 'Karan Watson', '2,700', '62,185 (Fall 2014)', '47,567 (Fall 2014)', '14,618 (Fall 2014)', '4,804 (Fall 2014)', 'College Station , Texas , US', '20 varsity teams', 'Aggies', 'Texas A&amp;M University System AAU CONAHEC ORAU U');
 
 -- --------------------------------------------------------
 
@@ -336,7 +458,7 @@ CREATE TABLE IF NOT EXISTS `sg_settings` (
   `a5_check` varchar(30) DEFAULT NULL,
   `real_id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`real_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 --
 -- Dumping data for table `sg_settings`
@@ -383,11 +505,11 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`username`, `password`, `isvalidated`, `email`, `userid`, `joindate`, `fullname`, `admin_notifs`, `root_admin_status`, `month2`, `day2`, `year2`, `salt`, `login_attempts`, `login_att_last`, `last_active_at`, `last_activity`) VALUES
-('nolvorite', 'd83ab46b4325d8bcd1102188c38d8a098b23a168', 1, 'hns_marcon@hotmail.com', 1, '2014-11-14 23:52:34', 'Hans Marcon', 'on', '1', 4, 9, 1996, '6c478c525f517a7ab838', '0', '2014-12-15 13:31:51', '2014-12-26 22:56:55', NULL),
+('nolvorite', 'd83ab46b4325d8bcd1102188c38d8a098b23a168', 1, 'hns_marcon@hotmail.com', 1, '2014-11-14 23:52:34', 'Hans Marcon', 'on', '1', 4, 9, 1996, '6c478c525f517a7ab838', '0', '2014-12-15 13:31:51', '2015-01-12 19:33:00', NULL),
 ('test_user4aaaasd', 'c08c7f680792684058eafc92e8e1e85e07617eff', NULL, 'asdasdas@asda.asdas', 27, '2014-11-13 21:16:30', 'asdas asdas', 'on', NULL, 12, 16, 1994, 'aad763cbecdacccb1f63', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 ('test_9', '6e1d3ee1ec90c3617dc4aff58fe39bba75a8b68e', NULL, 'laskdla@alsdkalsd.asdjas', 31, '2014-11-14 23:21:41', 'asdajsdjaks asdjaks', 'on', NULL, 4, 19, 1996, '3aab2407326f6ada6661', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 ('asdasdas', 'ef659ade9df94a0bc3e792ec9e2f81095d375a48', NULL, 'hns_marcon@hotmail.coma', 32, '2014-11-13 21:16:30', 'asdasd asd asdas', 'on', NULL, 11, 15, 1999, 'e64ec838d0dba46ea10a', '0', '2014-12-02 00:06:50', '0000-00-00 00:00:00', NULL),
-('nerd', '0989807af1ccfc712499519ebcb0e742b0597918', NULL, 'nerd@nerd.nerd', 36, '2014-12-14 22:10:24', 'John Hammercock', 'on', NULL, 6, 5, 1976, '9f5106ab7ebfe0e42b9a', '0', '2014-12-17 21:26:35', '2014-12-18 00:06:07', NULL);
+('nerd', '0989807af1ccfc712499519ebcb0e742b0597918', NULL, 'nerd@nerd.nerd', 36, '2014-12-14 22:10:24', 'John Hammercock', 'on', NULL, 6, 5, 1976, '9f5106ab7ebfe0e42b9a', '0', '2014-12-17 21:26:35', '2015-01-03 13:20:35', NULL);
 
 -- --------------------------------------------------------
 
@@ -402,7 +524,7 @@ CREATE TABLE IF NOT EXISTS `votes_q` (
   `vote` int(1) NOT NULL DEFAULT '1',
   `v_id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`v_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=164 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=186 ;
 
 --
 -- Dumping data for table `votes_q`
@@ -549,7 +671,29 @@ INSERT INTO `votes_q` (`bywhom`, `timeof`, `which_post`, `vote`, `v_id`) VALUES
 ('nerd', '2014-12-17 22:06:46', 136, 1, 160),
 ('nerd', '2014-12-17 22:15:46', 137, 1, 161),
 ('nolvorite', '2014-12-19 10:24:14', 138, 1, 162),
-('nolvorite', '2014-12-26 00:25:55', 139, 1, 163);
+('nolvorite', '2015-01-03 13:20:30', 139, 1, 163),
+('nerd', '2014-12-28 15:34:24', 138, 0, 164),
+('nerd', '2015-01-03 13:20:30', 139, 1, 165),
+('nerd', '2014-12-28 15:42:42', 62, 0, 166),
+('nerd', '2014-12-28 15:46:25', 61, 0, 167),
+('nolvorite', '2014-12-28 15:47:56', 140, 1, 168),
+('nolvorite', '2014-12-28 16:03:14', 141, 1, 169),
+('nolvorite', '2014-12-28 16:06:11', 142, 1, 170),
+('nolvorite', '2014-12-28 16:07:07', 143, 1, 171),
+('nerd', '2014-12-28 16:08:33', 144, 1, 172),
+('nolvorite', '2014-12-28 16:09:26', 145, 1, 173),
+('nerd', '2014-12-28 16:10:32', 146, 1, 174),
+('nolvorite', '2014-12-28 16:12:13', 147, 1, 175),
+('nolvorite', '2014-12-28 16:57:13', 148, 1, 176),
+('nolvorite', '2014-12-28 16:57:42', 149, 1, 177),
+('nolvorite', '2014-12-28 16:59:11', 150, 1, 178),
+('nolvorite', '2014-12-28 17:00:51', 151, 1, 179),
+('nolvorite', '2014-12-28 18:26:54', 152, 1, 180),
+('nolvorite', '2014-12-28 18:27:20', 153, 1, 181),
+('nolvorite', '2014-12-28 18:34:26', 155, 1, 182),
+('nolvorite', '2014-12-28 18:34:49', 156, 1, 183),
+('nolvorite', '2014-12-29 20:25:12', 157, 1, 184),
+('nerd', '2015-01-03 12:49:08', 158, 1, 185);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
