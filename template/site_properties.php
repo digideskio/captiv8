@@ -26,7 +26,9 @@ position:fixed;<?php echo (isset($_SESSION['xpos'])) ? "top" : "bottom" ?>:<?php
 a.link_view{display:inline-block; background:#c0c0c0;margin-right:5px;padding:5px 10px;text-decoration:none}
 a.link_view2{background:#d4d4d4;}
 a.link_view2:hover{padding:4px 9px;border:1px dashed #808080;background:#f0f0f0;}
+a.link_view2:focus{background:#79A8C8;color:#fff;border:1px solid #79a8c8;}
 #session_list a.selected2{background:#333;color:#fff;cursor:default}
+
 
                                                                   
 </style>

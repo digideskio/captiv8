@@ -249,7 +249,7 @@ $(".prompt[value='SEARCH SCHOOL']").next("div").removeClass("contentbox").html(d
 if($(this).attr("href") == "submit-edit"){  
 $.post("template/simcheck.php?action=css_edit",{"data":$("#jones").val(),"file":$("#jones").attr("title")},function(data){ alert(data);
 if(data.notice == "success"){alert("Successfully edited file!");
-}
+}                                                                       
 });
 }
 
@@ -276,7 +276,7 @@ $.get($zen_1).done(function(css){
      $("link[href='" +$zen_1+"']").remove();
 //modify directory file at url('')'s
      $snick = css;
-     $snick = $snick.replace(/url[\x28](.?)(.+)?/g,"url($1template/$2");
+     $snick = $snick.replace(/url[\x28]img(.?)(.+)?/g,"url($1template/img$2");
      
      if($("head style[title='"+$zen_1+"']").length === 0){     
      $("head").append("<style title='"+$zen_1+"'>"+ $snick +"</style>");  
