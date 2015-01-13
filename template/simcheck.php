@@ -35,10 +35,19 @@ if(isset($_GET['action']))    {
 
 switch($_GET['action']){
 
-case "drag_box":
+case "css_edit":
+if(preg_match("#[.]css$#",$_POST['file'])){//nice try kids
+
+$file_opener = fopen("../".$_POST['file'],"w+");
+fwrite($file_opener, $_POST['data']);
+
+echo json_encode(array("notice" => "success","bash" => "two"),JSON_UNESCAPED_SLASHES);        }
+break;
+
+case "drag_box":   
 if(isset($_GET['screen_max'])){
 if(isset($_SESSION['xpos'])){
-if((intval($_GET['screen_max'][0]) < $_SESSION['xpos']) || (intval($_GET['screen_max'][1]) < $_SESSION['ypos'])){unset($_SESSION['xpos'],$_SESSION['ypos']);}
+if((intval($_GET['screen_max'][0]) - $_GET['screen_max'][2] < $_SESSION['xpos']) || (intval($_GET['screen_max'][1]) - $_GET['screen_max'][3] < $_SESSION['ypos'])){unset($_SESSION['xpos'],$_SESSION['ypos']);}
 }
 }
 if(isset($_GET['offsets'])){ 
@@ -46,6 +55,18 @@ $_SESSION['xpos'] = intval($_GET['offsets'][0]);
 $_SESSION['ypos'] = intval($_GET['offsets'][1]);
 }
 
+
+break;
+
+case "change_panels":
+
+if(isset($_SESSION['current_view'])){
+if($_GET['view'] == isset($_SESSION['current_view'])){unset($_SESSION['current_view']);}else{
+$_SESSION['current_view'] = $_GET['view'];
+}
+}else{
+if($_GET['view'] == "v_sess"){}else{$_SESSION['current_view'] = $_GET['view'];}
+}
 
 break;
 
@@ -69,6 +90,146 @@ echo "<a href='index.php?query=".$_MONITORED['login_q']."&dispos=new_school' cla
 case "wikipedia_search":
             include("wikipedia_search.php");  
   
+break;
+
+case "confirm_school":
+$strings = json_decode($_GET['data'],true); //rawwwwww
+//we gotta run a bunch of tests to determine the authenticity of this data mine
+
+//check to see if the school's already in the database
+
+
+$check_in_sys = mysqli_query($db_main, "SELECT * FROM school WHERE name LIKE '".hack_free($strings['name'])."'");
+
+if(preg_match("#high[ ]school#",strtolower($strings['name']))){
+$school_level = "1";
+}
+if(preg_match("#(school (of)? )?(med([^ ]+)|law)( school)?|university|college#",strtolower($strings['name']))){
+$school_level = "2";
+}
+
+if(!isset($school_level)){
+//if not named either high school or university in the school's name    
+
+$recheck = file_get_html($strings['link'])->find("#mw-content-text table.infobox",0);
+foreach($recheck->find("tr") as $data_set){
+ $data_screened = str_get_html($data_set->innertext)->find("th[!colspan],td[!colspan]");
+
+ 
+ foreach($data_screened as $sheet){
+ if(preg_match("#^<th#",$sheet)){$name = strtolower(preg_replace("#[^A-Za-z]#","",$sheet->plaintext));
+             //criteria evaluation
+
+ }
+ else{$value = $sheet->plaintext;
+ //i'm lazy so i'll do all the modifying for this later
+ }     
+ 
+ if(isset($name)){$properties[$name] = isset($value) ? preg_replace("#([\133](.+)[\135][ ]+)$#","",$value) : "";  }
+ 
+ }   
+}
+
+if(preg_match("#[-]12$#",$properties['grades'])){
+$school_level = "1";
+}
+        
+ 
+$recheck->clear();                        
+}else{
+$properties = $strings;
+}
+if($school_level){
+             switch($school_level){
+                   case 1:
+                     $properties['ed_level'] = "High School";  
+                   break;
+                   case 2:
+                     $properties['ed_level'] = "College";  
+                   break;
+             }
+                                 
+if(mysqli_num_rows($check_in_sys) < 1){
+                                                   
+if(isset($strings['link']) && preg_match("#en[.]wikipedia[.]org#",$strings['link'])){      
+//check to see the validity of the link
+
+//now check whether it's a high school or a college           
+                                                              
+
+                     
+ //finally, submit the school to the school list and show the education completion form  
+               $properties['link'] = $strings['link'];  //link for later reference  
+          $properties['name'] = $strings['name'];
+          
+
+ 
+ foreach($properties as $nougatey => $nougats){ //oh boy
+ $datafield_check = mysqli_query($db_main, "SHOW COLUMNS FROM school WHERE `$nougatey`");
+ if(!$datafield_check){  //column doesn't exist
+ $new_lines = mysqli_query($db_main, "ALTER TABLE school ADD COLUMN `$nougatey` varchar(50)");
+ if($new_lines){}
+ }
+ 
+ //but either way
+ 
+ //prepend column names and respective values
+ 
+
+ $adjoiner = !isset($adjoiner) ? [$nougatey . ", ","'".$nougats . "', "] : [$nougatey.", " .$adjoiner[0],"'".hack_free($nougats). "', " . $adjoiner[1]] ;
+ $trims = [preg_replace("#(.+)[,][ ]$#","$1",$adjoiner[0]),preg_replace("#(.+)[,][ ]$#","$1",$adjoiner[1])];
+ $clear = $datafield_check ? mysqli_free_result($datafield_check) : "";
+ }
+ //put them in one SQL statement!
+  //actually...
+
+
+  $school_data = mysqli_query($db_main, "INSERT INTO school($trims[0]) VALUES($trims[1])");
+  if($school_data){
+  $fill_details = "yes";
+  }
+  
+    
+
+
+
+   unset($school_level);      unset($adjoiner);           }
+   
+
+}}else{
+$fill_details = "yes";
+}
+
+
+if(isset($fill_details) && !isset($_SESSION['school_fill'])):   $_SESSION['school_fill'] = "yes";
+?>
+    <br>
+<div class="contentbox fill_details"> <h3>Fill details</h3>
+<table><tr><th class="marginals" style="width:200px">School Name</th><td>
+<input type="text" value="<?php echo $strings['name'] ?>" class="largeform" disabled="disabled" name="school_name" style="opacity:.5">          </td>
+</tr>
+<tr><th>Started:</th><td><input type="text" class="largeform flick" value="Input the year that you started going to this school."></td></tr>
+<tr><th>Finished:</th><td><select><option id="current">Currently Attending</option><option id="did_finish">I finished attending this school.</option></select></td></tr>
+<?php if(isset($school_level)){ if($school_level == "1"){ ?> 
+
+<tr><th>Degree/Major</th><td><input type="text" value="Separate by comma if more than one..." name="degres"></td></tr>
+
+<?php }else{ ?>
+
+
+
+
+<?php } } ?>
+</table>
+</div>
+
+
+
+
+<?php      unset($properties);  
+endif;
+
+
 break;
   
 
@@ -102,7 +263,7 @@ else{       //clear notifications
 
 //delay it for the same amount of time as it would get refreshed, or maybe a little less
 
-switch($_GET['action']){
+switch($_GET['action']){    //user profile actions
 
 case "clearnotifs":
 $clear_last_10 = mysqli_query($db_main, "UPDATE notifications SET status=1 WHERE towhom IN (SELECT towhom FROM(SELECT towhom FROM notifications WHERE towhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,10)tmp)");
@@ -117,6 +278,12 @@ echo json_encode(array("result" => "completed","notifs_left" => mysqli_num_rows(
 
 }
 break;
+
+
+//we have to disable error displays here because timeout issues
+//if the school's name was never listed before in the education database, we have to send the data to the school table, but first have the user clear up details for himself
+//if a data name was never entered before as a column, alter the education table to make an entry for it
+//then set the user's education to the respective recently posted school(s)
 
 
 

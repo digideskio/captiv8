@@ -1,7 +1,7 @@
 <?php                              
 
 
-mysqli_set_charset($db_main,"UTF8");
+mysqli_set_charset($db_main,"ISO-8859-1");
 
 date_default_timezone_set('America/Chicago');
                                               /* input names: 

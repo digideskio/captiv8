@@ -59,7 +59,7 @@ if(strlen($search) > 0 || strlen($value_search) > 0){
 if(preg_match("#^".$search."#",$key)){unset($listof[$key]);}
 }}
 }}
-if($_SERVER['REQUEST_METHOD'] == "POST"){foreach($_POST as $key => $room){ $z++;
+if($_SERVER['REQUEST_METHOD'] == "POST"){foreach($_POST as $key => $room){ $z = isset($z) ? $z + 1 : 0;
 $_SPIN[$key] = preg_replace("/[\n]/","<br>",$_POST[$key]); 
 $_DATA[$key] = $_SPIN[$key];
 $clone[$z] = $_SPIN[$key];             //increment array key

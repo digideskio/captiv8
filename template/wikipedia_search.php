@@ -38,15 +38,16 @@
   
   $parsed_1 = str_get_html($iterations);
   $parsed_2 = [$parsed_1->find(".s .kv",0),$parsed_1->find("h3", 0)];  //get URLs and page titles of search results, respectively       
-  $keywords = preg_replace("#^(.+)[\057]wiki[\057](.+)[ ]+(cached(.+))+#","$2",strtolower(preg_replace("#[_]#"," ",$parsed_2[0]->plaintext))); //wee
+//  $keywords = preg_replace("#^(.+)[\057]wiki[\057](.+)[ ]+(cached(.+))+#","$2",strtolower(preg_replace("#[_]#"," ",$parsed_2[0]->plaintext))); //wee
     //check that they both exist, check that the link's name has the word "school" or a synonym of it, and check that the title has a search query word
+
     
   if(
-  is_object($parsed_2[0]) && is_object($parsed_2[1]) &&     //checking if objects, duh
-  preg_match("#en[.]wikipedia[.]org[\057]wiki[\057](.{0,})(school|college|academy|university|education|grade)(.{0,})#",strtolower($parsed_2[0]->plaintext)) &&   //checking if link has a school tag
-  preg_match("#".strtolower($_FILTERED['data'][1])."#",preg_replace("#[_]#"," ",strtolower($parsed_2[1]->plaintext))) &&      //check to see that the title matches the school name typed
-  preg_match("#(school|college|academy|university|education|grade)#",strtolower($_FILTERED['data'][1]))      //check to see that the typed school name has any of the school keywords
-  ){
+  is_object($parsed_2[0]) && is_object($parsed_2[1]) &&    
+  preg_match("#en[.]wikipedia[.]org[\057]wiki[\057](.{0,})(school|college|academy|university|education|grade)(.{0,})#",strtolower($parsed_2[0]->plaintext))  //checking if link has a school tag
+)      //check to see that the typed school name has any of the school keywords
+  {          
+                                             
   //then what
   //uh
   //reference the Wikipedia URL which is $parsed_2[0]
@@ -85,20 +86,38 @@
  }      
          //finally, phase 2
          $page_title = preg_replace("#(.+)- Wikipedia(.+)$#","$1",$parsed_2[1]->plaintext);
-         if(isset($properties['enrollment']) || isset($properties['students'])) {
-         $student_count = (isset($properties['enrollment'])) ? $properties['enrollment'] : $properties['students'];
-         $enrolled = preg_replace("#^(.+)([^0-9,]{0,})#","$1",$student_count);
-  echo "<div><a href='select_school' class='prompt'><h3>".$page_title."</h3>";
+         if(isset($properties['enrollment']) || isset($properties['students']) || isset($properties['numberofstudents'])) {   //eugh
+         $properties['numberofstudents'] = isset($properties['numberofstudents']) ? $properties['numberofstudents'] : "";
+         $counts = isset($properties['students']) ? $properties['students'] : $properties['numberofstudents'];
+         $student_count = (isset($properties['enrollment'])) ? $properties['enrollment'] : $counts;
+         $enrolled = preg_replace("#^(([0-9]+[,]?)+)(.{0,})$#","$1",$student_count);
+        $properties['link'] = $urlencode;  //link for later reference  
+          $properties['name'] = $page_title;
+         $toformat = json_encode($properties);
+  echo "<div class='school_shell'><a href='select-school' class='prompt school_box rad' datamine='$toformat'><h3>".$page_title." <span>";
+        echo "<em>".$enrolled."</em> enrolled as of last census";
+      echo (isset($properties['established'])) ? " &middot; Established " . $properties['established'] : "";
   
-      echo "<em>".$enrolled."</em> enrolled as of last census";
+  echo"</span></h3> (Confirm as your school)</a>";
+  
+
       
-  echo "</a><span><a href='".$urlencode."'>".$urlencode."</a></span></div>";    var_dump($properties);            }
+  echo " <span class='link'><strong>Link: </strong> <a href='".$urlencode."'>".$urlencode."</a></span></div><br>";
+       
+  
+    }       
   
        unset($properties); //duh
   
      
   
 $refer_to_url->clear();}
+
+//we have to disable error displays here
+//if the school's name was never listed before in the education database, we have to send the data to the school table, but first have the user clear up details for himself
+//if a data name was never entered before as a column, alter the education table to make an entry for it
+//then set the user's education to the respective recently posted school(s)
+//and copying this entire set of comments back to simcheck.php
  
   
    

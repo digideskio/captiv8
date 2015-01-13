@@ -39,6 +39,14 @@ echo "
 <input type='submit' value='".$nx['21']."'></div>";
 echo "</div></form>";  }
 
+
+//end submission form
+
+
+//later i'm going to add a message here if the user hasn't fully filled out their profile. 
+//later...
+
+
   if(isset($_SESSION['login_q'])){
 
   echo mysqli_error($db_main);

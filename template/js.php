@@ -1,3 +1,7 @@
+  <script src="template/jquery-.js" type="text/javascript"></script>
+
+<script src="template/jquery-ui.js" type="text/javascript"></script>
+
  <script>(function ( $ ) {   
     //this is soooo tacky      
 
@@ -32,7 +36,7 @@ return str.replace( /\s+$/, "" );
 
 
 
-</script>    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+</script>    
 <script type="text/javascript">
 
 
@@ -228,18 +232,100 @@ if($(this).hasClass("a1") && $(this).next("input").prop("checked",false)){$(this
              var $black_layer = ["<div id='black_overlay'><div id='widthfix'>","</div></div>"];  
 
       
-
+      
  
 $("body").on('click',".prompt",function(event){event.preventDefault();
 
 if($(this).attr("value") == "SEARCH SCHOOL"){  
 $values = [[$(this).prev("input").prop("defaultValue"),$(this).prev("input").val()],[$(this).prev().prev("input").prop("defaultValue"),$(this).prev().prev("input").val()]]; 
 $zenx = [($values[0][0] == $values[0][1]) ? " " : $values[0][1],($values[1][0] == $values[1][1]) ? " " : $values[1][1]];
+  $(this).after(function(){if($(this).next().is("div") == true){return false;}else{return "<div id='school_search' class='contentbox'>Loading...</div>"}});
+  $(this).next("div").html("Loading...").addClass("contentbox");
 $.get("template/simcheck.php",{"action":"wikipedia_search","data":[$zenx[1],$zenx[0]]},function(data){
-  $(".prompt[value='SEARCH SCHOOL']").after(function(){if($(this).next().is("div") == true){return false;}else{return "<div class='contentbox'>Loading...</div>"}});
-$(".prompt[value='SEARCH SCHOOL']").next("div").html(data);
+$(".prompt[value='SEARCH SCHOOL']").next("div").removeClass("contentbox").html(data);
 });
 }
+
+if($(this).attr("href") == "submit-edit"){  
+$.post("template/simcheck.php?action=css_edit",{"data":$("#jones").val(),"file":$("#jones").attr("title")},function(data){ alert(data);
+if(data.notice == "success"){alert("Successfully edited file!");
+}
+});
+}
+
+
+if($(this).attr("href") == "select-school"){     $("#select4").removeAttr("id");
+$(this).attr("id","select4");
+
+$.get("template/simcheck.php",{"action":"confirm_school","data":$(this).attr("datamine")}).done(function(msg){
+
+$("#select4").parent().append(msg);
+
+});
+
+
+
+}
+if(/^edit[:]/g.test($(this).attr("href"))){    //murder murder murder murrdurrrrrrrrrrrrrrrrr murrrrrrdurrrrrrrrr
+//FINALLY. holy shit mother of god tweaking batman
+$zen_0 = $(this).attr('href');      
+$zen_1 = $(this).attr('href');                
+$zen_1 = $zen_1.replace(/^edit[:](.+)$/,"$1");
+
+$.get($zen_1).done(function(css){
+     $("link[href='" +$zen_1+"']").remove();
+//modify directory file at url('')'s
+     $snick = css;
+     $snick = $snick.replace(/url[\x28](.?)(.+)?/g,"url($1template/$2");
+     
+     if($("head style[title='"+$zen_1+"']").length === 0){     
+     $("head").append("<style title='"+$zen_1+"'>"+ $snick +"</style>");  
+         
+     }
+if($("#jones").length === 0){  
+$("a[href='"+$zen_0+"']").addClass("selected2").after("<a href='submit-edit' class='link_view link_view2 rad prompt'>Finish editing</a><textarea id='jones' title='"+$zen_1+"' style='height:500px;margin-top:5px'></textarea>");
+
+//hmm...     
+
+$("#jones").val($("style[title='"+$zen_1+"']").html());              
+               
+if($("style[title='"+$zen_1+"']").length === 0){  
+
+   
+   
+}
+}else{
+}
+     
+}); 
+
+
+}
+
+
+
+if(/^v[\137]/g.test($(this).attr("href"))){
+
+
+
+
+if($(".selected_link").attr("href") == $(this).attr("href")){
+
+}else{$.get("template/simcheck.php",{"action":"change_panels","view":$(this).attr("href")});
+if($(this).attr("href") == "v_css"){
+$("#session_list").css({"width":"650px","height":"650px"});
+}else{$("#session_list").removeAttr("style");}
+
+$(".selected_link").removeClass("selected_link");  $(".open").removeClass("open");
+
+$(this).addClass("selected_link");
+$("div#" + $(this).attr("href")).addClass("open");
+
+}
+}
+
+
+
 
 if($(this).attr("href") == "one-liner"){
 $("#post_k input[name=tcha1]").val("<?php echo $nx['27'] ?>");$("#post_k textarea[name=tcha2]").toggle("200",function(){$(this).attr("style","display:block;box-shadow:0 0 6px #556378")}).removeClass("flick").val("<?php echo $nx['28'] ?>").end();  
@@ -264,7 +350,7 @@ $("#check_friend_status").html(data);
 if($(this).attr("href") == "finished-poll-q"){
 refs = "pass";
 for(i=0;i<=$("input[name=poll_choice]").length;i++){
-if(/"^[ ]+$"/.test($("input[name=poll_choice]").eq(i).val()) || $("input[name=poll_choice]").eq(i).val() == "Add a choice here"){
+if(/^[ ]+$/.test($("input[name=poll_choice]").eq(i).val()) || $("input[name=poll_choice]").eq(i).val() == "Add a choice here"){
 refs = "fail";
 }
 }

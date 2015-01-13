@@ -1,6 +1,4 @@
-<link rel="stylesheet" type="text/css" href="template/css.css">      <script src="template/jquery-.js" type="text/javascript"></script>
-
-<script src="template/jquery-ui.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="template/css.css">    
 
 <?php
 
