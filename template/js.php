@@ -247,10 +247,20 @@ $(".prompt[value='SEARCH SCHOOL']").next("div").removeClass("contentbox").html(d
 }
 
 if($(this).attr("href") == "submit-edit"){  
-$.post("template/simcheck.php?action=css_edit",{"data":$("#jones").val(),"file":$("#jones").attr("title")},function(data){ alert(data);
+$.post("template/simcheck.php?action=css_edit",{"data":$("#jones").val(),"file":$("#jones").attr("title")},function(data){ 
 if(data.notice == "success"){alert("Successfully edited file!");
 }                                                                       
+},"json");
+}
+
+if($(this).attr("href") == "load-more"){
+$(this).attr("Loading...");
+
+$.get("template/news_feed.php",{"get_more":"true"},function(older_msgs){
+$("#news_feed").append(older_msgs);
 });
+
+$(this).remove();
 }
 
 
@@ -276,7 +286,7 @@ $.get($zen_1).done(function(css){
      $("link[href='" +$zen_1+"']").remove();
 //modify directory file at url('')'s
      $snick = css;
-     $snick = $snick.replace(/url[\x28]img(.?)(.+)?/g,"url($1template/img$2");
+     $snick = $snick.replace(/url[\x28](.)[/]?(.+)(.)[\x29]/g,"url($1template/$2$3)");
      
      if($("head style[title='"+$zen_1+"']").length === 0){     
      $("head").append("<style title='"+$zen_1+"'>"+ $snick +"</style>");  
@@ -313,7 +323,7 @@ if($(".selected_link").attr("href") == $(this).attr("href")){
 
 }else{$.get("template/simcheck.php",{"action":"change_panels","view":$(this).attr("href")});
 if($(this).attr("href") == "v_css"){
-$("#session_list").css({"width":"650px","height":"650px"});
+$("#session_list").css({"width":"650px"});
 }else{$("#session_list").removeAttr("style");}
 
 $(".selected_link").removeClass("selected_link");  $(".open").removeClass("open");

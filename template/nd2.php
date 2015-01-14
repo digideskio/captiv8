@@ -139,6 +139,7 @@ break;
 
 require_once("template/idx_1.php");
 require_once("template/news_feed.php");
+
   
           
 //main body

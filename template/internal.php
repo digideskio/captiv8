@@ -1,9 +1,11 @@
 <?php                              
-
-
+$db_main = mysqli_connect("localhost","root","","captiv8");      
 mysqli_set_charset($db_main,"ISO-8859-1");
 
 date_default_timezone_set('America/Chicago');
+
+
+
                                               /* input names: 
  username2: username register
  pwrd2: password
@@ -19,17 +21,8 @@ date_default_timezone_set('America/Chicago');
  */
  //well good security can be a pain
  // for the password data, it's going to be the password + 
-require_once("template/auxiliary.php");
-
-define('dflt_date_f',"F j, Y, g:i A");
-define('checkin',mysqli_error($db_main));
-define('index_page_check', preg_match("#index.php([\072]([0-9]){0,15})*$#", extraurl()));
-define('logged_in_check',(isset($_SESSION['login_q'])));
 
 
- 
-
-  
 
 
 
@@ -38,7 +31,37 @@ $logged_query = mysqli_query($db_main,"SELECT * FROM users WHERE username='$_SES
 $logged_dt = mysqli_fetch_assoc($logged_query);
 }
 
-  
+    if(!isset($_GET['verify'])){             $datfunk = intval(microtime(true)) - mt_rand(1,microtime(true)) * mt_rand(-1,1);
+ $_SESSION['temp_n'] = substr(sha1(md5(base64_encode($datfunk))),0,25);
+ }
+
+
+ 
+
+switch(isset($_GET['get_more'])){
+case true:
+require_once("auxiliary.php");
+define('index_page_check', true);
+break;
+
+
+
+case false:
+require_once("template/auxiliary.php");
+define('index_page_check', preg_match("#index.php([\072]([0-9]){0,15})*$#", extraurl()));
+break;
+}
+
+define('dflt_date_f',"F j, Y, g:i A");
+define('checkin',mysqli_error($db_main));
+
+define('logged_in_check',(isset($_SESSION['login_q'])));
+
+
+switch(isset($_GET['more'])){
+
+case false:
+ 
                                                                                  
 
 if(isset($_GET['profile'])){
@@ -50,10 +73,7 @@ if($profile_query){
 
 }
 
- if(!isset($_GET['verify'])){             $datfunk = intval(microtime(true)) - mt_rand(1,microtime(true)) * mt_rand(-1,1);
- $_SESSION['temp_n'] = substr(sha1(md5(base64_encode($datfunk))),0,25);
- }
- 
+
  
 
 
@@ -198,6 +218,15 @@ setcookie("limbooo[".$bm."]","a",time()-1);
 //mysqli_query($db_main, "ALTER TABLE polls ADD COLUMN(votes INT NOT NULL DEFAULT 0)");
 //mysqli_query($db_main, "CREATE TABLE friend_limbo(user1 INT NOT NULL,user2 INT NOT NULL, time DATETIME NOT NULL, fl_id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(fl_id))");
 //mysqli_query($db_main, "CREATE TABLE notifications(n_id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(n_id),content varchar(100) NOT NULL,url varchar(110) NOT NULL)");  
+
+break;
+
+
+}  
+
+
+
+
 
  
   ?>                                                               

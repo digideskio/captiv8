@@ -39,6 +39,8 @@ case "css_edit":
 if(preg_match("#[.]css$#",$_POST['file'])){//nice try kids
 
 $file_opener = fopen("../".$_POST['file'],"w+");
+//convert the file strings back
+$_POST['data'] = preg_replace("#template[\057]#","",$_POST['data']);
 fwrite($file_opener, $_POST['data']);
 
 echo json_encode(array("notice" => "success","bash" => "two"),JSON_UNESCAPED_SLASHES);        }

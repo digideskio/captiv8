@@ -1,4 +1,4 @@
-<?php      session_start();       
+<?php      session_start();    
 
 /*
 
@@ -13,7 +13,7 @@ nd2.php - everything inside <body>
 
 */        
 /*db configurations*/   
-$db_main = mysqli_connect("localhost","root","","captiv8");     
+ 
 // mysqli_query($db_main,"");
 /* $x = mysqli_query($db_main, "ALTER TABLE users ADD COLUMN joindate TIMESTAMP"); 
   //users
@@ -35,6 +35,7 @@ echo "</head>";
 echo "<body>";
 
 require_once("template/nd2.php");
+
 
 // I'm gonna make an internal menu
 require_once("template/site_properties.php");

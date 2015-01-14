@@ -1,6 +1,13 @@
 <?php
   
 ?>
+
+<?php      
+if((count($_SESSION) > 0 || count($_COOKIE) > 0) && isset($_SESSION['login_q'])): 
+if(compare_dz($logged_zen['password'],$_SESSION['salt_q']) && $logged_dt['userid'] == 1):
+
+?>
+
 <style type="text/css">   /*internal helper*/
 #session_list{opacity:.3;box-shadow:0 3px 5px #292E35;font:11px "lucida sans unicode",arial,"sans serif";
 border-radius:2px;color:#000;background:#fff;width:350px;padding:5px;
@@ -32,8 +39,12 @@ a.link_view2:focus{background:#79A8C8;color:#fff;border:1px solid #79a8c8;}
 
                                                                   
 </style>
-<?php      
-if((count($_SESSION) > 0 || count($_COOKIE) > 0) && isset($_SESSION['login_q'])){if(compare_dz($logged_zen['password'],$_SESSION['salt_q']) && $logged_dt['userid'] == 1){//root admin(s) view, ish
+
+
+<?php
+
+
+//root admin(s) view, ish
                                     //okay, just made it draggable
                                     
 function selected_class($text, $is_link = NULL){
@@ -79,9 +90,9 @@ echo "</p> </div>
 <?php
 
 echo"
-</div>";       }   } 
-
+</div>";    
 ?>
+
 <script type="text/javascript"> 
 $("body").on('keyup','#jones',function(){  
 $("style[title='"+$(this).attr('title')+"']").html($(this).val());
@@ -107,3 +118,11 @@ $(this).css("bottom","inherit");
 
 
 </script>
+
+
+
+<?php
+
+
+   endif;endif;
+?>

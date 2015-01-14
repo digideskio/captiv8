@@ -123,7 +123,7 @@ Signing up is totally free and will take less than a minute at the most.</p><div
 ,"Editing your profile"   , 
 "Unfortunately, the school you typed down is currently not in the directory. Click here to add your school into the current directory."
 , "Add your school","Your search query is going to be referenced with all wikipedia school entries. If your school is not listed in Wikipedia, you will have to type in details for yourself."
-, ""
+, "","There are no more posts to display."
 
 
 );

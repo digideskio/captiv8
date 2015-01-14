@@ -1,6 +1,10 @@
-<?php
-if(index_page_check){
-if(isset($_SESSION['salt_q']) && compare_dz($_SESSION['salt_q'],$logged_dt['password'])){     //personal news feed
+<?php if(isset($_GET['get_more'])){    session_start();
+//crap, i'm gonna need a copy of a lot of the internalities, I should say, at internal.php
+ require_once("vars.php");
+require_once("internal.php");
+}
+if(index_page_check){     
+if(isset($_SESSION['salt_q']) && compare_dz($_SESSION['salt_q'],$logged_dt['password'])){     //personal news feed      
 echo (!isset($_GET['get_more'])) ? "<div id='news_feed'>" : "";
 //data we need to get:
 //the logged user's own posts, and every snowglobe he's subscribed to           
@@ -14,11 +18,29 @@ echo (!isset($_GET['get_more'])) ? "<div id='news_feed'>" : "";
 $que_posts[6] = mysqli_query($db_main, "SELECT * FROM sg_permissions WHERE towhom='$_MONITORED[login_q]'");
 
                                    
+$post_query = "SELECT * FROM posts INNER JOIN sg_permissions ON posts.bywhom = sg_permissions.granted_by AND sg_permissions.towhom = '$_MONITORED[login_q]' WHERE sg_permissions.access_type = 'friend snowglobe' AND posts.cnttype=1 ORDER BY stamptime DESC LIMIT 0,25";
 
-$que_posts[0] = mysqli_query($db_main,"SELECT * FROM posts INNER JOIN sg_permissions ON posts.bywhom = sg_permissions.granted_by AND sg_permissions.towhom = 'nolvorite' WHERE sg_permissions.access_type = 'friend snowglobe' AND posts.cnttype=1 ORDER BY stamptime DESC LIMIT 0,25");
+if(isset($_SESSION['last_postid'])){
+$post_query = (!isset($_GET['get_more'])) ? $post_query : "SELECT * FROM posts INNER JOIN sg_permissions ON posts.bywhom = sg_permissions.granted_by AND sg_permissions.towhom = '$_MONITORED[login_q]' WHERE sg_permissions.access_type = 'friend snowglobe' AND posts.cnttype=1 AND postid < '$_MONITORED[last_postid]' ORDER BY stamptime DESC LIMIT 0,25";
+  }                                                  
+$que_posts[0] = mysqli_query($db_main,$post_query);
+
+
+
+
+if( mysqli_num_rows($que_posts[0] ) == 0){
+echo "<div class='notice center'>". $nx['37'] ."</div>";
+}
+
+
+
+//begin news feed
+
+
+
 while($que_own = mysqli_fetch_assoc($que_posts[0])){
 
-$_SESSION['last_timestamp'] = $que_own['stamptime'];    //get last record for later reference
+$_SESSION['last_postid'] = $que_own['postid'];    //get last record for later reference
 
 //begin posts
 
@@ -127,15 +149,19 @@ echo"<td width='1%' class='right_side'><span class='right side_info' alt='" .$qu
 echo"<span class='votes'><a href='up' class='vote_" .$select_class[0] . "'><img src='template/img/up.png'></a><a href='down' class='vote_" .$select_class[1] . "'><img src='template/img/down.png'></a></span></span></td></tr></table></div>";
 };       
 
+
+
+
+ echo (!isset($_GET['get_more'])) ? "</div>" : "";
+
+echo (mysqli_num_rows($que_posts[0]) > 0) ? "<a href='load-more' class='prompt load-more-button'>Load more posts</a>" : "";
+
 for($i = count($que_posts)-1;$i >= 0;$i--){
 if(isset($que_posts[$i])){
 mysqli_free_result($que_posts[$i]);        }
 }
 clear_array($poll_dt);
 
-
-
- echo (!isset($_GET['get_more'])) ? "</div>" : "";
 
 }
 
