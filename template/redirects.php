@@ -41,7 +41,12 @@ unset($_SESSION[$nkey]);
   
   $parent_clasp = mysqli_query($db_main, "SELECT * FROM posts WHERE postid=$clasp_tip ORDER BY stamptime DESC"); $_SESSION['abc'] = mysqli_num_rows($parent_clasp); 
    $parent_call = mysqli_fetch_assoc($parent_clasp);
-  if(mysqli_num_rows($parent_clasp) > 0 && compare_dz($parent_call['forwhom'],"self") !== 0){
+  if(mysqli_num_rows($parent_clasp) > 0 && (($parent_call['bywhom'] != $_MONITORED['login_q']) || ($parent_call["bywhom"] == $_MONITORED['login_q'] && $parent_call["forwhom"] != "self"))){   
+  //this is so messy.
+  
+      //make sure you don't get replies in comments to your own replies or your own snowglobe
+  
+  
   
   $parent_check = ($actual['bywhom'] == $parent_call['bywhom']) ? "no" : "yes";
   $no_notif = ($actual['cnttype'] == 2) ? $parent_check : "yes";
@@ -49,23 +54,25 @@ unset($_SESSION[$nkey]);
   //i'm getting the most recent comment with $parent_call ... I mean its parent post
   //dang it I have to learn how to do comments better
   $url_nu = ($actual['cnttype'] == "1") ? "thread_view=" . $actual['thread_nick'] . "_" . $actual['topic_hash'] : "comment=" . $actual['topic_hash'];      
-  $parent_type = ($parent_call['cnttype'] == 1) ? ["thread",substr(hack_free($parent_call['content']),0,30),"index.php?" .$url_nu] : ["comment",substr($parent_call['content'],0,30),"index.php?comment=" . $actual['topic_hash']];
+  $parent_type = ($parent_call['cnttype'] == 1) ? ["thread",substr(hack_free($parent_call['title']),0,30),"index.php?" .$url_nu] : ["comment",substr($parent_call['content'],0,30),"index.php?comment=" . $actual['topic_hash']];
 
   $notif_add = ($no_notif == "no") ? false : mysqli_query($db_main, "INSERT INTO notifications(content,url,towhom) VALUES('<span>".$_MONITORED['login_q']."</span> replied to your ".$parent_type[0].": ".$parent_type[1]."','$parent_type[2]','$parent_call[bywhom]')");    
   if(!$notif_add){$_SESSION['sql_error'] = mysqli_error($db_main);} 
   }
   mysqli_query($db_main,"INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MICRORFID[login_q]',CURRENT_TIMESTAMP,'$actual[postid]',1)");
-  if($actual['cnttype'] == "1"){
+  if($actual['cnttype'] == "1"){    mysqli_free_result($parent_clasp);
+  mysqli_free_result($latest); 
 header("Location:index.php?thread_view=". $actual['thread_nick'] . "_" . $actual['topic_hash']);
   }
   
   if($actual['cnttype'] == "2"){
   $tree_roots = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$actual[thread_id]' ORDER BY stamptime DESC");
-  $piece = mysqli_fetch_assoc($tree_roots);
+  $piece = mysqli_fetch_assoc($tree_roots);   mysqli_free_result($parent_clasp);
+  mysqli_free_result($latest); 
 
-
+      mysqli_free_result($tree_roots);
  header("Location:index.php?thread_view=".$piece['thread_nick']."_".$piece['topic_hash']);
-  mysqli_free_result($tree_roots);
+
   }
   
      mysqli_free_result($parent_clasp);

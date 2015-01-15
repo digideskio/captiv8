@@ -225,7 +225,8 @@ div.bar_1{padding:10px 25px;color:#fff;}
 .contentbox td.side_info{vertical-align:top}
 .contentbox td.side_info .spacer{padding:8px 14px}
 tr.row_2 td.side_info .spacer{font:11px "Tahoma","Arial","Sans-serif";color:#fff;text-align:left}
-.contentbox td.content{vertical-align:top}                                                                
+.contentbox td.content{vertical-align:top}
+.contentbox td.content[valign=middle]{vertical-align:middle}                                                                
 .r_title{padding:5px 10px;font:bold 13px "Lucida Sans Unicode";background:#38475D;border-top:1px solid #2E3A4D;border-bottom:1px solid #556378}
 #dob-edit select.largeform{width:25%;margin: 2px 10px 2px 0;}
 .dashed{margin-bottom:10px;}

@@ -72,12 +72,26 @@ $(this).on({'mouseover':function(){
 var nina = $(this).find(".uplink");
 var nina2 = nina.offset().left;
 var nina3 = nina.offset().top + nina.height();
-$(this).find(".dropdown_content").attr("style","left: "+nina2+"px; top: "+nina3+"px;display:block;");
+$(this).find(".dropdown_content").attr("style","left: "+nina2+"px; top: "+nina3+"px;display:block;position:absolute");
 
 
 
 }, 'mouseleave':function(){
 $(this).find(".dropdown_content").attr("style","display:none");
+if($(this).is("#notifs_drop")){                                           
+$.get("template/simcheck.php",{"nm_time":"notifs","action":"clearnotifs"},function(data){if(data.notifs_left > 0){$("#notifs_bar .spacer .note").html("("+data.notifs_left+" new)");
+
+}else{
+
+$("#notifs_bar .spacer .note").empty();
+
+zen3 = $("title").html();
+zen3 = zen3.replace(/[\050]([0-9]{1,3})[\051][ ](.+)/,"$2");
+$("title").html(zen3);
+
+
+}},"json");
+}
 }
 
 })

@@ -38,7 +38,7 @@ $logged_dt = mysqli_fetch_assoc($logged_query);
 
  
 
-switch(isset($_GET['get_more'])){
+switch(isset($_GET['get_more'])){ //news_feed_php needs it
 case true:
 require_once("auxiliary.php");
 define('index_page_check', true);
@@ -61,7 +61,18 @@ define('logged_in_check',(isset($_SESSION['login_q'])));
 switch(isset($_GET['more'])){
 
 case false:
- 
+
+class reply_format { //first time doing classes
+//hm
+//better clock in
+public function init($u,$n,$p,$a,$c,$k){
+global $_MONITORED,$_FILTERED,$db_main;
+//get the reply template
+//mod options etc
+$u =  
+}
+
+} 
                                                                                  
 
 if(isset($_GET['profile'])){

@@ -33,7 +33,7 @@ echo "Captivate - ". $_FILTERED['profile']."'s snowglobe";
 
 if(isset($_GET['thread_view'])){
 $snip = (isset($_GET['comment'])) ? $nx['26'] : "";
-echo preg_replace("#[\x26][a-z0-9]+[;]#","",$thread_data['title']) . $snip . "";
+echo preg_replace("#[^-_A-Za-z0-9/ ]#","",$thread_data['title']) . $snip . "";
 }
 
 echo "</title>";      /*html end*/    include("js.php");

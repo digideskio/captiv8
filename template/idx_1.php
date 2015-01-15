@@ -9,6 +9,18 @@
 // mysqli_query($db_main, "CREATE TABLE polls(post_id_root INT NOT NULL,question varchar(100), num_values INT NOT NULL, a1 varchar(100), a2 varchar(100), a3 varchar(100), a4 varchar(100), a5 varchar(100), a6 varchar(100), a7 varchar(100), a8 varchar(100), a9 varchar(100), a10 varchar(100), a11 varchar(100), a12 varchar(100), a13 varchar(100), a14 varchar(100), a15 varchar(100), a16 varchar(100), a17 varchar(100), a18 varchar(100), a19 varchar(100), a20 varchar(100))");
 //this is the index template
 
+/*
+
+Goals for today: January 14, 2015
+
+   Fix notifications system
+   Fix posting system   
+   nvm with the posting system then, never had problems apparently
+   Make people able to see replies on news feed
+   Incorporate reply/comment list into a template accesible by an object
+
+*/
+
 if(logged_in_check && index_page_check){   //make a new post panel(for threads)
  echo "<div id='content' class='contentbox'>".$nx['31']."</div>";
 echo "<form method='POST' action='index.php?direct=new_post&verify=". $_SESSION['temp_n'] ."' id='post_k'>

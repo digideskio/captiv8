@@ -19,7 +19,10 @@ if($("#notifs_bar .spacer a").next().is(":not('.note')")){
 
 if(data.unread < 1){
 
-}else{$("#notifs_bar .spacer a").after(" <span class='note'>("+data.unread+" new)</span>");  }}
+}else{$("#notifs_bar .spacer a").after(" <span class='note'>("+data.unread+" new)</span>");  
+$("title").prepend("("+data.unread+") ");
+
+}}
  
 
                                     i = 0;
