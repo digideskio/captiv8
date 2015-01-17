@@ -1,8 +1,10 @@
-<?php                              
+<?php  error_reporting(~E_STRICT);                           
 $db_main = mysqli_connect("localhost","root","","captiv8");      
 mysqli_set_charset($db_main,"ISO-8859-1");
 
 date_default_timezone_set('America/Chicago');
+
+  $allow_redirs = true;
 
 
 
@@ -38,38 +40,48 @@ $logged_dt = mysqli_fetch_assoc($logged_query);
 
  
 
-switch(isset($_GET['get_more'])){ //news_feed_php needs it
-case true:
+if(isset($_GET['get_more'])){ //news_feed_php needs it
+
 require_once("auxiliary.php");
 define('index_page_check', true);
-break;
-
-
-
-case false:
+}else{
 require_once("template/auxiliary.php");
+require_once("template/vars.php");
 define('index_page_check', preg_match("#index.php([\072]([0-9]){0,15})*$#", extraurl()));
-break;
 }
 
 define('dflt_date_f',"F j, Y, g:i A");
-define('checkin',mysqli_error($db_main));
-
-define('logged_in_check',(isset($_SESSION['login_q'])));
 
 
-switch(isset($_GET['more'])){
+define('logged_in_check',isset($_SESSION['login_q']));
 
-case false:
+
+if(!isset($_GET['get_more'])){
 
 class reply_format { //first time doing classes
 //hm
 //better clock in
-public function init($u,$n,$p,$a,$c,$k){
-global $_MONITORED,$_FILTERED,$db_main;
+public function show(&$array_name){  global $reply_wrap,$logged_dt;
 //get the reply template
-//mod options etc
-$u =  
+
+//going to load the reply template from vars.php
+//$array_name will be the array that's called from the for/while loop that'll be getting all the replies
+//you can find it at vars.php
+
+echo $reply_wrap[0]. "<h4><a href='index.php?profile=".$array_name['bywhom']."'>".$array_name['bywhom']."</a></h4>".$reply_wrap[1].$array_name['content']. " ". $reply_wrap[2] ." <a href='?thread_view=".$_GET['thread_view']."&comment=".$array_name['topic_hash'] ."'>". date(dflt_date_f, strtotime($array_name['stamptime'])) . $reply_wrap[3]; 
+
+if(isset($_SESSION['login_q']) && compare_dz($logged_dt['password'],$_SESSION['salt_q'])){
+echo $reply_wrap[4] . "alt='".$array_name['postid']."'>";
+
+echo "<a href='#' class='comment_opts rad comment_q-u' id='post_".$array_name['postid']."' name='post_".$array_name['postid']."'>Reply</a>";
+//admin rights, mod rights, and then user's rights to their own posts
+if($logged_dt['userid'] == 1){
+echo "<a href='#' class='comment_opts rad edit' id='edit_".$array_name['postid']."'>Edit</a>";
+}
+
+echo $reply_wrap[5];
+
+} echo $reply_wrap[6];
 }
 
 } 
@@ -158,13 +170,21 @@ $x = $chain;
 if(mysqli_num_rows($q_req) > 0 && $x > 0){
 while($q_dt = mysqli_fetch_assoc($q_req)) {
 
-$margins = ($special_select == "none") ? array("<div class='margin'>","</div>") : array("","");      
-echo "".$margins[0]."<div class='contentbox comment_box'><table><tr>
+$margins = ($special_select == "none") ? array("<div class='margin'>","</div>") : array("","");   
+
+   
+echo $margins[0];
+
+reply_format::show($q_dt);
+                                   /*
+echo "<div class='contentbox comment_box'><table><tr>
 <td class='user_info'><h4><a href='index.php?profile=".$q_dt['bywhom']."'>".$q_dt['bywhom']."</a></h4></td><td><p class='post_text'>".$q_dt['content']."
 <span class='side_info'>- Posted <a href='?thread_view=".$_GET['thread_view']."&comment=".$q_dt['topic_hash'] ."'>". date(dflt_date_f, strtotime($q_dt['stamptime'])) ."</a></span>
 </p>";
 if(isset($_SESSION['login_q'])){echo "<div class='opts_block' alt='".$q_dt['postid']."'>";echo "<a href='#' class='comment_opts rad comment_q-u' id='post_".$q_dt['postid']."' name='post_".$q_dt['postid']."'>Reply</a><a href='#' class='comment_opts rad edit' id='edit_".$q_dt['postid']."'>Edit</a>";echo "</div>";}
-echo "</td></tr></table></div>";       //I give up. wait
+echo "</td></tr></table></div>";  */    
+
+ //I give up. wait
 //recursive functions is what i'm missing. yesss never knew that
 //now we need to find the fastest way to get the subcomments
 //which is why i'm gonna make it recursive without changing anything
@@ -229,8 +249,6 @@ setcookie("limbooo[".$bm."]","a",time()-1);
 //mysqli_query($db_main, "ALTER TABLE polls ADD COLUMN(votes INT NOT NULL DEFAULT 0)");
 //mysqli_query($db_main, "CREATE TABLE friend_limbo(user1 INT NOT NULL,user2 INT NOT NULL, time DATETIME NOT NULL, fl_id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(fl_id))");
 //mysqli_query($db_main, "CREATE TABLE notifications(n_id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(n_id),content varchar(100) NOT NULL,url varchar(110) NOT NULL)");  
-
-break;
 
 
 }  

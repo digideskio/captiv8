@@ -8,6 +8,13 @@ return $snp;
 }
 $dir = "template/img/";  
 $error = "<div class='contentbox'> <h3>SQL error</h3><p>" .mysqli_error($db_main) . "</p></div>";
+
+
+
+
+function redir_process($url){ global $allow_redirs;
+if($allow_redirs == true){header($url);      }
+}
  
 
 function compare_dz($a, $b) {

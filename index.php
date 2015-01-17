@@ -20,7 +20,7 @@ nd2.php - everything inside <body>
 $y = mysqli_query($db_main, "CREATE TABLE posts(content MEDIUMTEXT,cnttype INT NOT NULL,msgtype char(20),forwhom INT,parent INT NOT NULL,postid INT NOT NULL AUTO_INCREMENT,PRIMARY KEY(postid),stamptime TIMESTAMP)");    if(!$y){echo mysqli_error($db_main);}   // 1 for normal post, 2 for vid, 3 for anything else?   as for parent, for comments it'll be numbers if it's an actual post then it'll be 0. That'll be reserved - forwhom is for PM's       */
 // it's needed for a bunch of things
 /*html header, etc*/
-require_once("template/vars.php"); // text template    
+  
 require_once("template/internal.php"); // form actions, database registering, etc cetera, also site configurations -- the main hub, I guess
 
 
@@ -38,7 +38,7 @@ require_once("template/nd2.php");
 
 
 // I'm gonna make an internal menu
-require_once("template/site_properties.php");
+require_once("template/admin_panel.php");
 
 echo "</body>";
 echo "</html>";     
@@ -48,5 +48,6 @@ clear_array($_SESSION, "error");
 
 
 if(isset($_SESSION['login_q']) && isset($_SESSION['salt_q'])){mysqli_free_result($logged_query);}  
+
 
 ?>

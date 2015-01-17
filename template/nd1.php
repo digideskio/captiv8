@@ -1,5 +1,5 @@
-<link rel="stylesheet" type="text/css" href="template/css.css">    
-
+<link rel="stylesheet" type="text/css" href="template/css.css">     <!--style-->
+<link rel="icon" type="image/png" href="template/img/icon.png"> 
 <?php
 
 

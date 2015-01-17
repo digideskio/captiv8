@@ -21,11 +21,10 @@ unset($_SESSION[$nkey]);
   }else{
   
 
-  header("Location:index.php?phase=2");
+  redir_process("Location:index.php?phase=2");
   } }
   
-  }else{
-  header("Location:index.php?phase=2");}
+  }
   if($_GET['phase'] == "2"){   //inquire for successful data entry messages  
   if(isset($_COOKIE['limbooo'][1])){ 
   setcookie("glimpse","yuo",time()+1);
@@ -34,17 +33,16 @@ unset($_SESSION[$nkey]);
   clear_array($_SESSION,"free_sess_");
   
   if($_SESSION['db_query'] == "posted content-anything"){
-  $latest = mysqli_query($db_main, "SELECT * FROM posts WHERE bywhom = '".$_MICRORFID['login_q']."' ORDER BY stamptime DESC");
+  $latest = mysqli_query($db_main, "SELECT * FROM posts WHERE bywhom = '".$_MONITORED['login_q']."' ORDER BY stamptime DESC") or die(mysqli_error($db_main));
   $actual = mysqli_fetch_assoc($latest);
   
-  $clasp_tip = ($actual['parent'] != 0) ? $actual['parent'] : $actual['postid'];   //check to see if it's a thread to refer for a notification
+  $clasp_tip = ($actual['parent'] !== 0) ? $actual['parent'] : $actual['postid'];   //check to see if it's a thread to refer for a notification
   
-  $parent_clasp = mysqli_query($db_main, "SELECT * FROM posts WHERE postid=$clasp_tip ORDER BY stamptime DESC"); $_SESSION['abc'] = mysqli_num_rows($parent_clasp); 
+  $parent_clasp = mysqli_query($db_main, "SELECT * FROM posts WHERE postid=$clasp_tip ORDER BY stamptime DESC") or die(mysqli_error($db_main)); $_SESSION['abc'] = mysqli_num_rows($parent_clasp); 
    $parent_call = mysqli_fetch_assoc($parent_clasp);
-  if(mysqli_num_rows($parent_clasp) > 0 && (($parent_call['bywhom'] != $_MONITORED['login_q']) || ($parent_call["bywhom"] == $_MONITORED['login_q'] && $parent_call["forwhom"] != "self"))){   
+  if(mysqli_num_rows($parent_clasp) > 0 && (($parent_call['bywhom'] != $_MONITORED['login_q']) || ($parent_call["bywhom"] == $_MONITORED['login_q'] && $parent_call["forwhom"] != "self"))){       echo "in! (1)<br>";
   //this is so messy.
-  
-      //make sure you don't get replies in comments to your own replies or your own snowglobe
+  //make sure you don't get replies in comments to your own replies or your own snowglobe
   
   
   
@@ -60,26 +58,25 @@ unset($_SESSION[$nkey]);
   if(!$notif_add){$_SESSION['sql_error'] = mysqli_error($db_main);} 
   }
   mysqli_query($db_main,"INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MICRORFID[login_q]',CURRENT_TIMESTAMP,'$actual[postid]',1)");
-  if($actual['cnttype'] == "1"){    mysqli_free_result($parent_clasp);
-  mysqli_free_result($latest); 
-header("Location:index.php?thread_view=". $actual['thread_nick'] . "_" . $actual['topic_hash']);
+  if($actual['cnttype'] == "1"){  $url = "Location:index.php?thread_view=". $actual['thread_nick'] . "_" . $actual['topic_hash'];  mysqli_free_result($parent_clasp);
+  mysqli_free_result($latest);   echo "in! (2)<br>";
+redir_process($url);
   }
   
   if($actual['cnttype'] == "2"){
-  $tree_roots = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$actual[thread_id]' ORDER BY stamptime DESC");
-  $piece = mysqli_fetch_assoc($tree_roots);   mysqli_free_result($parent_clasp);
+  $tree_roots = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$actual[thread_id]' ORDER BY stamptime DESC");$piece = mysqli_fetch_assoc($tree_roots); 
+   $url ="Location:index.php?comment=".$piece['topic_hash'];
+    mysqli_free_result($parent_clasp);
   mysqli_free_result($latest); 
 
-      mysqli_free_result($tree_roots);
- header("Location:index.php?thread_view=".$piece['thread_nick']."_".$piece['topic_hash']);
+      mysqli_free_result($tree_roots);      echo "in! (2)<br>";
+ redir_process($url);
 
   }
-  
-     mysqli_free_result($parent_clasp);
-  mysqli_free_result($latest); 
+     echo $url;
   }
   unset($_SESSION['db_query']);
 
   }  
-  }else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}       }
+  }else{$_SESSION['error' .rand(56,1515)] = extraurl() . " - failed cookie"; redir_process("Location:index.php"); }       }
 ?>

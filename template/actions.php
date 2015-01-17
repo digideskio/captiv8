@@ -37,7 +37,7 @@ $_SESSION['login_q'] = $_SPIN['usernorm'];
 $_SESSION['salt_q'] = $mn['password'];
 $_SESSION['db_query'] = "user login";
 setcookie("limbooo[0]", "k", time()+1);
-header("Location: index.php?phase=2"); 
+/*  */ header("Location: index.php?phase=2"); /*  */ 
 }else{
 
 if($mas1){ //login attempts for valid usernames     
@@ -59,7 +59,7 @@ setcookie("inc_ombination", "Incorrect user/password combination", time()+1);
 
 }else{setcookie("inc_ombination", "This account is temporarily locked. Please wait no more than an hour to log in again.", time()+1); 
 
-header("Location: index.php"); 
+/*  */ header("Location: index.php"); /*  */ 
 $_SESSION['error' .rand(56,1515)] = extraurl();      //Don't want to get it further than that. Such lazy
 }
 
@@ -79,15 +79,19 @@ if(!isset($snowglobes)){$snowglobes = $matched[$key];}else{$snowglobes = $snowgl
 }
 }
 
+
 //snowglobe settings are by default for each individual snowglobe's setting, snowglobe permissions are custom and set by its admin or moderators.
 //has to be a valid post. At least one snowglobe, and not match the default text or be empty. If it's a reply, i'll set it accordingly
 //access_type under snowglobe permissions will be matched with id under snowglobe settings 
 
 if(isset($snowglobes) || isset($_SPIN['parent_comment'])){  //check to see if it's either a new thread or a comment
 // $pass_check = mysqli_query($db_main, "SELECT * FROM ")
+$_SPIN['tcha1'] = isset($_SPIN['tcha1']) ? $_SPIN['tcha1'] : "";
 
-$thread_nick = mysqli_real_escape_string($db_main,substr(preg_replace("#[^-A-Za-z0-9]#","_",$_DATA['tcha1']), 0, 50));
+$thread_nick = mysqli_real_escape_string($db_main,substr(preg_replace("#[^-A-Za-z0-9]#","_",$_SPIN['tcha1']), 0, 50));
 $topic_hash = mysqli_real_escape_string($db_main,substr(sha1(microtime()),0,10));
+
+$_SESSION['db_query'] = "posted content-anything"; setcookie("limbooo[0]", "k", time()+1);  
 
 if(isset($snowglobes)){//if posting a new thread
 //check sg_settings first
@@ -99,14 +103,14 @@ if($value == "1"){
   
  //users posting into their own snowglobe
 
-if((preg_match("#^(.){3,150}$#", $_SPIN['tcha1']) === 0) || strlen($_SPIN['tcha2']) > 65335 || ($_POST['tcha1'] == $nx['17']) || $_POST['tcha2'] == $nx['18']){header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
+if((preg_match("#^(.){3,150}$#", $_SPIN['tcha1']) === 0) || strlen($_SPIN['tcha2']) > 65335 || ($_POST['tcha1'] == $nx['17']) || $_POST['tcha2'] == $nx['18']){ $_SESSION['error' .rand(56,1515)] = extraurl();/*  */ header("Location:index.php"); /*  */  }
 
 
   
-$post_submission = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,parent,postid,stamptime,bywhom,title,thread_nick,topic_hash) VALUES('$_DATA[tcha2]','1','self','0','0',CURRENT_TIMESTAMP,'$_MICRORFID[login_q]','$_DATA[tcha1]','$thread_nick','$topic_hash')");      if($post_submission){
+$post_submission = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,parent,postid,stamptime,bywhom,title,thread_nick,topic_hash) VALUES('$_DATA[tcha2]','1','self','0','0',CURRENT_TIMESTAMP,'$_MONITORED[login_q]','$_DATA[tcha1]','$thread_nick','$topic_hash')");      if($post_submission){
 
 if(isset($_SPIN['poll_question'],$_SPIN['choice_addition'],$_SPIN['choice_selection'])){    //check if a poll was set
-$topic_search = mysqli_query($db_main, "SELECT * FROM posts WHERE bywhom='$_MICRORFID[login_q]' ORDER BY stamptime DESC LIMIT 0,2");
+$topic_search = mysqli_query($db_main, "SELECT * FROM posts WHERE bywhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,2");
 $search_dt = mysqli_fetch_assoc($topic_search);
 mysqli_query($db_main, "INSERT INTO polls(post_id_root,value,define_set) VALUES($search_dt[postid],'$_DATA[poll_question]','question')");
 
@@ -122,46 +126,45 @@ mysqli_query($db_main,"INSERT INTO polls(post_id_root,value,define_set) VALUES($
 }                   
 
        
-         }else{    echo $error;  }     
+         }else{    echo mysqli_error($db_main);  }     
 }
 
-}  $_SESSION['db_query'] = "posted content-anything"; setcookie("limbooo[0]", "k", time()+1);  
+}  
 
 }      
 
 if(isset($_SPIN['parent_comment'])){
 $tree_roots = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$_SPIN[parent_comment]'");
 $piece = mysqli_fetch_assoc($tree_roots);      //get parent of post. Just to recheck, ya know. That's right! For the settings! My goodness I work like a turtle.
-if($piece['settings'] > 4){header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();mysqli_free_result($tree_roots);}
+if($piece['settings'] > 4){  $_SESSION['error' .rand(56,1515)] = extraurl();mysqli_free_result($tree_roots);/*  */ header("Location:index.php"); /*  */ }
 
-$post_async = mysqli_query($sync, "SELECT * FROM posts WHERE bywhom='$MICRORFID[login_q]' ORDER BY stamptime DESC LIMIT 0,10");
+$post_async = mysqli_query($sync, "SELECT * FROM posts WHERE bywhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,10");
 $async_dt = mysqli_fetch_assoc($post_async); //get latest post for whatever reference you must.
 
 
 $post_nip = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,parent,postid,stamptime,bywhom,title,thread_nick,topic_hash,thread_id) 
 VALUES('$_DATA[tcha2]','2','n-a','$piece[postid]','0',CURRENT_TIMESTAMP,'$_MONITORED[login_q]','$_DATA[tcha1]','$thread_nick','$topic_hash','$_DATA[thread_id]');");
-if($post_nip){header("Location:index.php?phase=2");
-$_SESSION['db_query'] = "posted content-anything";
-setcookie("limbooo[0]", "k", time()+1);
-mysqli_free_result($tree_roots);
+if($post_nip){mysqli_free_result($tree_roots);header("Location:index.php?phase=2"); /*  */ 
+
+
 }else{
 
 echo $error; 
 
 }
 } 
-header("Location:index.php?phase=2"); 
-}else{
-header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();
+ /*  */ header("Location:index.php?phase=2"); /*  */  
+}else{                                 $_SESSION['error' .rand(56,1515)] = extraurl();
+ /*  */ header("Location:index.php"); /*  */ 
 }
 
-}else{
-header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();
+}else{                                  $_SESSION['error' .rand(56,1515)] = extraurl();
+ /*  */ header("Location:index.php"); /*  */  
 
 }
 
-}else{if(isset($_GET['verify']) && $_GET['verify'] !== $_SESSION['temp_n']){
-header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();
+}else{if(isset($_GET['verify']) && $_GET['verify'] !== $_SESSION['temp_n']){ $_SESSION['error' .rand(56,1515)] = extraurl();
+ /*  */ header("Location:index.php"); /*  */  
 }}
 
 //if not, then it's just direct
@@ -226,7 +229,7 @@ setcookie("limbooo[0]", "Successfully registered.", time()+1);
 setcookie("limbooo[1]", "You have been successfully registered as a user.", time()+1);
 $_SESSION['db_query'] = "user registration";
 
-header("Location: index.php?phase=1");
+ /*  */ header("Location: index.php?phase=1"); /*  */ 
 
 }else{echo "<div class='notice'><h3>Notice</h3><p>Please correct some incorrect data.</p></div>";}
 
@@ -255,7 +258,7 @@ echo '
 
 </td>';
 echo '</tr></table></form></div></span>';     
-}
+}}
 
 /*if($_SERVER['REQUEST_METHOD'] !== "POST"){   //session set clearing for post session variables                
 //the cookie will be set on a successful data entry, and then I will rightfully redirect the page to a dummy page
@@ -270,7 +273,7 @@ unset($_SESSION[$nkey]);
 } } 
 unset($_SESSION['db_query']);
          */             
-
+               
                     /*  username2 = nolvoritea       1
 pwrd2 = sangra99asdasasda                     2
 email2 = askdajskdaksdka@asdaKASDKA.CASK        3
@@ -280,5 +283,5 @@ month2 = 12                                6
 year2 = 1998                               7
 admin_notifs = on                           8*/
 
-}  
+    
                                                                                                                 ?>

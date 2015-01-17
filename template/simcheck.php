@@ -1,7 +1,7 @@
 <?php              //AJAX calls page
 //this is the hotline center, bitchessssss     \
 
-session_start();
+session_start();        
 
 $db_main = mysqli_connect("localhost","root","","captiv8");  
 
@@ -74,7 +74,7 @@ break;
 
 case "school_search":   
 
-$select_school = mysqli_query($db_main,"SELECT * FROM school WHERE name LIKE='$_FILTERED[search_q]' and type='$_FILTERED[criteria]'");
+$select_school = mysqli_query($db_main,"SELECT * FROM school WHERE name LIKE '%$_FILTERED[search_q]%'");
 
 if($select_school && mysqli_num_rows($select_school) > 0){} else{
 
@@ -143,10 +143,10 @@ $properties = $strings;
 }
 if($school_level){
              switch($school_level){
-                   case 1:
+                   case "1":
                      $properties['ed_level'] = "High School";  
                    break;
-                   case 2:
+                   case "2":
                      $properties['ed_level'] = "College";  
                    break;
              }

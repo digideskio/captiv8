@@ -134,4 +134,11 @@ $dobordate = "<select name='day2' class='largeform'><option value='0'>--</option
   "
 
   ;
+$reply_wrap = ["<div class='contentbox comment_box'><table><tr> <td class='user_info'>"
+,"</td><td><p class='post_text'> "
+,"<span class='side_info'>- Posted" 
+, "</a></span> </p>"
+, "<div class='opts_block'" 
+,  "</div>"
+, "</td></tr></table></div>"];
 ?>                                                                              

@@ -96,12 +96,15 @@ echo "<div class='contentbox notice_msg'>There are no replies in this topic yet.
  
 if(!isset($_GET['comment'])){while($comment_loop = mysqli_fetch_assoc($snipe8)){$sync_25 = mysqli_query($db_main, "SELECT * FROM posts WHERE parent='$comment_loop[parent]' AND thread_id='$thread_data[postid]' ORDER BY stamptime DESC LIMIT 0,25");
 
-echo "<div class='contentbox comment_box arch_1'><table><tr>
+
+ reply_format::show($comment_loop);
+/*echo "<div class='contentbox comment_box arch_1'><table><tr>
 <td class='user_info'><h4><a href='index.php?profile=".$comment_loop['bywhom']."'>".$comment_loop['bywhom']."</a></h4></td><td><p class='post_text'>".$comment_loop['content']."
 <span class='side_info'>- Posted <a href='?thread_view=".$_GET['thread_view']."&comment=".$comment_loop['topic_hash'] ."'>". date(dflt_date_f, strtotime($comment_loop['stamptime'])) ."</a></span>
 </p>";                                                                                                              
 if(isset($_SESSION['login_q'])){echo "<div class='opts_block' alt='".$comment_loop['postid']."'>";echo "<a href='#' class='comment_opts rad comment_q-u' name='post_".$comment_loop['postid']."' id='post_".$comment_loop['postid']."'>Reply</a><a href='#' class='comment_opts rad edit' id='edit_".$comment_loop['postid']."'>Edit</a>";echo "</div>";}
-echo"</td></tr></table>";    echo "</div>";
+echo"</td></tr></table>";    echo "</div>";      */
+
 //second and third and fourth level of comments and so on
 
 
@@ -126,7 +129,9 @@ if(isset($_SESSION['login_q'])){echo "<div class='opts_block' alt='".$comment_lo
 echo "</td></tr></table>";
 //second and third and fourth level of comments and so on
 
-echo "</div>";      //this is soooooo tacky
+echo "</div>";      
+
+//this is soooooo tacky
 
 if(mysqli_num_rows($sync_25) > 0){//function get_posts($pid_call,$tid_call = "1",$limit = "25",$chain = "5")
 get_posts($comment_loop['postid'],$thread_data['postid']);
@@ -154,20 +159,18 @@ if($tell_2 !== "dead" && $_SESSION['count'] > 0){
 if($tell_2['parent'] !== $thread_data['postid']){
 show_parents($tell_2['postid'],$tell_2['parent'],$_SESSION['count'] - 1);        $margin_set = (is_array($tell_1)) ? "<div class='margin'>" : "";
 echo $margin_set;
-} echo "<div class='contentbox comment_box'><table><tr>
-<td class='user_info'><h4><a href='index.php?profile=".$tell_2['bywhom']."'>".$tell_2['bywhom']."</a></h4></td><td><p class='post_text'>".$tell_2['content']."
-<span class='side_info'>- Posted <a href='?thread_view=".$_GET['thread_view']."&comment=".$tell_2['topic_hash'] ."'>". date(dflt_date_f, strtotime($tell_2['stamptime'])) ."</a></span>
-</p>";
-if(isset($_SESSION['login_q'])){echo "<div class='opts_block' alt='".$tell_2['postid']."'>";echo "<a href='#' class='comment_opts rad comment_q-u' id='post_".$tell_2['postid']."' name='post_".$tell_2['postid']."'>Reply</a><a href='#' class='comment_opts rad edit' id='edit_".$tell_2['postid']."'>Edit</a>";echo "</div>";}
-echo "</td></tr></table></div>"; }          $margin_set = (is_array($tell_2)) ? "<div class='margin'>" : "";
+}
+
+ reply_format::show($tell_2); 
+
+} 
+
+         $margin_set = (is_array($tell_2)) ? "<div class='margin'>" : "";
 echo $margin_set;
 
-echo "<div class='contentbox comment_box' alt=''><table><tr>
-<td class='user_info'><h4><a href='index.php?profile=".$tell_1['bywhom']."'>".$tell_1['bywhom']."</a></h4></td><td><p class='post_text'>".$tell_1['content']."
-<span class='side_info'>- Posted <a href='?thread_view=".$_GET['thread_view']."&comment=".$tell_1['topic_hash'] ."'>". date(dflt_date_f, strtotime($tell_1['stamptime'])) ."</a></span>
-</p>";     
-if(isset($_SESSION['login_q'])){echo "<div class='opts_block' alt='".$tell_1['postid']."'>";echo "<a href='#' class='comment_opts rad comment_q-u' id='post_".$tell_1['postid']."' name='post_".$tell_1['postid']."'>Reply</a><a href='#' class='comment_opts rad edit' id='edit_".$tell_1['postid']."'>Edit</a>";echo "</div>";}
-echo "</td></tr></table></div>";           
+ reply_format::show($tell_1); 
+
+        
 mysqli_free_result($show_2);
 }
 mysqli_free_result($show_1);
@@ -176,15 +179,9 @@ mysqli_free_result($show_1);
 }
 $_SESSION['count'] = "5";   $_SESSION['incr'] = "0";
 show_parents($comment_loop['postid'],$comment_loop['parent'],$_SESSION['count']);
- echo "<div class='margin'><div class='contentbox comment_box arch_1 selected'><table><tr>
-<td class='user_info'><h4><a href='index.php?profile=".$comment_loop['bywhom']."'>".$comment_loop['bywhom']."</a></h4></td><td><p class='post_text'>".$comment_loop['content']."
-<span class='side_info'>- Posted <a href='?thread_view=".$_GET['thread_view']."&comment=".$comment_loop['topic_hash'] ."'>". date(dflt_date_f, strtotime($comment_loop['stamptime'])) ."</a></span>
-</p>";
-if(isset($_SESSION['login_q'])){echo "<div class='opts_block' alt='".$comment_loop['postid']."'>";echo "<a href='#' class='comment_opts rad comment_q-u' id='post_".$comment_loop['postid']."' name='post_".$comment_loop['postid']."'>Reply</a><a href='#' class='comment_opts rad edit' id='edit_".$comment_loop['postid']."'>Edit</a>";echo "</div>";}
-echo "</td></tr></table>";
-//second and third and fourth level of comments and so on
+  reply_format::show($comment_loop);
 
-echo "</div></div>";      //this is soooooo tacky
+echo "</div>";      //this is soooooo tacky
 echo "<div class='margin'>";
 get_posts($comment_loop['postid'],$thread_data['postid']);        echo "</div>";
 for($i=0; $i <= $_SESSION['incr'];$i++){echo "</div>";}
