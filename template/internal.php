@@ -33,7 +33,7 @@ $logged_query = mysqli_query($db_main,"SELECT * FROM users WHERE username='$_SES
 $logged_dt = mysqli_fetch_assoc($logged_query);
 }
 
-    if(!isset($_GET['verify'])){             $datfunk = intval(microtime(true)) - mt_rand(1,microtime(true)) * mt_rand(-1,1);
+    if(!isset($_GET['verify'])){             $datfunk = microtime();
  $_SESSION['temp_n'] = substr(sha1(md5(base64_encode($datfunk))),0,25);
  }
 

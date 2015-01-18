@@ -1,5 +1,5 @@
 <?php   if(isset($_GET['phase'])){
-if(isset($_COOKIE['limbooo'][0])){
+if(isset($_SESSION['db_query'])){  //$_COOKIE['limbooo'] was being buggy, or there was something I wasnt doring right
   if($_GET['phase'] == "1"){
   if($_SESSION['db_query'] = "user registration"){
   
@@ -64,8 +64,7 @@ redir_process($url);
   }
   
   if($actual['cnttype'] == "2"){
-  $tree_roots = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$actual[thread_id]' ORDER BY stamptime DESC");$piece = mysqli_fetch_assoc($tree_roots); 
-   $url ="Location:index.php?comment=".$piece['topic_hash'];
+   $url ="Location:index.php?comment=".$actual['topic_hash'];
     mysqli_free_result($parent_clasp);
   mysqli_free_result($latest); 
 

@@ -22,9 +22,7 @@ if(data.unread < 1){
 }else{$("#notifs_bar .spacer a").after(" <span class='note'>("+data.unread+" new)</span>");  
 $("title").prepend("("+data.unread+") ");
 
-}
-$("#notifications .spacer").empty();
-}else{}
+}}
  
 
                                     i = 0;
@@ -32,18 +30,12 @@ $.each(data.notifs,function(i,v){
 
 i++;
 j = data.notifs.length - i;      //reverse it
-//because there's no decremental index looping for .each()
-
-//get the most recent post's id
-k = 0;
-k = (data.notifs[j].length == j + 1) ? data.notifs[j].stamptime : k;
-
+//because there's no negative incremental index looping for .each()
 
 if($(".notifs").length != data.notifs.length){ 
 $("#notifications .spacer").prepend("<div alt='"+ data.notifs[j]['url'] +"' class='notifs'>"+data.notifs[j]['content']+"<br><em>"+data.notifs[j]['stamptime']+"</em></div>");
 //$("<a href='"+ data.notifs[i]['url'] +"'><div class='notifs'>Some arbitrary content "+data.notifs[i]['content']+"</div></a>").prependTo("#notifications .spacer");
 }
-m = data.notifs[j].stamptime;
 });
 
 
