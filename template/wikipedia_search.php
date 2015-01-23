@@ -90,11 +90,12 @@
          $properties['numberofstudents'] = isset($properties['numberofstudents']) ? $properties['numberofstudents'] : "";
          $counts = isset($properties['students']) ? $properties['students'] : $properties['numberofstudents'];
          $student_count = (isset($properties['enrollment'])) ? $properties['enrollment'] : $counts;
-         $enrolled = preg_replace("#^(([0-9]+[,]?)+)(.{0,})$#","$1",$student_count);
+     
         $properties['link'] = $urlencode;  //link for later reference  
           $properties['name'] = $page_title;
          $toformat = json_encode($properties);
-  echo "<div class='school_shell'><a href='select-school' class='prompt school_box rad' datamine='$toformat'><h3>".$page_title." <span>";
+  echo "<div class='school_shell'><a href='select-school' class='prompt school_box rad' datamine='$toformat'><h3>".$page_title." <span>";      
+      $enrolled = preg_replace("#^(([0-9]+[,]?)+)(.{0,})$#","$1",$student_count);
         echo "<em>".$enrolled."</em> enrolled as of last census";
       echo (isset($properties['established'])) ? " &middot; Established " . $properties['established'] : "";
   

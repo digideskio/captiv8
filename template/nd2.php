@@ -150,7 +150,7 @@ require_once("template/news_feed.php");
 //$_COOKIE['limbo'] has the welcome message
 
 
-if(isset($_COOKIE['glimpse'])){
+if(isset($_COOKIE['limbooo'][1])){
 echo "<div class='contentbox'><h3>". $_COOKIE['limbooo'][0] ."</h3><p>". $_COOKIE['limbooo'][1] ."</p></div>";
 
 setcookie("glimpse","asd",time()-1);

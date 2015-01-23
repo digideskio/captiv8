@@ -179,12 +179,12 @@ mysqli_free_result($show_1);
 }
 $_SESSION['count'] = "5";   $_SESSION['incr'] = "0";
 show_parents($comment_loop['postid'],$comment_loop['parent'],$_SESSION['count']);
-  reply_format::show($comment_loop);
 
-echo "</div>";      //this is soooooo tacky
-echo "<div class='margin'>";
-get_posts($comment_loop['postid'],$thread_data['postid']);        echo "</div>";
-for($i=0; $i <= $_SESSION['incr'];$i++){echo "</div>";}
+
+//echo "</div>";      //this is soooooo tacky
+echo "<div class='margin'>";     reply_format::show($comment_loop); 
+get_posts($comment_loop['postid'],$thread_data['postid']);       
+
 }
 
 }

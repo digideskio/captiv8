@@ -1,4 +1,8 @@
-<?php  error_reporting(~E_STRICT);                           
+<?php  error_reporting(~E_STRICT);      
+
+//I have no idea why I still don't want to finish the school registration. I mean there's nothing complicated about it, i've already done similar functions
+
+                     
 $db_main = mysqli_connect("localhost","root","","captiv8");      
 mysqli_set_charset($db_main,"ISO-8859-1");
 
@@ -71,7 +75,7 @@ public function show(&$array_name){  global $reply_wrap,$logged_dt;
 echo $reply_wrap[0]. "<h4><a href='index.php?profile=".$array_name['bywhom']."'>".$array_name['bywhom']."</a></h4>".$reply_wrap[1].$array_name['content']. " ". $reply_wrap[2] ." <a href='?thread_view=".$_GET['thread_view']."&comment=".$array_name['topic_hash'] ."'>". date(dflt_date_f, strtotime($array_name['stamptime'])) . $reply_wrap[3]; 
 
 if(isset($_SESSION['login_q']) && compare_dz($logged_dt['password'],$_SESSION['salt_q'])){
-echo $reply_wrap[4] . "alt='".$array_name['postid']."'>";
+echo $reply_wrap[4] . " alt='".$array_name['postid']."'>";
 
 echo "<a href='#' class='comment_opts rad comment_q-u' id='post_".$array_name['postid']."' name='post_".$array_name['postid']."'>Reply</a>";
 //admin rights, mod rights, and then user's rights to their own posts
@@ -129,6 +133,12 @@ $call_last_activity = $activity_funct[$mo][0][1];
 mysqli_query($db_main, "UPDATE users SET last_actvity='$call_last_activity', last_active_at=now() WHERE username='$query_key[username]'");
 }        */
    //this should help for search engines
+   
+                                                  //first is the entire URL, second is the folder that contains the file as displayed in the server + the URL/server name.
+$full_url = [$_SERVER['PHP_SELF'],preg_replace("#(.+)[/][^/]+$#","$1",$_SERVER['PHP_SELF'])];   
+   
+   
+   
 if(!isset($_SESSION['db_query'])){
    foreach($_SESSION as $nkey => $nvalue){
    if(preg_match("#^(free[_]sess[_])#", $nkey)){

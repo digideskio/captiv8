@@ -72,7 +72,8 @@ $vote = "yes";
 $que_posts[3] = mysqli_query($db_main, "SELECT * FROM polls where post_id_root='$que_own[postid]' ORDER by (CASE 'define_set' WHEN 'question' THEN 1 WHEN 'choice_selection' THEN 2 WHEN 'choice_addition' THEN 3 WHEN 'poll_choice' THEN 4 ELSE 25 END) DESC");      //check to see if it has a poll, also have the poll questions be last
 $select_class[0] = ($vote == "yes" && isset($que_posts[2]) > 0) ? "selected" : "";
 $select_class[1] = ($vote == "no" && isset($que_posts[2]) > 0) ? "selected" : ""; 
-$content_blur = preg_match("#^[ ]+$#",$que_own['content']) ? "" : "<p>".$que_own['content'] ."<span class='bywhom'> (Posted in your own snowglobe)</span></p>";
+$content_blur = preg_match("#^[ ]+$#",$que_own['content']) ? false : "<p>".$que_own['content'] ;
+$zing = ($content_blur == false) ? "" : "</p>";
 $align_blocks = preg_match("#^[ ]+$#",$que_own['content']) ? " valign='middle'" : "";
 echo "<div class='contentbox index_post' alt='".$que_own['postid']."'><table><tr><td width='1%' class='left_side'><strong><a href='index.php?profile=".$que_own['bywhom'] ."'>".$que_own['bywhom'] ."</a></strong></td>
 <td class='content'$align_blocks>";
@@ -87,11 +88,11 @@ echo"<span class='spoiler'>".$content_blur."</span>";
 }
 }else{
 $wraps = (empty($content_blur)) ? ["<strong>","</strong>"] : ["<div class='r_title'>","</div>"];
-echo $wraps[0] .$que_own['title'] . $wraps[1].$content_blur .""; }
-
+echo $wraps[0] .$que_own['title'] . $wraps[1].$content_blur; } echo (isset($_SESSION['login_q']) && $que_own['forwhom'] == "self" && $que_own['bywhom'] == $_MONITORED['login_q']) ? "<span class='bywhom'> (Posted in your own snowglobe)</span>" : "";
+echo $zing;
 //POLLS
 
-
+ 
 echo "</td>";
 if(mysqli_num_rows($que_posts[3]) > 0){echo "<td class='poll_choosy'>";  $z = 0; $poll_dt = [];         $poll_choice_zen = [];      $total = 0;
 while($poll_extract = mysqli_fetch_assoc($que_posts[3])){

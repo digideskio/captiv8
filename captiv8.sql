@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 13, 2015 at 01:40 AM
+-- Generation Time: Jan 23, 2015 at 08:00 AM
 -- Server version: 5.6.12-log
 -- PHP Version: 5.4.16
 
@@ -30,16 +30,21 @@ USE `captiv8`;
 
 CREATE TABLE IF NOT EXISTS `education` (
   `e_id` int(11) NOT NULL AUTO_INCREMENT,
-  `school_name` varchar(60) NOT NULL,
-  `wikipedia_link` text NOT NULL,
-  `degree` text NOT NULL,
-  `started` date DEFAULT NULL,
-  `finished` date DEFAULT NULL,
-  `is_current` int(11) NOT NULL,
+  `school_name` text NOT NULL,
+  `degree` text,
+  `started` text,
+  `finished` text,
+  `is_current` text NOT NULL,
   `forwhom` varchar(25) NOT NULL,
-  `ed_level` varchar(30) NOT NULL,
   PRIMARY KEY (`e_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+
+--
+-- Dumping data for table `education`
+--
+
+INSERT INTO `education` (`e_id`, `school_name`, `degree`, `started`, `finished`, `is_current`, `forwhom`) VALUES
+(1, 'Nettleton High School (Arkansas)', NULL, '2012', '2014', 'true', 'nolvorite');
 
 -- --------------------------------------------------------
 
@@ -69,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   `stamptime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`n_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=71 ;
 
 --
 -- Dumping data for table `notifications`
@@ -91,7 +96,61 @@ INSERT INTO `notifications` (`n_id`, `content`, `url`, `towhom`, `stamptime`, `s
 (13, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your comment: And for legitimacy...', 'index.php?comment=5da50d3f9f', 'nolvorite', '2014-12-28 16:59:11', 1),
 (14, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your comment: And for legitimacy...', 'index.php?comment=a56328b3b9', 'nolvorite', '2014-12-28 17:00:51', 1),
 (15, '<a href=''index.php?profile=nolvorite''>nolvorite</a> replied to your comment: Again.', 'index.php?comment=6292754060', 'nolvorite', '2014-12-28 18:27:20', 1),
-(16, '<span>nerd</span> replied to your comment: And for legitimacy...', 'index.php?comment=6a05952fa0', 'nolvorite', '2015-01-03 12:49:08', 1);
+(16, '<span>nerd</span> replied to your comment: And for legitimacy...', 'index.php?comment=6a05952fa0', 'nolvorite', '2015-01-03 12:49:08', 1),
+(17, '<span>nerd</span> replied to your comment: And for legitimacy...', 'index.php?comment=6a05952fa0', 'nolvorite', '2015-01-13 16:39:57', 1),
+(18, '<span>nerd</span> replied to your comment: And for legitimacy...', 'index.php?comment=6a05952fa0', 'nolvorite', '2015-01-13 16:40:44', 1),
+(19, '<span>nolvorite</span> replied to your thread: ', 'index.php?thread_view=ayy_lmao_195cebf849', 'nolvorite', '2015-01-14 16:44:52', 1),
+(20, '<span>nerd</span> replied to your thread: ', 'index.php?thread_view=Try_posting_maybe__5848a6eca2', 'nerd', '2015-01-14 16:50:00', 1),
+(21, '<span>nolvorite</span> replied to your thread: ', 'index.php?comment=780864e2e5', 'nerd', '2015-01-14 22:17:03', 1),
+(22, '<span>nerd</span> replied to your thread: ', 'index.php?comment=4a08768802', 'nolvorite', '2015-01-14 22:40:25', 1),
+(23, '<span>nolvorite</span> replied to your thread: ', 'index.php?comment=f4f3a6275f', 'nerd', '2015-01-14 22:49:44', 1),
+(24, '<span>nolvorite</span> replied to your thread: ', 'index.php?comment=817d6531cc', 'nerd', '2015-01-14 22:50:55', 1),
+(25, '<span>nolvorite</span> replied to your thread: ', 'index.php?comment=c1a46e0b82', 'nerd', '2015-01-14 22:51:32', 1),
+(26, '<span>nolvorite</span> replied to your thread: ', 'index.php?comment=c1a46e0b82', 'nerd', '2015-01-14 22:54:24', 1),
+(27, '<span>nolvorite</span> replied to your thread: ', 'index.php?comment=f8405d7ed0', 'nerd', '2015-01-14 22:59:18', 1),
+(28, '<span>nolvorite</span> replied to your thread: ', 'index.php?comment=060517c759', 'nerd', '2015-01-14 23:09:32', 1),
+(29, '<span>nolvorite</span> replied to your thread: ', 'index.php?comment=ddc7ee2624', 'nerd', '2015-01-14 23:09:57', 1),
+(30, '<span>nolvorite</span> replied to your thread: Testing for roots', 'index.php?comment=449c7e90d8', 'nerd', '2015-01-14 23:15:22', 1),
+(31, '<span>nolvorite</span> replied to your thread: Testing for roots', 'index.php?comment=b9d4c32cf2', 'nerd', '2015-01-14 23:16:54', 1),
+(32, '<span>nolvorite</span> replied to your thread: Testing for roots', 'index.php?comment=bd09eb3222', 'nerd', '2015-01-14 23:17:56', 1),
+(33, '<span>nolvorite</span> replied to your thread: Testing for roots', 'index.php?comment=bd09eb3222', 'nerd', '2015-01-15 01:00:45', 1),
+(34, '<span>nolvorite</span> replied to your thread: Testing for roots', 'index.php?comment=bd09eb3222', 'nerd', '2015-01-15 01:01:27', 1),
+(35, '<span>nolvorite</span> replied to your thread: Testing for roots', 'index.php?comment=bd09eb3222', 'nerd', '2015-01-15 01:02:02', 1),
+(36, '<span>nolvorite</span> replied to your thread: Testing for roots', 'index.php?comment=bd09eb3222', 'nerd', '2015-01-15 01:03:22', 1),
+(37, '<span>nolvorite</span> replied to your thread: This is an oddity.', 'index.php?comment=2bf8e7b8dc', 'nerd', '2015-01-16 19:52:23', 1),
+(38, '<span>nolvorite</span> replied to your thread: This is an oddity.', 'index.php?comment=f71c8ee8b2', 'nerd', '2015-01-16 20:17:07', 1),
+(39, '<span>nolvorite</span> replied to your thread: This is an oddity.', 'index.php?comment=f165cf5fbd', 'nerd', '2015-01-16 20:43:34', 1),
+(40, '<span>nolvorite</span> replied to your thread: This is an oddity.', 'index.php?comment=c6b9fce8dd', 'nerd', '2015-01-16 20:46:21', 1),
+(41, '<span>nerd</span> replied to your thread: Test comments', 'index.php?comment=ee8ef680fd', 'nolvorite', '2015-01-16 22:00:27', 1),
+(42, '<span>nerd</span> replied to your thread: Test comments', 'index.php?comment=5fe700ab5d', 'nolvorite', '2015-01-16 22:05:08', 1),
+(43, '<span>nerd</span> replied to your thread: Test comments', 'index.php?comment=b89293fc95', 'nolvorite', '2015-01-16 22:08:02', 1),
+(44, '<span>nolvorite</span> replied to your thread: Testing', 'index.php?comment=7c7058d976', 'nerd', '2015-01-16 23:12:15', 1),
+(45, '<span>nolvorite</span> replied to your thread: Testing', 'index.php?comment=25a311e103', 'nerd', '2015-01-16 23:12:58', 1),
+(46, '<span>nolvorite</span> replied to your thread: Testing', 'index.php?comment=257132d8d0', 'nerd', '2015-01-16 23:21:27', 1),
+(47, '<span>nolvorite</span> replied to your thread: Testing', 'index.php?comment=ada8c3b239', 'nerd', '2015-01-16 23:23:15', 1),
+(48, '<span>nolvorite</span> replied to your thread: Testing', 'index.php?comment=0285d324b6', 'nerd', '2015-01-16 23:34:04', 1),
+(49, '<span>nolvorite</span> replied to your thread: Testing', 'index.php?comment=f10e239aa9', 'nerd', '2015-01-16 23:37:24', 1),
+(50, '<span>nolvorite</span> replied to your thread: Testing', 'index.php?comment=a7d014d820', 'nerd', '2015-01-16 23:38:11', 1),
+(51, '<span>nolvorite</span> replied to your thread: Testing', 'index.php?comment=943e87d80c', 'nerd', '2015-01-16 23:38:38', 1),
+(52, '<span>nolvorite</span> replied to your thread: So, topics work, but not repli', 'index.php?comment=a44ed9c807', 'nerd', '2015-01-17 21:11:42', 1),
+(53, '<span>nolvorite</span> replied to your thread: So, topics work, but not repli', 'index.php?comment=a44ed9c807', 'nerd', '2015-01-17 21:31:43', 1),
+(54, '<span>nolvorite</span> replied to your thread: So, topics work, but not repli', 'index.php?comment=6105b381e8', 'nerd', '2015-01-17 21:33:22', 1),
+(55, '<span>nolvorite</span> replied to your thread: So, topics work, but not repli', 'index.php?comment=6105b381e8', 'nerd', '2015-01-17 21:34:57', 1),
+(56, '<span>nolvorite</span> replied to your thread: So, topics work, but not repli', 'index.php?comment=6105b381e8', 'nerd', '2015-01-17 21:35:42', 1),
+(57, '<span>nolvorite</span> replied to your thread: So, topics work, but not repli', 'index.php?comment=c411fad9f7', 'nerd', '2015-01-17 21:37:39', 1),
+(58, '<span>nerd</span> replied to your thread: Get it right the first time', 'index.php?comment=f8453f2156', 'nolvorite', '2015-01-18 15:53:45', 1),
+(59, '<span>nolvorite</span> replied to your thread: So, topics work, but not repli', 'index.php?comment=c411fad9f7', 'nerd', '2015-01-20 14:05:23', 1),
+(60, '<span>nolvorite</span> replied to your thread: So, topics work, but not repli', 'index.php?comment=556d33057d', 'nerd', '2015-01-20 14:07:03', 1),
+(61, '<span>nolvorite</span> replied to your thread: So, topics work, but not repli', 'index.php?comment=c88006f125', 'nerd', '2015-01-20 14:08:03', 1),
+(62, '<span>nolvorite</span> replied to your thread: GAH! Man seriously', 'index.php?comment=fccff8fa5c', 'nerd', '2015-01-20 14:27:46', 1),
+(63, '<span>nolvorite</span> replied to your thread: GAH! Man seriously', 'index.php?comment=6f6bb8f808', 'nerd', '2015-01-20 14:28:39', 1),
+(64, '<span>nolvorite</span> replied to your thread: GAH! Man seriously', 'index.php?comment=8ad9ee1e2c', 'nerd', '2015-01-20 14:29:40', 1),
+(65, '<span>nolvorite</span> replied to your thread: GAH! Man seriously', 'index.php?comment=8ad9ee1e2c', 'nerd', '2015-01-20 14:32:41', 1),
+(66, '<span>nolvorite</span> replied to your thread: GAH! Man seriously', 'index.php?comment=8ad9ee1e2c', 'nerd', '2015-01-20 14:33:25', 1),
+(67, '<span>nolvorite</span> replied to your thread: GAH! Man seriously', 'index.php?comment=6be69388e9', 'nerd', '2015-01-20 14:35:16', 1),
+(68, '<span>nolvorite</span> replied to your thread: GAH! Man seriously', 'index.php?comment=6ff4c2d0d6', 'nerd', '2015-01-20 14:36:29', 1),
+(69, '<span>nolvorite</span> replied to your thread: GAH! Man seriously', 'index.php?comment=4a3989a1de', 'nerd', '2015-01-20 14:42:17', 1),
+(70, '<span>nerd</span> replied to your comment: Zing', 'index.php?comment=e71dbf868d', 'nolvorite', '2015-01-20 14:44:50', 1);
 
 -- --------------------------------------------------------
 
@@ -106,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `polls` (
   `define_set` varchar(20) NOT NULL,
   `votes` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`data_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=84 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=89 ;
 
 --
 -- Dumping data for table `polls`
@@ -137,7 +196,12 @@ INSERT INTO `polls` (`post_id_root`, `value`, `data_id`, `define_set`, `votes`) 
 (138, 'true', 80, 'choice_selection', 0),
 (138, 'false', 81, 'choice_addition', 0),
 (138, 'Are they more like, limbs?', 82, 'poll_choice', 2),
-(138, 'Depends.', 83, 'poll_choice', 0);
+(138, 'Depends.', 83, 'poll_choice', 0),
+(164, 'Humina humina humina', 84, 'question', 0),
+(164, 'true', 85, 'choice_selection', 0),
+(164, 'false', 86, 'choice_addition', 0),
+(164, 'POW! Right in the kisser!', 87, 'poll_choice', 1),
+(164, 'POW!', 88, 'poll_choice', 1);
 
 -- --------------------------------------------------------
 
@@ -152,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `pollvotes_q` (
   `which_poll` int(11) NOT NULL,
   `vote_id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`vote_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
 
 --
 -- Dumping data for table `pollvotes_q`
@@ -165,7 +229,9 @@ INSERT INTO `pollvotes_q` (`bywhom`, `timeof`, `choice_id`, `which_poll`, `vote_
 ('nerd', '2014-12-17 15:46:35', 78, 89, 9),
 ('nerd', '2014-12-17 15:46:41', 73, 88, 10),
 ('nolvorite', '2014-12-19 11:09:49', 82, 138, 11),
-('nerd', '2015-01-03 13:19:52', 82, 138, 12);
+('nerd', '2015-01-03 13:19:52', 82, 138, 12),
+('nolvorite', '2015-01-14 22:47:39', 87, 164, 13),
+('nerd', '2015-01-14 23:57:15', 88, 164, 14);
 
 -- --------------------------------------------------------
 
@@ -192,7 +258,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `downvotes` int(11) NOT NULL DEFAULT '0',
   `post_type` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`postid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=159 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=255 ;
 
 --
 -- Dumping data for table `posts`
@@ -325,7 +391,103 @@ INSERT INTO `posts` (`content`, `cnttype`, `msgtype`, `forwhom`, `parent`, `post
 ('Now?', 2, NULL, 'n-a', 154, 155, '2014-12-29 00:34:25', 'nolvorite', 'Comments', 'Comments', '6966e97fe9', 1, 90, NULL, 1, 0, 0),
 ('Hmmm', 2, NULL, 'n-a', 147, 156, '2014-12-29 00:34:47', 'nolvorite', 'Comments', 'Comments', 'bf2aa304a2', 1, 90, NULL, 1, 0, 0),
 ('eugh', 2, NULL, 'n-a', 156, 157, '2014-12-30 02:25:10', 'nolvorite', 'Comments', 'Comments', '1028a261a2', 1, 90, NULL, 1, 0, 0),
-('Ayyyyyyy', 2, NULL, 'n-a', 147, 158, '2015-01-03 18:49:06', 'nerd', 'Comments', 'Comments', '6a05952fa0', 1, 90, NULL, 1, 0, 0);
+('Ayyyyyyy', 2, NULL, 'n-a', 147, 158, '2015-01-03 18:49:06', 'nerd', 'Comments', 'Comments', '6a05952fa0', 1, 90, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 159, '2015-01-14 22:44:51', 'nolvorite', 'ayy lmao', 'ayy_lmao', '195cebf849', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 160, '2015-01-14 22:49:58', 'nerd', 'Try posting maybe>', 'Try_posting_maybe_', '5848a6eca2', 1, NULL, NULL, 1, 0, 0),
+('noob', 2, NULL, 'n-a', 160, 161, '2015-01-15 04:17:03', 'nolvorite', '', '', '780864e2e5', 1, 160, NULL, 1, 0, 0),
+('testing response', 2, NULL, 'n-a', 159, 162, '2015-01-15 04:40:24', 'nerd', '', '', '4a08768802', 1, 159, NULL, 1, 0, 0),
+('to my own', 2, NULL, 'n-a', 162, 163, '2015-01-15 04:41:42', 'nerd', 'Comments', 'Comments', 'b612d0ac8b', 1, 159, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 164, '2015-01-15 04:42:30', 'nerd', 'Testing for roots', 'Testing_for_roots', '9a2670d4db', 1, NULL, NULL, 1, 0, 0),
+('Test reply.', 2, NULL, 'n-a', 164, 165, '2015-01-15 04:49:42', 'nolvorite', '', '', 'f4f3a6275f', 1, 164, NULL, 1, 0, 0),
+('Try again', 2, NULL, 'n-a', 164, 166, '2015-01-15 04:50:53', 'nolvorite', '', '', '817d6531cc', 1, 164, NULL, 1, 0, 0),
+('Hmmm.....', 2, NULL, 'n-a', 164, 167, '2015-01-15 04:51:28', 'nolvorite', '', '', 'c1a46e0b82', 1, 164, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 168, '2015-01-15 04:55:56', 'nolvorite', 'This is bizarre.', 'This_is_bizarre_', '9b6877d04e', 1, NULL, NULL, 2, 0, 0),
+('Test', 2, NULL, 'n-a', 164, 169, '2015-01-15 04:59:17', 'nolvorite', '', '', 'f8405d7ed0', 1, 164, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 170, '2015-01-15 04:59:56', 'nolvorite', 'wtf', 'wtf', '9665ebe07e', 1, NULL, NULL, 2, 0, 0),
+('Sigh.', 2, NULL, 'n-a', 164, 171, '2015-01-15 05:03:12', 'nolvorite', '', '', '5ceafbe8db', 1, 164, NULL, 1, 0, 0),
+('Why is this so buggy, eugh', 2, NULL, 'n-a', 164, 172, '2015-01-15 05:09:31', 'nolvorite', '', '', '060517c759', 1, 164, NULL, 1, 0, 0),
+('eugh', 2, NULL, 'n-a', 164, 173, '2015-01-15 05:09:56', 'nolvorite', '', '', 'ddc7ee2624', 1, 164, NULL, 1, 0, 0),
+('Good grief', 2, NULL, 'n-a', 164, 174, '2015-01-15 05:15:20', 'nolvorite', '', '', '449c7e90d8', 1, 164, NULL, 1, 0, 0),
+('Sorry.', 2, NULL, 'n-a', 164, 175, '2015-01-15 05:16:53', 'nolvorite', '', '', 'b9d4c32cf2', 1, 164, NULL, 1, 0, 0),
+('Okay this should be everything.', 2, NULL, 'n-a', 164, 176, '2015-01-15 05:17:55', 'nolvorite', '', '', 'bd09eb3222', 1, 164, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 177, '2015-01-16 00:08:07', 'nolvorite', 'Try again', 'Try_again', '8f4234e06b', 1, NULL, NULL, 1, 0, 0),
+('For science!', 1, NULL, 'self', 0, 178, '2015-01-16 00:15:11', 'nolvorite', 'Moar spam!', 'Moar_spam_', 'cc4d87a03b', 1, NULL, NULL, 1, 0, 0),
+('huh', 1, NULL, 'self', 0, 179, '2015-01-16 00:16:18', 'nolvorite', 'Testing here', 'Testing_here', '9dcdf987b5', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 180, '2015-01-16 04:06:26', 'nerd', 'Test', 'Test', 'c6c8bd2f3d', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 181, '2015-01-16 04:07:25', 'nerd', 'Test again?', 'Test_again_', '4c2155e2ca', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 182, '2015-01-16 04:08:05', 'nolvorite', 'This is bizarre.', 'This_is_bizarre_', 'ffd16ca47f', 1, NULL, NULL, 1, 0, 0),
+('Test post', 1, NULL, 'self', 0, 183, '2015-01-16 04:08:20', 'nerd', 'Test post', 'Test_post', '17d6fb126e', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 184, '2015-01-16 04:25:41', 'nolvorite', 'Try again?', 'Try_again_', 'b8b7861fbd', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 185, '2015-01-16 04:25:58', 'nerd', 'This is an oddity.', 'This_is_an_oddity_', '2e59f4ca63', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 186, '2015-01-16 05:41:34', 'nolvorite', 'Spam testing to no end.', 'Spam_testing_to_no_end_', 'c2bf46c552', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 187, '2015-01-17 00:03:48', 'nolvorite', 'Get rekt', 'Get_rekt', 'ee968ac84b', 1, NULL, NULL, 1, 0, 0),
+('Reply', 2, NULL, 'n-a', 185, 188, '2015-01-17 01:52:22', 'nolvorite', '', '', '2bf8e7b8dc', 1, 185, NULL, 1, 0, 0),
+('Test', 2, NULL, 'n-a', 185, 189, '2015-01-17 02:07:39', 'nolvorite', '', '', '1002e4fd03', 1, 185, NULL, 1, 0, 0),
+('Test', 2, NULL, 'n-a', 185, 190, '2015-01-17 02:09:16', 'nolvorite', '', '', '6e66ae8c84', 1, 185, NULL, 1, 0, 0),
+('Test', 2, NULL, 'n-a', 185, 191, '2015-01-17 02:17:06', 'nolvorite', '', '', 'f71c8ee8b2', 1, 185, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 192, '2015-01-17 02:18:07', 'nolvorite', 'Test', 'Test', '62345be3a6', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 193, '2015-01-17 02:20:49', 'nolvorite', 'Test', 'Test', '9410d991da', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 194, '2015-01-17 02:22:36', 'nolvorite', 'Test', 'Test', '5dade8abf7', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 195, '2015-01-17 02:31:36', 'nolvorite', 'Test again', 'Test_again', '37873eed96', 1, NULL, NULL, 1, 0, 0),
+('Lorem ipsum dolor sit amet, nec tibique consectetuer ei, vix nihil malorum persecuti ad. Ut eam atqui simul, ut sumo case appellantur mea. An ius aliquip accusam ponderum. Ex ius quem voluptatibus, eam cu epicuri intellegam. Per vituperata definitionem in, ne error laboramus definiebas sea.\r<br>\r<br>Diam autem id eum, dicam bonorum philosophia ex quo. Mea utroque disputando cu. Mutat labitur sed at, sit ea ullum quando. Esse accusamus consequuntur qui et. Et iuvaret sanctus vis, usu ut euismod conceptam. Id eam veniam denique inciderint, ei eam purto natum.\r<br>\r<br>Pri no probatus intellegebat, an wisi inciderint efficiantur vis. An nemore viderer salutandi his, id verear inermis efficiantur sea. Ad civibus delicata efficiantur nec, an quod habeo praesent vim, an sed unum habeo. Illum periculis necessitatibus te pri, et pro elaboraret eloquentiam, purto graece et eos. Ei mei officiis elaboraret, vix te soleat voluptatum. No diam civibus qui.\r<br>\r<br>Eum id odio minim tractatos, his commodo eleifend at. Ius scripta incorrupte et. Hinc consul salutatus te vel, in has invidunt inciderint complectitur, his repudiare voluptatibus at. Vis diam dolorem eu. Ius ut laudem similique concludaturque, legendos aliquando ne duo.\r<br>\r<br>Quo id wisi deserunt, an dicta dolorem admodum quo. Nisl purto utamur eam in, explicari voluptatum ea duo. Duo facilis recusabo sapientem in, cu eum facer complectitur. Qui ea oporteat assueverit, hinc eruditi nominati an vim. Ius movet tacimates ei. Porro malis no vix. Pro possit audiam ei, odio consul splendide qui ei.', 1, NULL, 'self', 0, 196, '2015-01-17 02:34:51', 'nolvorite', 'Spam all day!', 'Spam_all_day_', '44b39decf8', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 197, '2015-01-17 02:35:48', 'nolvorite', 'Testing the process again....', 'Testing_the_process_again____', '1fafe362c5', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 198, '2015-01-17 02:40:41', 'nolvorite', 'This is retarded.', 'This_is_retarded_', 'd58eaede95', 1, NULL, NULL, 1, 0, 0),
+('Disgusting as always.', 2, NULL, 'n-a', 185, 199, '2015-01-17 02:43:34', 'nolvorite', '', '', 'f165cf5fbd', 1, 185, NULL, 1, 0, 0),
+('Pricks.', 2, NULL, 'n-a', 185, 200, '2015-01-17 02:46:20', 'nolvorite', '', '', 'c6b9fce8dd', 1, 185, NULL, 1, 0, 0),
+('Lorem ipsum dolor sit amet, nec tibique consectetuer ei, vix nihil malorum persecuti ad. Ut eam atqui simul, ut sumo case appellantur mea. An ius aliquip accusam ponderum. Ex ius quem voluptatibus, eam cu epicuri intellegam. Per vituperata definitionem in, ne error laboramus definiebas sea. ', 1, NULL, 'self', 0, 201, '2015-01-17 03:37:23', 'nolvorite', 'Spam again.', 'Spam_again_', '2358416737', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 202, '2015-01-17 03:39:27', 'nolvorite', 'Test? ew', 'Test__ew', '57435114a1', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 203, '2015-01-17 03:40:39', 'nolvorite', 'Spamming to no end, always fun.', 'Spamming_to_no_end__always_fun_', '9d37398509', 1, NULL, NULL, 1, 0, 0),
+('Seriously, fuck this shit.', 1, NULL, 'self', 0, 204, '2015-01-17 03:41:40', 'nolvorite', 'For science!', 'For_science_', '3f7f6e645d', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 205, '2015-01-17 03:43:22', 'nerd', 'Eughsssdahsdajsjne3j', 'Eughsssdahsdajsjne3j', 'b69f12c128', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 206, '2015-01-17 03:47:07', 'nerd', 'Gay', 'Gay', 'ce26aa72e1', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 207, '2015-01-17 03:51:46', 'nerd', 'This shit aint right', 'This_shit_aint_right', '0aafaba924', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 208, '2015-01-17 03:52:08', 'nolvorite', 'Ewwwww', 'Ewwwww', '7e965c1a4b', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 209, '2015-01-17 03:57:12', 'nerd', 'Verruhfyyyy', 'Verruhfyyyy', 'ca445eddf9', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 210, '2015-01-17 03:58:03', 'nolvorite', 'Test comments', 'Test_comments', '7a0ab0e630', 1, NULL, NULL, 1, 0, 0),
+('Reply bitch', 2, NULL, 'n-a', 210, 211, '2015-01-17 04:00:26', 'nerd', '', '', 'ee8ef680fd', 1, 210, NULL, 1, 0, 0),
+('Test', 2, NULL, 'n-a', 210, 212, '2015-01-17 04:05:07', 'nerd', '', '', '5fe700ab5d', 1, 210, NULL, 1, 0, 0),
+('Test reply!', 2, NULL, 'n-a', 210, 213, '2015-01-17 04:08:01', 'nerd', '', '', 'b89293fc95', 1, 210, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 214, '2015-01-17 04:13:10', 'nerd', 'Testing', 'Testing', '538af04b59', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 215, '2015-01-17 04:21:27', 'nolvorite', 'Gahh', 'Gahh', 'ec22e3f2aa', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 216, '2015-01-17 04:22:35', 'nolvorite', 'srsly', 'srsly', 'd5052402d6', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 217, '2015-01-17 04:29:12', 'nolvorite', 'Well this is truly awkward.', 'Well_this_is_truly_awkward_', '78ba1fe768', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 218, '2015-01-17 05:10:49', 'nolvorite', 'I thought I had fixed it but apparently not', 'I_thought_I_had_fixed_it_but_apparently_not', '64db185f17', 1, NULL, NULL, 1, 0, 0),
+('Test reply.', 2, NULL, 'n-a', 214, 219, '2015-01-17 05:12:14', 'nolvorite', '', '', '7c7058d976', 1, 214, NULL, 1, 0, 0),
+('And again.', 2, NULL, 'n-a', 214, 220, '2015-01-17 05:12:57', 'nolvorite', '', '', '25a311e103', 1, 214, NULL, 1, 0, 0),
+('This is getting kinda tiring', 2, NULL, 'n-a', 214, 221, '2015-01-17 05:14:55', 'nolvorite', '', '', 'e8f7d653e7', 1, 214, NULL, 1, 0, 0),
+('This should truly do the trick.', 2, NULL, 'n-a', 214, 222, '2015-01-17 05:21:25', 'nolvorite', '', '', '257132d8d0', 1, 214, NULL, 1, 0, 0),
+('This should do the trick.', 2, NULL, 'n-a', 214, 223, '2015-01-17 05:23:14', 'nolvorite', '', '', 'ada8c3b239', 1, 214, NULL, 1, 0, 0),
+('Nope.', 2, NULL, 'n-a', 214, 224, '2015-01-17 05:24:14', 'nolvorite', '', '', '33ccff85cd', 1, 214, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 225, '2015-01-17 05:33:08', 'nolvorite', 'I now know what being a crappy mechanic feels like.', 'I_now_know_what_being_a_crappy_mechanic_feels_like', '2934faf2af', 1, NULL, NULL, 1, 0, 0),
+('Yes.', 2, NULL, 'n-a', 214, 226, '2015-01-17 05:34:00', 'nolvorite', '', '', '0285d324b6', 1, 214, NULL, 1, 0, 0),
+('This sucks.', 2, NULL, 'n-a', 214, 227, '2015-01-17 05:37:21', 'nolvorite', '', '', 'f10e239aa9', 1, 214, NULL, 1, 0, 0),
+('Gah', 2, NULL, 'n-a', 214, 228, '2015-01-17 05:38:10', 'nolvorite', '', '', 'a7d014d820', 1, 214, NULL, 1, 0, 0),
+('This is so dumb.', 2, NULL, 'n-a', 214, 229, '2015-01-17 05:38:38', 'nolvorite', '', '', '943e87d80c', 1, 214, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 230, '2015-01-17 05:38:59', 'nerd', 'Post new topic', 'Post_new_topic', 'ed5554d664', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 231, '2015-01-18 02:50:29', 'nolvorite', 'Get it right the first time', 'Get_it_right_the_first_time', '4e4c514a8c', 1, NULL, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 232, '2015-01-18 02:51:51', 'nerd', 'Another prompt.', 'Another_prompt_', '6a262b475b', 1, NULL, NULL, 1, 0, 0),
+('Reply to own', 2, NULL, 'n-a', 232, 233, '2015-01-18 02:51:59', 'nerd', '', '', '59064d19e2', 1, 232, NULL, 1, 0, 0),
+('Nope. Not yet', 2, NULL, 'n-a', 232, 234, '2015-01-18 02:53:10', 'nerd', '', '', '4e8df571e2', 1, 232, NULL, 1, 0, 0),
+('Try again.... :((((', 2, NULL, 'n-a', 232, 235, '2015-01-18 03:02:46', 'nerd', '', '', '4a9ab811e5', 1, 232, NULL, 1, 0, 0),
+(' ', 1, NULL, 'self', 0, 236, '2015-01-18 03:08:17', 'nerd', 'So, topics work, but not replies.', 'So__topics_work__but_not_replies_', '711b1c5656', 1, NULL, NULL, 1, 0, 0),
+('Indeed.', 2, NULL, 'n-a', 236, 237, '2015-01-18 03:11:42', 'nolvorite', '', '', 'a44ed9c807', 1, 236, NULL, 1, 0, 0),
+('Nooooope', 2, NULL, 'n-a', 232, 238, '2015-01-18 03:16:03', 'nerd', '', '', '6a123aac43', 1, 232, NULL, 1, 0, 0),
+('Ew grosssss', 2, NULL, 'n-a', 236, 239, '2015-01-18 03:33:21', 'nolvorite', '', '', '6105b381e8', 1, 236, NULL, 1, 0, 0),
+('Okay. This should finally do the trick. Ew', 2, NULL, 'n-a', 236, 240, '2015-01-18 03:37:38', 'nolvorite', '', '', 'c411fad9f7', 1, 236, NULL, 1, 0, 0),
+('Swell.', 2, NULL, 'n-a', 231, 241, '2015-01-18 21:53:45', 'nerd', '', '', 'f8453f2156', 1, 231, NULL, 1, 0, 0),
+('Swell.', 2, NULL, 'n-a', 231, 242, '2015-01-18 21:53:45', 'nerd', '', '', '16e420ba8e', 1, 231, NULL, 1, 0, 0),
+('Fail.', 2, NULL, 'n-a', 236, 243, '2015-01-20 20:07:02', 'nolvorite', '', '', '556d33057d', 1, 236, NULL, 1, 0, 0),
+('Try again', 2, NULL, 'n-a', 236, 244, '2015-01-20 20:08:02', 'nolvorite', '', '', 'c88006f125', 1, 236, NULL, 1, 0, 0),
+('fuck this shit.', 1, NULL, 'self', 0, 245, '2015-01-20 20:08:24', 'nerd', 'GAH! Man seriously', 'GAH__Man_seriously', 'cf066f9a73', 1, NULL, NULL, 1, 0, 0),
+('im sorry hun.\r<br>\r<br>/foreveralone', 2, NULL, 'n-a', 245, 246, '2015-01-20 20:27:45', 'nolvorite', '', '', 'fccff8fa5c', 1, 245, NULL, 1, 0, 0),
+('Whoops let me try this again', 2, NULL, 'n-a', 245, 247, '2015-01-20 20:28:39', 'nolvorite', '', '', '6f6bb8f808', 1, 245, NULL, 1, 0, 0),
+('This is retarded', 2, NULL, 'n-a', 245, 248, '2015-01-20 20:29:39', 'nolvorite', '', '', '8ad9ee1e2c', 1, 245, NULL, 1, 0, 0),
+('Hmmmmmmm', 2, NULL, 'n-a', 245, 249, '2015-01-20 20:35:15', 'nolvorite', '', '', '6be69388e9', 1, 245, NULL, 1, 0, 0),
+('Ayyyyy', 2, NULL, 'n-a', 245, 250, '2015-01-20 20:36:29', 'nolvorite', '', '', '6ff4c2d0d6', 1, 245, NULL, 1, 0, 0),
+('Zing', 2, NULL, 'n-a', 245, 251, '2015-01-20 20:42:16', 'nolvorite', '', '', '4a3989a1de', 1, 245, NULL, 1, 0, 0),
+('Thank u', 2, NULL, 'n-a', 251, 252, '2015-01-20 20:44:50', 'nerd', 'Comments', 'Comments', 'e71dbf868d', 1, 245, NULL, 1, 0, 0),
+('mhm', 2, NULL, 'n-a', 252, 253, '2015-01-20 20:45:23', 'nerd', 'Comments', 'Comments', '9252e7c83b', 1, 245, NULL, 1, 0, 0),
+('Svelte', 2, NULL, 'n-a', 251, 254, '2015-01-20 21:07:55', 'nolvorite', 'Comments', 'Comments', 'a13d6230e3', 1, 245, NULL, 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -404,14 +566,14 @@ CREATE TABLE IF NOT EXISTS `school` (
   `affiliations` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`s_id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
 -- Dumping data for table `school`
 --
 
 INSERT INTO `school` (`s_id`, `name`, `type`, `coordinates`, `motto`, `religiousaffiliations`, `established`, `principal`, `headmaster`, `chaplain`, `faculty`, `grades`, `gender`, `numberofstudents`, `campussize`, `campustype`, `colors`, `athletics`, `mascot`, `rival`, `accreditation`, `averagesatscores`, `averageactscores`, `publication`, `newspaper`, `yearbook`, `tuition`, `website`, `link`, `status`, `schoolboard`, `schooldistrict`, `ncesdistrictid`, `oversight`, `ceebcode`, `ncesschoolid`, `enrollment`, `studenttoteacherratio`, `educationsystem`, `classesoffered`, `schoolcolors`, `athleticsconference`, `teamname`, `usnwrranking`, `feederschools`, `affiliation`, `ed_level`, `schooltype`, `founded`, `assistantprincipals`, `staff`, `language`, `campus`, `rivals`, `communitiesserved`, `formernames`, `endowment`, `president`, `provost`, `academicstaff`, `students`, `undergraduates`, `postgraduates`, `doctoralstudents`, `location`, `sports`, `nickname`, `affiliations`) VALUES
-(1, 'Nettleton High School (Arkansas)', '', '35Â°48â€²45â€³N  90Â°38â€²58â€³W    /  35.81250Â°N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '9-12', NULL, '', NULL, 'City; small', NULL, NULL, 'Raider', NULL, 'AdvancED (1965-)', NULL, NULL, NULL, NULL, NULL, NULL, 'nettleton.ar.schoolwebpages.com.', 'http://en.wikipedia.org/wiki/Nettleton_High_School', 'Open', 'Nettleton School Board', 'Nettleton School District', '0510440', 'Arkansas Department of Education (ADE)', '041815', '051044000762', '877Â (2010-11[ 2] )', '13.27', 'ADE Smart Core curriculum', 'Regular, Advanced Placement', 'Â Â Â Â   Black\r\n Â Â Â Â   Gold', '5A East (2012-14)', 'Nettleton Raiders', 'Unranked (2012)', 'Nettleton Junior High School (6-8)', 'Arkansas Activities Association (AAA)', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(1, 'Nettleton High School (Arkansas)', '', '35Â°48â€²45â€³N  90Â°38â€²58â€³W    /  35.81250Â°N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '9-12', NULL, '', NULL, 'City; small', NULL, NULL, 'Raider', NULL, 'AdvancED (1965-)', NULL, NULL, NULL, NULL, NULL, NULL, 'nettleton.ar.schoolwebpages.com.', 'http://en.wikipedia.org/wiki/Nettleton_High_School', 'Open', 'Nettleton School Board', 'Nettleton School District', '0510440', 'Arkansas Department of Education (ADE)', '041815', '051044000762', '877Â (2010-11[ 2] )', '13.27', 'ADE Smart Core curriculum', 'Regular, Advanced Placement', 'Â Â Â Â   Black\r\n Â Â Â Â   Gold', '5A East (2012-14)', 'Nettleton Raiders', 'Unranked (2012)', 'Nettleton Junior High School (6-8)', 'Arkansas Activities Association (AAA)', 'High School', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (2, 'Jonesboro High School (Arkansas)', '', NULL, NULL, NULL, NULL, 'David Clark', NULL, NULL, NULL, '10â€“12', NULL, '', NULL, NULL, 'Â Â Â Â   Black Â Â Â Â   Gold Â Â Â Â   White', NULL, 'Golden Hurricane', NULL, 'North Central Association (NCA) Commission on Accr', NULL, NULL, NULL, NULL, NULL, NULL, 'www.jps.k12.ar.us', 'http://en.wikipedia.org/wiki/Jonesboro_High_School', NULL, NULL, 'Jonesboro Public Schools', NULL, NULL, NULL, NULL, '1,066Â (2013-14)', NULL, NULL, NULL, NULL, '7A/6A East (2012-14)', NULL, NULL, 'Annie Camp Junior High School\r\n Douglas MacArthur ', NULL, 'High School', 'Public, secondary school', '1899Â (1899 )', 'Shannon Lewis\r\n Brett Brown', '118', 'English', 'Suburban', 'West Memphis High School\r\n Nettleton High School\r\n', 'Jonesboro, tnÂ°', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (3, 'Texas A&amp;amp;M University', 'Flagship state university\r\n Land-grant university\r\n Sea-grant university\r\n Space-grant university', NULL, NULL, NULL, '1876', NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, 'Â   Â Maroon and white', 'NCAA Division I â€“ SEC', 'Reveille VIII', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'www.tamu.edu', 'http://en.wikipedia.org/wiki/Texas_A%26M_Universit', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'College', NULL, NULL, NULL, NULL, NULL, 'College town/Suburban, 5,500 acres (20Â km2)', NULL, NULL, 'The Agricultural and Mechanical College of Texas (', '$ 7.6 billion(2012)', 'Mark Hussey', 'Karan Watson', '2,700', '62,185 (Fall 2014)', '47,567 (Fall 2014)', '14,618 (Fall 2014)', '4,804 (Fall 2014)', 'College Station , Texas , US', '20 varsity teams', 'Aggies', 'Texas A&amp;M University System AAU CONAHEC ORAU U');
 
@@ -505,11 +667,11 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`username`, `password`, `isvalidated`, `email`, `userid`, `joindate`, `fullname`, `admin_notifs`, `root_admin_status`, `month2`, `day2`, `year2`, `salt`, `login_attempts`, `login_att_last`, `last_active_at`, `last_activity`) VALUES
-('nolvorite', 'd83ab46b4325d8bcd1102188c38d8a098b23a168', 1, 'hns_marcon@hotmail.com', 1, '2014-11-14 23:52:34', 'Hans Marcon', 'on', '1', 4, 9, 1996, '6c478c525f517a7ab838', '0', '2014-12-15 13:31:51', '2015-01-12 19:33:00', NULL),
+('nolvorite', 'd83ab46b4325d8bcd1102188c38d8a098b23a168', 1, 'hns_marcon@hotmail.com', 1, '2014-11-14 23:52:34', 'Hans Marcon', 'on', '1', 4, 9, 1996, '6c478c525f517a7ab838', '0', '2015-01-22 13:14:02', '2015-01-23 00:42:21', NULL),
 ('test_user4aaaasd', 'c08c7f680792684058eafc92e8e1e85e07617eff', NULL, 'asdasdas@asda.asdas', 27, '2014-11-13 21:16:30', 'asdas asdas', 'on', NULL, 12, 16, 1994, 'aad763cbecdacccb1f63', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 ('test_9', '6e1d3ee1ec90c3617dc4aff58fe39bba75a8b68e', NULL, 'laskdla@alsdkalsd.asdjas', 31, '2014-11-14 23:21:41', 'asdajsdjaks asdjaks', 'on', NULL, 4, 19, 1996, '3aab2407326f6ada6661', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL),
 ('asdasdas', 'ef659ade9df94a0bc3e792ec9e2f81095d375a48', NULL, 'hns_marcon@hotmail.coma', 32, '2014-11-13 21:16:30', 'asdasd asd asdas', 'on', NULL, 11, 15, 1999, 'e64ec838d0dba46ea10a', '0', '2014-12-02 00:06:50', '0000-00-00 00:00:00', NULL),
-('nerd', '0989807af1ccfc712499519ebcb0e742b0597918', NULL, 'nerd@nerd.nerd', 36, '2014-12-14 22:10:24', 'John Hammercock', 'on', NULL, 6, 5, 1976, '9f5106ab7ebfe0e42b9a', '0', '2014-12-17 21:26:35', '2015-01-03 13:20:35', NULL);
+('nerd', '0989807af1ccfc712499519ebcb0e742b0597918', NULL, 'nerd@nerd.nerd', 36, '2014-12-14 22:10:24', 'John Hammercock', 'on', NULL, 6, 5, 1976, '9f5106ab7ebfe0e42b9a', '0', '2014-12-17 21:26:35', '2015-01-20 17:51:12', NULL);
 
 -- --------------------------------------------------------
 
@@ -524,7 +686,7 @@ CREATE TABLE IF NOT EXISTS `votes_q` (
   `vote` int(1) NOT NULL DEFAULT '1',
   `v_id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`v_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=186 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=291 ;
 
 --
 -- Dumping data for table `votes_q`
@@ -693,7 +855,112 @@ INSERT INTO `votes_q` (`bywhom`, `timeof`, `which_post`, `vote`, `v_id`) VALUES
 ('nolvorite', '2014-12-28 18:34:26', 155, 1, 182),
 ('nolvorite', '2014-12-28 18:34:49', 156, 1, 183),
 ('nolvorite', '2014-12-29 20:25:12', 157, 1, 184),
-('nerd', '2015-01-03 12:49:08', 158, 1, 185);
+('nerd', '2015-01-03 12:49:08', 158, 1, 185),
+('nerd', '2015-01-13 16:39:57', 158, 1, 186),
+('nerd', '2015-01-13 16:40:44', 158, 1, 187),
+('nolvorite', '2015-01-14 16:44:52', 159, 1, 188),
+('nerd', '2015-01-14 16:50:00', 160, 1, 189),
+('nolvorite', '2015-01-14 22:17:03', 161, 1, 190),
+('nerd', '2015-01-14 22:40:25', 162, 1, 191),
+('nerd', '2015-01-14 22:41:43', 163, 1, 192),
+('nerd', '2015-01-14 22:42:34', 164, 1, 193),
+('nolvorite', '2015-01-14 22:49:44', 165, 1, 194),
+('nolvorite', '2015-01-14 22:50:55', 166, 1, 195),
+('nolvorite', '2015-01-14 22:51:32', 167, 1, 196),
+('nolvorite', '2015-01-14 22:54:24', 167, 1, 197),
+('nolvorite', '2015-01-14 22:55:57', 168, 1, 198),
+('nolvorite', '2015-01-14 22:59:18', 169, 1, 199),
+('nolvorite', '2015-01-14 22:59:57', 170, 1, 200),
+('nolvorite', '2015-01-14 23:09:32', 172, 1, 201),
+('nolvorite', '2015-01-14 23:09:58', 173, 1, 202),
+('nolvorite', '2015-01-14 23:15:22', 174, 1, 203),
+('nolvorite', '2015-01-14 23:16:54', 175, 1, 204),
+('nerd', '2015-01-14 23:17:10', 170, 1, 205),
+('nerd', '2015-01-14 23:17:11', 168, 1, 206),
+('nolvorite', '2015-01-14 23:17:56', 176, 1, 207),
+('nolvorite', '2015-01-15 01:00:45', 176, 1, 208),
+('nolvorite', '2015-01-15 01:01:27', 176, 1, 209),
+('nolvorite', '2015-01-15 01:02:02', 176, 1, 210),
+('nolvorite', '2015-01-15 01:03:22', 176, 1, 211),
+('nolvorite', '2015-01-15 18:08:07', 177, 1, 212),
+('nolvorite', '2015-01-15 18:15:11', 178, 1, 213),
+('nolvorite', '2015-01-15 18:16:18', 179, 1, 214),
+('nerd', '2015-01-15 22:06:27', 180, 1, 215),
+('nerd', '2015-01-15 22:07:26', 181, 1, 216),
+('nolvorite', '2015-01-15 22:08:06', 182, 1, 217),
+('nerd', '2015-01-15 22:08:21', 183, 1, 218),
+('nolvorite', '2015-01-15 22:25:43', 184, 1, 219),
+('nerd', '2015-01-15 22:25:59', 185, 1, 220),
+('nolvorite', '2015-01-15 23:41:35', 186, 1, 221),
+('nolvorite', '2015-01-16 17:40:08', 186, 1, 222),
+('nolvorite', '2015-01-16 18:03:49', 187, 1, 223),
+('nolvorite', '2015-01-16 19:52:23', 188, 1, 224),
+('nolvorite', '2015-01-16 20:17:07', 191, 1, 225),
+('nolvorite', '2015-01-16 20:31:36', 195, 1, 226),
+('nolvorite', '2015-01-16 20:34:53', 196, 1, 227),
+('nolvorite', '2015-01-16 20:35:49', 197, 1, 228),
+('nolvorite', '2015-01-16 20:40:42', 198, 1, 229),
+('nolvorite', '2015-01-16 20:43:35', 199, 1, 230),
+('nolvorite', '2015-01-16 20:46:21', 200, 1, 231),
+('nolvorite', '2015-01-16 21:37:24', 201, 1, 232),
+('nolvorite', '2015-01-16 21:39:28', 202, 1, 233),
+('nolvorite', '2015-01-16 21:40:40', 203, 1, 234),
+('nolvorite', '2015-01-16 21:41:42', 204, 1, 235),
+('nerd', '2015-01-16 21:43:23', 205, 1, 236),
+('nerd', '2015-01-16 21:47:08', 206, 1, 237),
+('nerd', '2015-01-16 21:50:57', 206, 1, 238),
+('nerd', '2015-01-16 21:51:46', 207, 1, 239),
+('nolvorite', '2015-01-16 21:52:09', 208, 1, 240),
+('nerd', '2015-01-16 21:57:13', 209, 1, 241),
+('nolvorite', '2015-01-16 21:58:04', 210, 1, 242),
+('nerd', '2015-01-16 22:00:27', 211, 1, 243),
+('nerd', '2015-01-16 22:05:09', 212, 1, 244),
+('nerd', '2015-01-16 22:08:02', 213, 1, 245),
+('nerd', '2015-01-16 22:13:11', 214, 1, 246),
+('nerd', '2015-01-16 22:15:10', 214, 1, 247),
+('nolvorite', '2015-01-16 22:22:37', 216, 1, 248),
+('nolvorite', '2015-01-16 22:29:13', 217, 1, 249),
+('nolvorite', '2015-01-16 23:10:49', 218, 1, 250),
+('nolvorite', '2015-01-16 23:12:15', 219, 1, 251),
+('nolvorite', '2015-01-16 23:12:58', 220, 1, 252),
+('nolvorite', '2015-01-16 23:21:27', 222, 1, 253),
+('nolvorite', '2015-01-16 23:23:15', 223, 1, 254),
+('nolvorite', '2015-01-16 23:33:10', 225, 1, 255),
+('nolvorite', '2015-01-16 23:34:04', 226, 1, 256),
+('nolvorite', '2015-01-16 23:37:24', 227, 1, 257),
+('nolvorite', '2015-01-16 23:38:11', 228, 1, 258),
+('nolvorite', '2015-01-16 23:38:38', 229, 1, 259),
+('nerd', '2015-01-16 23:39:00', 230, 1, 260),
+('nolvorite', '2015-01-17 20:50:30', 231, 1, 261),
+('nerd', '2015-01-17 20:51:52', 232, 1, 262),
+('nerd', '2015-01-17 20:52:00', 233, 1, 263),
+('nerd', '2015-01-17 20:53:11', 234, 1, 264),
+('nerd', '2015-01-17 21:02:47', 235, 1, 265),
+('nerd', '2015-01-17 21:03:09', 235, 1, 266),
+('nerd', '2015-01-17 21:08:18', 236, 1, 267),
+('nolvorite', '2015-01-17 21:11:42', 237, 1, 268),
+('nerd', '2015-01-17 21:16:04', 238, 1, 269),
+('nolvorite', '2015-01-17 21:31:43', 237, 1, 270),
+('nolvorite', '2015-01-17 21:33:22', 239, 1, 271),
+('nolvorite', '2015-01-17 21:34:57', 239, 1, 272),
+('nolvorite', '2015-01-17 21:35:42', 239, 1, 273),
+('nolvorite', '2015-01-17 21:37:39', 240, 1, 274),
+('nerd', '2015-01-18 15:53:46', 241, 1, 275),
+('nolvorite', '2015-01-20 14:05:23', 240, 1, 276),
+('nolvorite', '2015-01-20 14:07:03', 243, 1, 277),
+('nolvorite', '2015-01-20 14:08:03', 244, 1, 278),
+('nerd', '2015-01-20 14:08:25', 245, 1, 279),
+('nolvorite', '2015-01-20 14:27:46', 246, 1, 280),
+('nolvorite', '2015-01-20 14:28:39', 247, 1, 281),
+('nolvorite', '2015-01-20 14:29:40', 248, 1, 282),
+('nolvorite', '2015-01-20 14:32:41', 248, 1, 283),
+('nolvorite', '2015-01-20 14:33:25', 248, 1, 284),
+('nolvorite', '2015-01-20 14:35:16', 249, 1, 285),
+('nolvorite', '2015-01-20 14:36:29', 250, 1, 286),
+('nolvorite', '2015-01-20 14:42:17', 251, 1, 287),
+('nerd', '2015-01-20 14:44:51', 252, 1, 288),
+('nerd', '2015-01-20 14:45:24', 253, 1, 289),
+('nolvorite', '2015-01-20 15:07:55', 254, 1, 290);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

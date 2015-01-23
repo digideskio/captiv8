@@ -3,6 +3,8 @@
 
 session_start();        
 
+date_default_timezone_set('America/Chicago');
+
 $db_main = mysqli_connect("localhost","root","","captiv8");  
 
 require_once("vars.php");
@@ -74,9 +76,30 @@ break;
 
 case "school_search":   
 
-$select_school = mysqli_query($db_main,"SELECT * FROM school WHERE name LIKE '%$_FILTERED[search_q]%'");
+$select_school = mysqli_query($db_main,"SELECT * FROM school WHERE name LIKE '%$_FILTERED[search_q]%' AND ed_level='$_FILTERED[criteria]' ORDER BY name ASC LIMIT 0,5");
 
-if($select_school && mysqli_num_rows($select_school) > 0){} else{
+if($select_school && mysqli_num_rows($select_school) > 0){    echo "<div id='school_search'>";
+
+while($properties = mysqli_fetch_assoc($select_school)){
+    
+
+?>
+            <div class="school_shell">
+<a href="confirm_school" class="school_box rad prompt name_only" name="<?php echo $properties['name'] ?>"><h3><?php echo $properties['name'] ?>      
+                                                                                             <span>
+
+<?php
+
+
+      echo (isset($properties['established'])) ? " &middot; Established " . $properties['established'] : "";
+      echo "</span></h3></a>";
+      
+
+}
+
+echo "</div>";          
+
+} else{
 
 
  if(preg_match("#([-A-Za-z]+)[ ]#",$_FILTERED['search_q'])){  
@@ -85,23 +108,28 @@ echo "<a href='index.php?query=".$_MONITORED['login_q']."&dispos=new_school' cla
 
 }
 
-} 
+}      
+
+mysqli_free_result($select_school);
 
   break;
   
 case "wikipedia_search":
-            include("wikipedia_search.php");  
-  
+            include("wikipedia_search.php");   
 break;
 
 case "confirm_school":
+if(isset($_GET['data'])){
 $strings = json_decode($_GET['data'],true); //rawwwwww
+}else{$strings['name'] = $_GET['name'];}
 //we gotta run a bunch of tests to determine the authenticity of this data mine
 
 //check to see if the school's already in the database
 
 
-$check_in_sys = mysqli_query($db_main, "SELECT * FROM school WHERE name LIKE '".hack_free($strings['name'])."'");
+$check_in_sys = mysqli_query($db_main, "SELECT * FROM school WHERE name ='".hack_free($strings['name'])."'");
+
+if(mysqli_num_rows($check_in_sys) < 1){
 
 if(preg_match("#high[ ]school#",strtolower($strings['name']))){
 $school_level = "1";
@@ -112,6 +140,8 @@ $school_level = "2";
 
 if(!isset($school_level)){
 //if not named either high school or university in the school's name    
+
+//you're gonna have to reconfirm this list with a wikipedia entry
 
 $recheck = file_get_html($strings['link'])->find("#mw-content-text table.infobox",0);
 foreach($recheck->find("tr") as $data_set){
@@ -169,7 +199,7 @@ if(isset($strings['link']) && preg_match("#en[.]wikipedia[.]org#",$strings['link
  foreach($properties as $nougatey => $nougats){ //oh boy
  $datafield_check = mysqli_query($db_main, "SHOW COLUMNS FROM school WHERE `$nougatey`");
  if(!$datafield_check){  //column doesn't exist
- $new_lines = mysqli_query($db_main, "ALTER TABLE school ADD COLUMN `$nougatey` varchar(50)");
+ $new_lines = mysqli_query($db_main, "ALTER TABLE school ADD COLUMN `".hack_free($nougatey)."` varchar(50)");
  if($new_lines){}
  }
  
@@ -181,12 +211,13 @@ if(isset($strings['link']) && preg_match("#en[.]wikipedia[.]org#",$strings['link
  $adjoiner = !isset($adjoiner) ? [$nougatey . ", ","'".$nougats . "', "] : [$nougatey.", " .$adjoiner[0],"'".hack_free($nougats). "', " . $adjoiner[1]] ;
  $trims = [preg_replace("#(.+)[,][ ]$#","$1",$adjoiner[0]),preg_replace("#(.+)[,][ ]$#","$1",$adjoiner[1])];
  $clear = $datafield_check ? mysqli_free_result($datafield_check) : "";
+ 
  }
  //put them in one SQL statement!
   //actually...
 
 
-  $school_data = mysqli_query($db_main, "INSERT INTO school($trims[0]) VALUES($trims[1])");
+  $school_data = mysqli_query($db_main, "INSERT INTO school($trims[0]) VALUES(".hack_free($trims[1]).")");
   if($school_data){
   $fill_details = "yes";
   }
@@ -198,44 +229,130 @@ if(isset($strings['link']) && preg_match("#en[.]wikipedia[.]org#",$strings['link
    unset($school_level);      unset($adjoiner);           }
    
 
-}}else{
+}}  } else{
 $fill_details = "yes";
+$zen = mysqli_fetch_assoc($check_in_sys);
+foreach($zen as $key => $value){
+if($zen[$key] !== NULL){
+$properties[$key] = $value;
+}
+}
 }
 
 
-if(isset($fill_details) && !isset($_SESSION['school_fill'])):   $_SESSION['school_fill'] = "yes";
+$z = (isset($z)) ? $z + 1 : $z;          
+
+                                             $znip = "i";
+if(isset($fill_details) && !isset($_SESSION[$znip])):   
+ $znip = preg_replace("#[^A-Za-z]#","",strtolower($properties['ed_level']));
+$_SESSION[$znip] = "yes";     //start form
 ?>
+<form class="zenith">
     <br>
-<div class="contentbox fill_details"> <h3>Fill details</h3>
+<div class="contentbox fill_details"> <h3>Fill details</h3>        
+ 
 <table><tr><th class="marginals" style="width:200px">School Name</th><td>
-<input type="text" value="<?php echo $strings['name'] ?>" class="largeform" disabled="disabled" name="school_name" style="opacity:.5">          </td>
+<input type="text" name="school" value="<?php echo $strings['name'] ?>" class="largeform <?php echo 'a' . $z; ?>" disabled="disabled" name="school_name" style="opacity:.5">          </td>
 </tr>
-<tr><th>Started:</th><td><input type="text" class="largeform flick" value="Input the year that you started going to this school."></td></tr>
-<tr><th>Finished:</th><td><select><option id="current">Currently Attending</option><option id="did_finish">I finished attending this school.</option></select></td></tr>
-<?php if(isset($school_level)){ if($school_level == "1"){ ?> 
+<tr><th>Started:</th><td><input type="text" name="year_s" class="largeform flick <?php echo 'a' . $z; ?>" value="Input the year that you started going to this school."></td></tr>
+<tr><th>Finished:</th><td><select class="largeform <?php echo 'a' . $z; ?>"  name="current_status"><option class="current <?php echo 'a' . $z; ?>" value="current" selected="selected">Currently Attending</option><option value="did_finish" value="finished">I finished attending this school.</option></select><input type="text" class="largeform flick inline <?php echo 'a' . $z; ?>" value="Insert Year Here..." name="year_finished" disabled="disabled">   <input type="text" style="display:none" name="edu_type" class="a1" value="<?php echo $properties['ed_level']; ?>">
+<input type="submit" value="Complete Details" class="prompt" id="<?php echo 'a' . $z; ?>">
+</td></tr>
+<?php if(isset($school_level)){ switch($school_level){ case "1": ?> 
+                                                                              
+<tr><th>Degree/Major</th><td><input type="text" class="largeform flick <?php echo 'a' . $z; ?>" value="Separate by comma if more than one..." name="degrees"></td></tr>
 
-<tr><th>Degree/Major</th><td><input type="text" value="Separate by comma if more than one..." name="degres"></td></tr>
-
-<?php }else{ ?>
+<?php break; case "2": ?>
 
 
 
+<?php break; ?>
 
-<?php } } ?>
+
+
+
+
+
+
+<?php } ?>
 </table>
 </div>
+</form>
 
 
 
 
-<?php      unset($properties);  
-endif;
+<?php   }   
+endif;   //end submission form
+        unset($properties);     unset($fill_details);   unset($_SESSION[$znip]);
+        unset($znip);
+
+break; //end case "confirm_school"
 
 
-break;
+case "complete_details":
+                               
+foreach($_GET['data'] as $q_k => $q_v){
+
+$zing = preg_split("#[ ]:[ ]#",$q_v);
+$zing[0] = preg_replace("#[ ]#","",$zing[0]);
+$zing[1] = preg_replace("#^(.+)$#","$1",$zing[1]);
+
+$parse[$zing[0]] = hack_free($zing[1]);
+
+}
+
+//test for validity
+
+//school : Nettleton High School (Arkansas),year_s : 2012,current_status : did_finish,undefined : current,year_finished : 201
+
+
+if(isset($parse['school']) && isset($parse['year_s']) && isset($parse['current_status']) && isset($parse['year_finished']) && isset($parse['edu_type'])){     //first
+
+
+//check to see that they haven't registered their education for that school yet
+$parse['school'] = preg_replace("#;#","",$parse['school']);
+$edu_search= mysqli_query($db_main,"SELECT * FROM education WHERE school_name='$parse[school]' AND username='$_MONITORED[login_q]'");
+if(mysqli_num_rows($edu_search) > 0){
+                                                                                       
+$school_confirm = mysqli_query($db_main, "SELECT * FROM school WHERE name='$parse[school]' AND ed_level='". hack_free($parse['edu_type'])."'");
+
+
+
+if(mysqli_num_rows($school_confirm) > 0){  //second
+if($parse['current_status'] == "current"){
+$parse['year_finished'] = 0;
+}
+$opt_degree = ($parse['edu_type'] == "College") ? ",degree" : "";
+
+$degrees = (isset($parse['degrees'])) ? "'".hack_free($parse['degrees']) . "'," : "";
+$status = ($parse['current_status'] == "did_finish") ? "true" : "false";
+
+$submit_results = mysqli_query($db_main, "INSERT INTO education(school_name".$opt_degree.",started,finished,is_current,forwhom) VALUES('$parse[school]',".$degrees."'$parse[year_s]','$parse[year_finished]','$status','$_MONITORED[login_q]')");
+
+if($submit_results){
+echo $nx['38'];
+}
+else{
+echo mysqli_error($db_main); //echo $nx['39'];
+}
+
+}
+
+mysqli_free_result($school_confirm);
+}
+        }
+
+//submit to education
+
+unset($parse);
+
+break;  //end case "complete_details"
   
 
-}             }
+}//end $_GET['action'] switch loose comparison             
+
+}//end $_GET['action'] conditional
                                                  
 
 if(isset($_GET['nm_time'])){              
@@ -276,7 +393,7 @@ $search_new = mysqli_query($db_main, "SELECT * FROM notifications WHERE towhom='
 
 
 
-echo json_encode(array("result" => "completed","notifs_left" => mysqli_num_rows($search_new)),JSON_UNESCAPED_SLASHES);
+echo json_encode(array("result" => "completed","notifs_left" => mysqli_num_rows($search_new)),JSON_UNESCAPED_SLASHES);        
 
 }
 break;

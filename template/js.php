@@ -245,7 +245,15 @@ if($(this).hasClass("a1") && $(this).next("input").prop("checked",false)){$(this
 
              var $black_layer = ["<div id='black_overlay'><div id='widthfix'>","</div></div>"];  
 
-      
+ 
+ 
+$("body").on('change', "select.largeform:has(.current)", function(){
+if($(this).next().attr("disabled") !== undefined){
+$(this).next().removeAttr("disabled");
+}else{
+$(this).next().attr("disabled","disabled").val("").trigger("change");
+}
+});     
       
  
 $("body").on('click',".prompt",function(event){event.preventDefault();
@@ -260,10 +268,30 @@ $(".prompt[value='SEARCH SCHOOL']").next("div").removeClass("contentbox").html(d
 });
 }
 
+<?php if(isset($_SESSION['login_q'])): ?>
+
+if($(this).attr("value") == "Complete Details"){       i = -1;
+s_layer = $(this).attr("id");   zeus = new Array();        
+$("."+s_layer).each(function(){ i++;//isn't that fun 
+zeus[i] = $(this).attr("name") + " : " + $(this).val();     
+});   i = 0;
+
+
+
+alert(zeus);    
+$.get("template/simcheck.php",{"action":"complete_details","data":zeus}).done(function(msg){ alert(msg); 
+if(msg == "<?php echo $nx['38'] ?>"){
+// window.location.assign('<?php echo $_SERVER['HTTP_REFERER']; ?>index.php?query=<?php echo $_MONITORED['login_q']; ?>');         
+}
+});
+}
+
+<?php endif; ?>
+
+
 if($(this).attr("href") == "submit-edit"){  
 $.post("template/simcheck.php?action=css_edit",{"data":$("#jones").val(),"file":$("#jones").attr("title")},function(data){ 
-if(data.notice == "success"){alert("Successfully edited file!");
-}                                                                       
+if(data.notice == "success"){alert("Successfully edited file!");}                                                                       
 },"json");
 }
 
@@ -281,15 +309,35 @@ $(this).remove();
 if($(this).attr("href") == "select-school"){     $("#select4").removeAttr("id");
 $(this).attr("id","select4");
 
+if($(this).attr("datamine").length){
+
 $.get("template/simcheck.php",{"action":"confirm_school","data":$(this).attr("datamine")}).done(function(msg){
 
 $("#select4").parent().append(msg);
 
 });
+}else{
+
+$.get("template/simcheck.php",{"action":"confirm_school"}).done(function(msg){
+
+$("#select4").after(msg);
+
+});
+
+}
 
 
 
 }
+if($(this).attr("href") == "confirm_school"){ $("#select4").removeAttr("id");
+$(this).attr("id","select4");
+$.get("template/simcheck.php",{"action":"confirm_school","name":$(this).attr("name")}).done(function(msg){
+
+$("#select4").after(msg);
+
+});
+}
+
 if(/^edit[:]/g.test($(this).attr("href"))){    //murder murder murder murrdurrrrrrrrrrrrrrrrr murrrrrrdurrrrrrrrr
 //FINALLY. holy shit mother of god tweaking batman
 $zen_0 = $(this).attr('href');      

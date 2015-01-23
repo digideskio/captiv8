@@ -2,6 +2,10 @@
 
 require_once("lib/simple_html_dom.php");
 
+if(isset($_GET['error_reporting']) && $_GET['error_reporting'] == "false"){      //This would be helpful for all get
+error_reporting(~E_ALL);
+}
+
 function extraurl(){
 if(strlen($_SERVER['QUERY_STRING']) > 0){$snp = $_SERVER['PHP_SELF'] ."?". $_SERVER['QUERY_STRING'];}else{$snp = $_SERVER['PHP_SELF'];}
 return $snp;
@@ -15,6 +19,12 @@ $error = "<div class='contentbox'> <h3>SQL error</h3><p>" .mysqli_error($db_main
 function redir_process($url){ global $allow_redirs;
 if($allow_redirs == true){header($url);      }
 }
+
+$time = [
+'now' => time()
+
+
+];
  
 
 function compare_dz($a, $b) {

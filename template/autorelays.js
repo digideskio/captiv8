@@ -7,6 +7,8 @@ setTimeout(function(){
 setInterval(function(){
 
 
+
+
 $.ajax({
 url: "template/simcheck.php",
 data: {"nm_time":"notifs"},
@@ -14,14 +16,13 @@ success: function(data){        $("#notifications").html();
 
                                  
 
-if(data.result == "new"){
+if(data.result == "new"){    //new as in there are notifications, what counts is if it's read
+
 if($("#notifs_bar .spacer a").next().is(":not('.note')")){
 
-if(data.unread < 1){
-
-}else{$("#notifs_bar .spacer a").after(" <span class='note'>("+data.unread+" new)</span>");  
+if(data.unread >= 1){$("#notifs_bar .spacer a").after("<span class='note'>("+data.unread+" new)</span>");  
 $("title").prepend("("+data.unread+") ");
-
+$("#notifications .spacer").empty();
 }}
  
 
@@ -33,7 +34,7 @@ j = data.notifs.length - i;      //reverse it
 //because there's no negative incremental index looping for .each()
 
 if($(".notifs").length != data.notifs.length){ 
-$("#notifications .spacer").prepend("<div alt='"+ data.notifs[j]['url'] +"' class='notifs'>"+data.notifs[j]['content']+"<br><em>"+data.notifs[j]['stamptime']+"</em></div>");
+$("#notifications .spacer").prepend("<div alt='"+ data.notifs[j]['url'] +"' class='notifs unchecked'>"+data.notifs[j]['content']+"<br><em>"+data.notifs[j]['stamptime']+"</em></div>");
 //$("<a href='"+ data.notifs[i]['url'] +"'><div class='notifs'>Some arbitrary content "+data.notifs[i]['content']+"</div></a>").prependTo("#notifications .spacer");
 }
 });
@@ -43,7 +44,7 @@ $("#notifications .spacer").prepend("<div alt='"+ data.notifs[j]['url'] +"' clas
 $zin = $("#notifications .spacer").html();
 
                 
-}else{} 
+}
 
   $('.notifs').each(function(){
 $zen = $(this).attr('alt');    
