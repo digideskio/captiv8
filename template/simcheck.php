@@ -1,7 +1,7 @@
 <?php              //AJAX calls page
 //this is the hotline center, bitchessssss     \
 
-session_start();        
+session_start();      
 
 date_default_timezone_set('America/Chicago');
 
@@ -112,6 +112,22 @@ echo "<a href='index.php?query=".$_MONITORED['login_q']."&dispos=new_school' cla
 
 mysqli_free_result($select_school);
 
+  break;
+  
+  case "chat_with_user":
+  
+  //find whether they're able to actually chat with the user whom they're trying to engage with
+  
+  $chat_perms_check = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' AND a.granted_by = '$_FILTERED[user]' LIMIT 100");
+  
+  if(mysqli_num_rows($chat_perms_check) == 1){
+  $search_for_posts = mysqli_query($db_main,"SELECT * FROM posts WHERE bywhom='$_MONITORED[login_q]' AND forwhom='$_FILTERED[user]' AND cnttype = '2' UNION SELECT * FROM posts WHERE bywhom ='$_FILTERED[user]' AND forwhom='$_MONITORED[login_q]' AND cnttype = '2' ORDER BY stamptime DESC LIMIT 0,36");
+  $search_cha = (mysqli_num_rows($search_for_posts) > 0) ? array_reverse(mysqli_fetch_array($search_for_posts)) : $nx['41'];
+  echo json_encode(["message"=>"success","user"=>$_FILTERED['user'],"messages"=>$search_cha]);
+  }
+  
+  
+  
   break;
   
 case "wikipedia_search":

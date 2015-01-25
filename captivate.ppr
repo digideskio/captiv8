@@ -31,6 +31,7 @@ captivate
 			template\actions.php
 			template\redirects.php
 			template\wikipedia_search.php
+			template\admin_panel.php
 		+Low priority
 			template\jquery-ui.js
 			template\jquery-.js
@@ -55,7 +56,7 @@ captivate
 14=template\js.php
 [Selected Project Files]
 Main=
-Selected=template\simcheck.php
+Selected=template\js.php
 [template\index_feed.js]
 TopLine=1
 Caret=58,20
@@ -63,17 +64,17 @@ Caret=58,20
 TopLine=1
 Caret=13,11
 [template\nd2.php]
-TopLine=172
-Caret=32,153
+TopLine=69
+Caret=39,81
 [template\idx_1.php]
-TopLine=196
+TopLine=186
 Caret=10,186
 [template\simcheck.php]
-TopLine=321
-Caret=31,331
+TopLine=11
+Caret=33,26
 [template\vars.php]
-TopLine=244
-Caret=134,126
+TopLine=145
+Caret=123,145
 [template\autorelays.js]
 TopLine=1
 Caret=37,25
@@ -81,7 +82,7 @@ Caret=37,25
 TopLine=1
 Caret=62,2
 [template\actions.php]
-TopLine=271
+TopLine=239
 Caret=1,239
 [index.php]
 TopLine=10
@@ -90,14 +91,14 @@ Caret=1,39
 TopLine=71
 Caret=32,76
 [template\internal.php]
-TopLine=202
-Caret=109,169
+TopLine=272
+Caret=38,272
 [template\redirects.php]
 TopLine=56
 Caret=33,66
 [template\wikipedia_search.php]
-TopLine=82
-Caret=21,99
+TopLine=43
+Caret=32,84
 [template\js.php]
-TopLine=169
-Caret=37,169
+TopLine=1
+Caret=107,2

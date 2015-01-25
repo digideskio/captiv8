@@ -45,12 +45,36 @@ echo"
 if(isset($_SESSION['welcome'])){echo "<div class='welcome_note' id='first1'>".$nx[4]."</div>";} 
 
 echo "</div><table><tr><td id='left1'>";
-                  
-if(index_page_check && logged_in_check){echo $nx['29'];}
+                 
+if(logged_in_check){if(index_page_check){echo $nx['29'];
+
+//this is gonna be a fun SQL statement. Oh boy
+
+$find_users_to_chat_with = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' LIMIT 100");
+
+echo "<div class='box' id='chat_list'><h3>Online Users</h3><p>Users will show up here if you both follow each other. Of course you can send a message regardless, but it will be shown somewhere less exposed.</p>";
+
+if(mysqli_num_rows($find_users_to_chat_with) > 0){
+
+while($fetch_chat = mysqli_fetch_assoc($find_users_to_chat_with)){  //   $fetch_chat['granted_by'] has the user whom you could chat with
+?>  
+
+<a href="chat-with-user:<?php echo $fetch_chat['granted_by']; ?>" class="prompt chat-option"><?php echo $fetch_chat['granted_by']; ?></a>
+
+<?php
+}
+}
+
+echo '</div>';
+
+} }
 //if(preg_match()){}\
 
       echo "<div class='box space1'></div>";
 echo "</td><td width='99%' id='vc2'>";
+
+
+
 
 //edit profile action, and all the other actions for query= [ ]
 if(isset($_GET['query'])){   $check_entry = mysqli_query($db_main,"SELECT * FROM users WHERE username='$_MONITORED[login_q]' AND password='$_MONITORED[salt_q]'");

@@ -9,10 +9,10 @@ if(compare_dz($logged_zen['password'],$_SESSION['salt_q']) && $logged_dt['userid
 ?>
 
 <style type="text/css">   /*internal helper*/
-#session_list{opacity:.3;box-shadow:0 3px 5px #292E35;font:11px "lucida sans unicode",arial,"sans serif";
+#session_list{opacity:.3;box-shadow:0 3px 5px #292E35;font:11px "lucida sans unicode",arial,"sans serif"; text-align:left;
 border-radius:2px;color:#000;background:#fff;width:350px;padding:5px;
 position:fixed;<?php echo (isset($_SESSION['xpos'])) ? "top" : "bottom" ?>:<?php echo (isset($_SESSION['ypos'])) ? $_SESSION['ypos'] : "10" ?>px;
-<?php echo (isset($_SESSION['xpos'])) ? "left" : "right" ?>:<?php echo (isset($_SESSION['xpos'])) ? $_SESSION['xpos'] : "10" ?>px;text-shadow:none;text-align:left;line-height:15px;<?php echo (isset($_SESSION['hide'])) ? "display:none;" : ""; ?>}
+<?php echo (isset($_SESSION['xpos'])) ? "left" : "right" ?>:<?php echo (isset($_SESSION['xpos'])) ? $_SESSION['xpos'] : "10" ?>px;text-shadow:none;text-align:left;line-height:15px;word-wrap:break-word;<?php echo (isset($_SESSION['hide'])) ? "display:none;" : ""; ?>}
 #session_list a{color:#000;cursor:pointer}
 #session_list h3{text-align:center}
 #session_list:hover{opacity:1}
@@ -27,7 +27,7 @@ position:fixed;<?php echo (isset($_SESSION['xpos'])) ? "top" : "bottom" ?>:<?php
 #panelcd a:hover{background:#404040;color:#c0c0c0;border-top:1px solid #303030;box-shadow:0 -2px 2px #a0a0a0}
 #session_list textarea{width:100%;padding:6px;background:#e8e8e8;border:1px solid #e0e0e0;color:#000;text-shadow:0 0;box-shadow: 0 0;font:12px monospace;cursor:auto;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;}        
 #session_list textarea:focus{border:1px solid #79A8C8}
-
+div#v_sess{text-align:left}
 
 #panelcd a.selected_link{background:#202020;border-top-color:#101010;color:#fff;cursor:default}
 a.link_view{display:inline-block; background:#c0c0c0;margin-right:5px;padding:5px 10px;text-decoration:none}
@@ -57,7 +57,7 @@ return " class='open'";   }
 return " class='open'";   }}}
 }                      //this(#session_list) will be open by default
 
-echo "<div id='session_list'>";
+echo "<div id='session_list'><h3>Admin Panel</h3>";   
 
 echo "<div id='v_sess'".selected_class('v_sess').">
 <h3>List of currently open session/cookie variables, among other things</h3><p>";

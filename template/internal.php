@@ -261,6 +261,19 @@ setcookie("limbooo[".$bm."]","a",time()-1);
 //mysqli_query($db_main, "CREATE TABLE notifications(n_id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(n_id),content varchar(100) NOT NULL,url varchar(110) NOT NULL)");  
 
 
+/* time to create the chat system
+defining chat rights
+
+-if an acount's banned, it cannot use the chat.
+-Disable chat option for those who don't want to get PM's from random people.
+
+-If they're both following each other, each other will be added on each other's chat list.
+
+-Make the chats appear on the sidebar
+
+*/
+
+
 }  
 
 

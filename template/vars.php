@@ -124,6 +124,7 @@ Signing up is totally free and will take less than a minute at the most.</p><div
 "Unfortunately, the school you typed down is currently not in the directory. Click here to add your school into the current directory."
 , "Add your school","Your search query is going to be referenced with all wikipedia school entries. If your school is not listed in Wikipedia, you will have to type in details for yourself."
 , "","There are no more posts to display.","Successfully completed input!","Unfortunately, you have failed to enter correct details."   //39th at this point
+,"Chatting with: ","Start a conversation with this user!"
 
 
 
@@ -142,4 +143,6 @@ $reply_wrap = ["<div class='contentbox comment_box'><table><tr> <td class='user_
 , "<div class='opts_block'" 
 ,  "</div>"
 , "</td></tr></table></div>"];
+function chat_box($user){return '<div class="box" ref="'.$user.'"><h3>Chatting with '.$user.'</h3><div class="message_box"></div></div>';}
+
 ?>                                                                              

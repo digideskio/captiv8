@@ -1,6 +1,10 @@
+ 
+<?php header("Cache-Control: no-cache, must-revalidate");header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); ?>
+
   <script src="template/jquery-.js" type="text/javascript"></script>
 
 <script src="template/jquery-ui.js" type="text/javascript"></script>
+
 
  <script>(function ( $ ) {   
     //this is soooo tacky      
@@ -154,8 +158,12 @@ $(this).val($(this).prop("defaultValue"));
 } }).on('change','.flick',function(){if($(this).hasClass("named") && ($(this).val().length == 0 || $(this).val()==$(this).prop("defaultValue"))){$(this).removeClass("named")}else{$(this).addClass("named")}
 if($(this).val().length == 0){
 $(this).val($(this).prop("defaultValue")); //had to change it to this for textareas
-}}).on('keyup','.flick',function(event){
-<?php if(isset($_SESSION['login_q']) && count($_GET) == 1 && compare_dz($logged_dt['password'],$_SESSION['salt_q'])): ?>  
+}}).on('keyup','.flick',function(event){             
+<?php if(isset($_SESSION['login_q']) && compare_dz($logged_dt['password'],$_SESSION['salt_q'])): ?>  
+
+
+
+<?php if(count($_GET) == 1): ?>
 
 if($(this).hasClass("school_search")){    
 
@@ -176,6 +184,9 @@ if($(this).hasClass("school_search")){
    
 
  }
+ <?php endif; ?> <!-- end count($_GET) conditional -->      
+ 
+ 
    <?php endif; ?>
 //add em'
 });
@@ -257,6 +268,39 @@ $(this).next().attr("disabled","disabled").val("").trigger("change");
       
  
 $("body").on('click',".prompt",function(event){event.preventDefault();
+
+if(/^chat-with-user[:]/.test($(this).attr("href"))){
+zing = $(this).attr("href").replace(/^chat-with-user:(.+)$/,"$1");
+
+$.get("template/simcheck.php",{"action":"chat_with_user","user":zing},function(chat_sync){     //start em' here
+
+if(chat_sync.message == "success"){
+//connection does exist
+
+if(typeof chat_sync.messages === "object" || typeof chat_sync.messages === "array"){
+for(i = 0;i <= chat_sync.messages.length;i++){
+message = chat_sync.messages.content;
+time = chat_sync.messages.stamptime;
+    
+}
+}else{
+messages = chat_sync.messages;
+}
+
+chat_box = "<div class='box' ref='" + chat_sync.user + "'><div class='spacer'><h3><?php echo $nx['40']; ?>" + chat_sync.user + "</h3><div class='chat_box'><p>"+messages+"</p></div><div class='chat_panel'><textarea></textarea></div> <a class='prompt button_samp rad' href='close-chat'>Close</a></div></div></div>";
+if($(".chat_box[ref="+chat_sync.user+"]").length == 0){ //check to see that it hasn't existed yet
+$("#chat_list").before(chat_box);
+}
+
+}
+
+
+
+
+},"json");
+
+delete zing;
+}
 
 if($(this).attr("value") == "SEARCH SCHOOL"){  
 $values = [[$(this).prev("input").prop("defaultValue"),$(this).prev("input").val()],[$(this).prev().prev("input").prop("defaultValue"),$(this).prev().prev("input").val()]]; 

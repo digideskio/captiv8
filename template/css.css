@@ -8,7 +8,7 @@ a{color:#fff;text-decoration:underline;}
 #header{width:100%;height:60px;}
 #logo{width:200px;height:60px;float:left;display:block;}
 #panel{float:left}
-input, .contentbox, .signup-a, .welcome_note, .bottom_menu a, select, textarea, .ui-tooltip, .notice, #user_menu, #login .left, .rad, .spacer, .margin, #panelcd a, .load-more-button{border-radius:4px;}
+input, .contentbox, .signup-a, .welcome_note, .bottom_menu a, select, textarea, .ui-tooltip, .notice, #user_menu, #login .left, .rad, .spacer, .margin, #panelcd a, .load-more-button,a.chat-option,.chat_box{border-radius:4px;}
 #user_menu{background:#2D394A;border-top:2px solid #38475D;border-bottom:2px solid #26303F;box-shadow:0 -2px 2px #2D394B;text-shadow:0 1px 0 #000;color:#7993A7;font:13px "lucida sans unicode", arial, "sans serif";margin:14px 0 0 4px;}
 #user_menu div.left, #user_menu div.right{display:inline-block;}
 .right{float:right;}
@@ -27,7 +27,7 @@ a.signup-a:focus{box-shadow:0 0 10px #556378}
 #welcomemsg{background:#323B49;border-top:2px solid #292E35;border-bottom:2px solid #3C4D64;font-size:10px;}
 #welcomemsg a{border-top:2px solid transparent}
 #welcomemsg a:hover{border-top:2px solid #3B4A60;}
-.contentbox, .notice{background:#495567;border-top:2px solid #2F3743;border-bottom:2px solid #556378;box-shadow:0 -3px 3px #333D4C;padding:6px 4px;margin-bottom:10px;}
+.contentbox, .notice,.chat-option{background:#495567;border-top:2px solid #2F3743;border-bottom:2px solid #556378;box-shadow:0 -3px 3px #333D4C;padding:6px 4px;margin-bottom:10px;}
 .contentbox h3{color:#64B0DF;font:bold 17px "Lucida sans unicode", arial, "sans serif";padding:3px 6px 8px;margin:0}
 .contentbox h3 span{font-weight:normal;}
 .contentbox p{padding:5px;margin:0}
@@ -185,7 +185,7 @@ div.contentbox td.right_side{width:240px;}
 .spoiler{display:none;}
 .index_post p{font-size:12px;}
 .bywhom{font-size:11px;color:#8C98AD}
-div.contentbox.index_post{border-top:1px solid #556378;border-bottom:1px solid #202834;box-shadow:0 0 4px #26303F;margin:15px 0;}
+div.contentbox.index_post,a.chat-option{border-top:1px solid #556378;border-bottom:1px solid #202834;box-shadow:0 0 4px #26303F;margin:15px 0;}
 .side_info a.topic_link{color:#7a869b;text-decoration:none;padding-bottom:1px;border-bottom:1px dashed #7a869b;}
 .extra_opts{padding:0 15px;z-index:4;background:#344256;}
 .extra_opts a, a.load-more-button{text-decoration:none;color:#82eda8;text-shadow:0 -1px 0 #30353C;padding:4px 8px;font-family:"Lucida Sans Unicode", "Arial";text-align:center;background:#5C6676;border-top:2px solid #6C778D;box-shadow:0 -2px 2px #2F3743;}
@@ -258,9 +258,16 @@ a.load-more-button:hover{opacity:1}
 blockquote{margin:0 0 20px 10px;padding-bottom:8px}
 blockquote dt{background:transparent url('img/4.png') repeat-x scroll;padding:7px;font:bold 13px "Tahoma";color:#94CCE0;}
 blockquote dd{margin-left:35px}
-.nam, .posts_t1 span{cursor:default;   -webkit-touch-callout:none;    -webkit-user-select:none;    -khtml-user-select:none;    -moz-user-select:none;    -ms-user-select:none;    user-select:none;}
+.nam, .posts_t1 span,#left1 h3{cursor:default;   -webkit-touch-callout:none;    -webkit-user-select:none;    -khtml-user-select:none;    -moz-user-select:none;    -ms-user-select:none;    user-select:none;}
 .nam{font:13px "Lucida Sans Unicode";}
 input[type=text].inline{display:inline;width:auto;margin-left:5px}
 #school_search a.school_box h3{padding:3px 0}
 .fill_details input[type=submit]{display:block;float:right;border-bottom-color:#333D4C;text-transform:uppercase}
 input[disabled]{opacity:.5}
+a.chat-option{display:block;margin:4px;padding:4px 15px 5px;text-decoration:none}
+.chat_box,.chat_panel textarea,#chat_list p{font:11px tahoma;}
+.chat_box{background:#495567;border-top:2px solid #2F3743;border-bottom:2px solid #556378;margin-bottom:4px;padding:3px;}
+.chat_panel textarea{width:100%;margin:0;padding:4px;min-height:11px;border-style:solid;border-color:transparent}
+.chat_panel textarea:focus{box-shadow:0 0 transparent;border-color:#667086}
+div.box[ref] .spacer{text-align:right;}
+a.button_samp[href=close-chat]{font-size:11px;text-transform:uppercase;margin-right:0;box-shadow:0 2px 2px #292E35;border-bottom:2px solid #202834}
