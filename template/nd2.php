@@ -45,6 +45,7 @@ echo"
 if(isset($_SESSION['welcome'])){echo "<div class='welcome_note' id='first1'>".$nx[4]."</div>";} 
 
 echo "</div><table><tr><td id='left1'>";
+
                  
 if(logged_in_check){if(index_page_check){echo $nx['29'];
 
@@ -72,6 +73,7 @@ echo '</div>';
 
       echo "<div class='box space1'></div>";
 echo "</td><td width='99%' id='vc2'>";
+
 
 
 

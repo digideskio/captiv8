@@ -50,11 +50,11 @@ function hack_free(&$data,$start = "0"){           global $db_main,$sync; $child
   }else{    
                               $array_view = [];  
 
-     for($i = 0;$i <= count($data)-1;$i++){ 
+     for($i = 0;$i <= count($data)-1;$i++){       $data[$i] = mysqli_real_escape_string($db_main,$data[$i]);
       $data[$i] = trim($data[$i]);
   $data[$i] = stripslashes($data[$i]);
   $data[$i] = htmlspecialchars($data[$i]);       /*le filters*/
-    $data[$i] = mysqli_real_escape_string($db_main,$data[$i]);
+
     
     if(count($array_view) > 0){ $array_view = array_merge(array($i => $data[$i]), $array_view);}else{ $array_view = array($i => $data[$i]);  }
  }
@@ -62,22 +62,23 @@ function hack_free(&$data,$start = "0"){           global $db_main,$sync; $child
   }
   }
   }else{
-  
+        $data = mysqli_real_escape_string($db_main,$data);  
    $data = trim($data);
   $data = stripslashes($data);
   $data = htmlspecialchars($data);
-     $data = mysqli_real_escape_string($db_main,$data);  
+
   return $data;  }
 }function clear_array(&$listof, $search = "", $value_search = ""){
 if(is_array($listof)){
 foreach($listof as $key => $value){
 if(strlen($search) > 0 || strlen($value_search) > 0){
 
-if(preg_match("#^".$search."#",$key)){unset($listof[$key]);}
+if(preg_match("#^".$search."#",$key)){unset($listof[$key]);} 
 }}
 }}
 if($_SERVER['REQUEST_METHOD'] == "POST"){foreach($_POST as $key => $room){ $z = isset($z) ? $z + 1 : 0;
-$_SPIN[$key] = preg_replace("/[\n]/","<br>",$_POST[$key]); 
+$copy = $_POST[$key];
+$_SPIN[$key] = preg_replace("/[\x27]/","&#39;",preg_replace("/[\n]/","<br>",hack_free($copy))); 
 $_DATA[$key] = $_SPIN[$key];
 $clone[$z] = $_SPIN[$key];             //increment array key
                    //lol spin and data are essentially the same thing

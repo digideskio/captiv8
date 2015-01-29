@@ -258,7 +258,7 @@ a.load-more-button:hover{opacity:1}
 blockquote{margin:0 0 20px 10px;padding-bottom:8px}
 blockquote dt{background:transparent url('img/4.png') repeat-x scroll;padding:7px;font:bold 13px "Tahoma";color:#94CCE0;}
 blockquote dd{margin-left:35px}
-.nam, .posts_t1 span,#left1 h3{cursor:default;   -webkit-touch-callout:none;    -webkit-user-select:none;    -khtml-user-select:none;    -moz-user-select:none;    -ms-user-select:none;    user-select:none;}
+.nam, .posts_t1 span,#left1 h3,.chat_box div{cursor:default;   -webkit-touch-callout:none;    -webkit-user-select:none;    -khtml-user-select:none;    -moz-user-select:none;    -ms-user-select:none;    user-select:none;}
 .nam{font:13px "Lucida Sans Unicode";}
 input[type=text].inline{display:inline;width:auto;margin-left:5px}
 #school_search a.school_box h3{padding:3px 0}
@@ -270,4 +270,10 @@ a.chat-option{display:block;margin:4px;padding:4px 15px 5px;text-decoration:none
 .chat_panel textarea{width:100%;margin:0;padding:4px;min-height:11px;border-style:solid;border-color:transparent}
 .chat_panel textarea:focus{box-shadow:0 0 transparent;border-color:#667086}
 div.box[ref] .spacer{text-align:right;}
-a.button_samp[href=close-chat]{font-size:11px;text-transform:uppercase;margin-right:0;box-shadow:0 2px 2px #292E35;border-bottom:2px solid #202834}
+.chat-b textarea{min-height:65px;border:1px solid #495567}
+.chat-b a.button_samp{font-size:10px;text-transform:uppercase;margin-right:0;box-shadow:0 0 0 transparent;border-bottom:2px solid #202834;padding:3px 8px 4px}
+.chat_box{max-height:150px;overflow-y:hidden;}
+.chat_box:hover{overflow-y:auto}
+.chat_box div{background:transparent url('img/4.png') repeat-x scroll bottom left;padding:3px 10px 5px;background-color:#424D5D;font-weight:bold;text-align:right}
+.chat_box p{padding:4px 5px;}
+#chat_list p{line-height:14px}

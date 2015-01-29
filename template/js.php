@@ -1,12 +1,11 @@
  
-<?php header("Cache-Control: no-cache, must-revalidate");header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); ?>
+
 
   <script src="template/jquery-.js" type="text/javascript"></script>
 
 <script src="template/jquery-ui.js" type="text/javascript"></script>
 
-
- <script>(function ( $ ) {   
+<script>(function ( $ ) {   
     //this is soooo tacky      
 
 
@@ -40,7 +39,8 @@ return str.replace( /\s+$/, "" );
 
 
 
-</script>    
+</script> 
+ 
 <script type="text/javascript">
 
 
@@ -101,6 +101,8 @@ $("title").html(zen3);
 })
 });
 
+
+/*fix this shit starting here*/
 
 $("#title_trigger").next("textarea").hide().end().on(
 'focus',function(){
@@ -192,7 +194,7 @@ if($(this).hasClass("school_search")){
 });
 
 
-;
+
 
 /*
 $(".flick").each(function(){
@@ -212,7 +214,7 @@ $(this).val($(this).prop("defaultValue")); //had to change it to this for textar
 }
  //yup, change covers more than blur
 });     
-});  */
+});  */                  
 $("#first1").attr("extra",$("#first1").height()).addClass("lolbuffer").animate({height:$("#first1").attr('extra')},2200).removeClass("lolbuffer");
 $("#close_button1").click(function(event){event.preventDefault();
 $(this).parents("td#left1 div").detach();});  
@@ -250,7 +252,49 @@ if($(this).hasClass("a1") && $(this).next("input").prop("checked",false)){$(this
 });
 
 
-<?php if(isset($_SESSION['login_q'])){require_once("template/autorelays.js");} ?> 
+<?php if(isset($_SESSION['login_q'])): ?>
+
+function load_replies(){
+$.get("template/simcheck.php",{"action":"chat_with_user","user":zing},function(chat_sync){     //start em' here
+                                 
+                                                           
+if(chat_sync.message == "success"){
+//connection does exist                                                         
+                                
+if(typeof chat_sync.messages === "object"){
+for(i = 0;i <= chat_sync.messages.length - 1;i++){
+message = chat_sync.messages[i].content; 
+user = chat_sync.messages[i].bywhom; 
+postid = chat_sync.messages[i].postid;
+j = i -1;  
+                                 
+r_format = ((j < 0 && i == 0) || (i > 0 && chat_sync.messages[j].bywhom != user)) ? "<div>"+user+"</div><p num='"+postid+"'>"+message+"</p>" : "<p num='"+postid+"'>"+message+"</p>"; //check whether previous user was the same one so I won't have to spell the username for each reply
+//count the very first message
+
+messages_p = (typeof messages_p === "undefined") ? r_format : messages_p + r_format;   
+
+}
+}else{                                  
+messages_p = "<p><em>" + chat_sync.messages + "</em></p>";
+}
+
+
+
+chat_box = "<div class='box chat-b' ref='" + chat_sync.user + "'><div class='spacer'><h3><?php echo $nx['40']; ?>" + chat_sync.user + "</h3><div class='chat_box'>"+messages_p+"</div><div class='chat_panel'><textarea></textarea></div><a class='prompt button_samp rad chat-buttons' href='submit-chat-msg'>SUBMIT</a><a class='prompt button_samp rad chat-buttons' href='close-chat'>Close</a></div></div></div>";
+if($(".chat-b[ref='"+chat_sync.user+"']").length < 1){ //check to see that it hasn't existed yet
+$("#chat_list").before(chat_box);
+}
+
+
+
+ 
+} //end "success"ful message
+},"json");  //end get_tabbed_users get switch
+}
+
+
+<?php require_once("template/autorelays.js");endif; ?> 
+
 
 <?php if(preg_match("#profile[=](.+)$#",extraurl())){require_once("template/profile_sync.js");} ?> 
 
@@ -266,41 +310,36 @@ $(this).next().attr("disabled","disabled").val("").trigger("change");
 }
 });     
       
- 
+                  
 $("body").on('click',".prompt",function(event){event.preventDefault();
 
 if(/^chat-with-user[:]/.test($(this).attr("href"))){
 zing = $(this).attr("href").replace(/^chat-with-user:(.+)$/,"$1");
 
-$.get("template/simcheck.php",{"action":"chat_with_user","user":zing},function(chat_sync){     //start em' here
+if($(".chat-b").length <= 5){
 
-if(chat_sync.message == "success"){
-//connection does exist
+load_replies();
 
-if(typeof chat_sync.messages === "object" || typeof chat_sync.messages === "array"){
-for(i = 0;i <= chat_sync.messages.length;i++){
-message = chat_sync.messages.content;
-time = chat_sync.messages.stamptime;
-    
-}
-}else{
-messages = chat_sync.messages;
-}
-
-chat_box = "<div class='box' ref='" + chat_sync.user + "'><div class='spacer'><h3><?php echo $nx['40']; ?>" + chat_sync.user + "</h3><div class='chat_box'><p>"+messages+"</p></div><div class='chat_panel'><textarea></textarea></div> <a class='prompt button_samp rad' href='close-chat'>Close</a></div></div></div>";
-if($(".chat_box[ref="+chat_sync.user+"]").length == 0){ //check to see that it hasn't existed yet
-$("#chat_list").before(chat_box);
-}
-
+} //end check on number of tabs
+else{//alert if too many tabs
+//alternatively, I could have just checked the number of chat boxes on... :/
+alert("You have too many chat tabs on. Please close at least one of them");
 }
 
 
 
-
-},"json");
 
 delete zing;
 }
+
+
+if($(this).attr("href") == "submit-chat-msg"){
+
+$.post("template/simcheck.php?action=submit-chat-msg",{"towhom":$(this).parent().parent().attr("ref"),"message":$(this).parent().find(".chat_panel textarea").val()},function(message){
+$("#left1").prepend(message);
+});
+}
+
 
 if($(this).attr("value") == "SEARCH SCHOOL"){  
 $values = [[$(this).prev("input").prop("defaultValue"),$(this).prev("input").val()],[$(this).prev().prev("input").prop("defaultValue"),$(this).prev().prev("input").val()]]; 
@@ -312,7 +351,11 @@ $(".prompt[value='SEARCH SCHOOL']").next("div").removeClass("contentbox").html(d
 });
 }
 
-<?php if(isset($_SESSION['login_q'])): ?>
+if($(this).attr("href") == "close-chat"){
+$(this).parent().parent().empty().detach();
+}
+
+<?php if(isset($_SESSION['login_q'])): ?>    //IT'S HERE
 
 if($(this).attr("value") == "Complete Details"){       i = -1;
 s_layer = $(this).attr("id");   zeus = new Array();        
@@ -324,8 +367,8 @@ zeus[i] = $(this).attr("name") + " : " + $(this).val();
 
 alert(zeus);    
 $.get("template/simcheck.php",{"action":"complete_details","data":zeus}).done(function(msg){ alert(msg); 
-if(msg == "<?php echo $nx['38'] ?>"){
-// window.location.assign('<?php echo $_SERVER['HTTP_REFERER']; ?>index.php?query=<?php echo $_MONITORED['login_q']; ?>');         
+if(msg == "<?php echo $nx['38']; ?>"){
+window.location.assign('<?php echo $_SERVER['HTTP_HOST'] . "/" . $_SERVER['PHP_SELF']; ?>/index.php?query=<?php echo $_MONITORED['login_q']; ?>');         
 }
 });
 }
@@ -516,7 +559,9 @@ $("#content").appendTo("#widthfix");  //keep the dynamicity?
 
 } 
 
-});      
+});   
+
+/*and ending here*/
 
 });
 

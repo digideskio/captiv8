@@ -74,6 +74,18 @@ if($_GET['view'] == "v_sess"){}else{$_SESSION['current_view'] = $_GET['view'];}
 
 break;
 
+//$.post("template/simcheck.php",{"action":"submit-chat-msg","towhom":$(this).parent().parent().attr("ref"),"message":$(this).parent().find(".chat_panel textarea").val()},function(message){
+
+case "submit-chat-msg":      
+  $chat_perms_check = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' AND a.granted_by = '$_SPIN[towhom]' LIMIT 5");
+  
+  if(mysqli_num_rows($chat_perms_check) == 1){ 
+$submit_post = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,bywhom,settings) VALUES('$_SPIN[message]','3','$_SPIN[towhom]','$_MONITORED[login_q]','2')"); //i'll use the settings column somehow for something in the future lol, probably privacy-related
+echo (!$submit_post) ? mysqli_error($db_main) : "Successfully posted!";
+}
+mysqli_free_result($chat_perms_check);
+break;
+
 case "school_search":   
 
 $select_school = mysqli_query($db_main,"SELECT * FROM school WHERE name LIKE '%$_FILTERED[search_q]%' AND ed_level='$_FILTERED[criteria]' ORDER BY name ASC LIMIT 0,5");
@@ -118,12 +130,17 @@ mysqli_free_result($select_school);
   
   //find whether they're able to actually chat with the user whom they're trying to engage with
   
-  $chat_perms_check = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' AND a.granted_by = '$_FILTERED[user]' LIMIT 100");
+  $chat_perms_check = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' AND a.granted_by = '$_FILTERED[user]' LIMIT 5");
   
   if(mysqli_num_rows($chat_perms_check) == 1){
-  $search_for_posts = mysqli_query($db_main,"SELECT * FROM posts WHERE bywhom='$_MONITORED[login_q]' AND forwhom='$_FILTERED[user]' AND cnttype = '2' UNION SELECT * FROM posts WHERE bywhom ='$_FILTERED[user]' AND forwhom='$_MONITORED[login_q]' AND cnttype = '2' ORDER BY stamptime DESC LIMIT 0,36");
-  $search_cha = (mysqli_num_rows($search_for_posts) > 0) ? array_reverse(mysqli_fetch_array($search_for_posts)) : $nx['41'];
-  echo json_encode(["message"=>"success","user"=>$_FILTERED['user'],"messages"=>$search_cha]);
+  $search_for_posts = mysqli_query($db_main,"SELECT * FROM posts WHERE bywhom='$_MONITORED[login_q]' AND forwhom='$_FILTERED[user]' AND cnttype = '3' UNION SELECT * FROM posts WHERE bywhom='$_FILTERED[user]' AND forwhom='$_MONITORED[login_q]' AND cnttype = '3' ORDER BY stamptime DESC LIMIT 0,36");       
+   while($zen = mysqli_fetch_assoc($search_for_posts)){
+   foreach($zen as $key => $value){
+   if($zen[$key] == null){unset($zen[$key]);}
+   }
+   $post_list[] = $zen;}
+  $search_cha = (mysqli_num_rows($search_for_posts) > 0) ? array_reverse($post_list) : $nx['41'];
+  echo json_encode(["message"=>"success","user"=>$_FILTERED['user'],"messages"=>$search_cha],JSON_UNESCAPED_SLASHES);
   }
   
   
@@ -372,7 +389,8 @@ break;  //end case "complete_details"
                                                  
 
 if(isset($_GET['nm_time'])){              
-if($_GET['nm_time'] == "notifs"){
+switch($_GET['nm_time']){
+case "notifs":
 $notifs_grab = mysqli_query($db_main, "SELECT * FROM notifications WHERE towhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,10");
 if(mysqli_num_rows($notifs_grab) > 0){
 
@@ -440,8 +458,34 @@ $("#notifications .spacer").html().append("<a href='"+ data.notifs[i]['url'] +"'
 $msgs = array("result" => "nonew");
 echo json_encode($msgs);
 
+}   //end "notifs" switch conditional
+
+
+
+
+break;    case "chat-log":
+
+//find all messages sent to the user
+                                  
+if(isset($_SESSION['tabbed_users'])){
+
+foreach($_MONITORED['tabbed_users'] as $other_users_name){
+
+$sent_messages = mysqli_query($db_main, "SELECT * FROM posts user_1,posts user_2 WHERE user_1.bywhom = '$_MONITORED[login_q]' AND user_1.forwhom='$other_users_name' AND user_1.forwhom=user_2.bywhom AND user_1.cnttype='3' AND user_2.cnttype='3' AND user_2.bywhom=user_1.forwhom ORDER BY stamptime DESC");
+
+$que_messages = ($sent_messages) ? mysqli_fetch_array($sent_messages) : $nx['41']; 
+
+
 }
-}}
+
+}
+
+break;
+
+  }//end switch statement
+
+
+}  //end $nm_time conditional
 
 //and we're in                                                                               
 
