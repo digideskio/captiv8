@@ -15,6 +15,15 @@ $error = "<div class='contentbox'> <h3>SQL error</h3><p>" .mysqli_error($db_main
 
 
 
+$server_mash = "http://" . $_SERVER['SERVER_NAME'] .$_SERVER['PHP_SELF'];
+
+$main_dir = preg_replace("#(index[.]php|template[/](.+)[.]php)[/]?#","",$server_mash) ;
+$image_dir = $main_dir . $dir;
+
+
+
+
+
 
 function redir_process($url){ global $allow_redirs;
 if($allow_redirs == true){header($url);      }
@@ -78,7 +87,7 @@ if(preg_match("#^".$search."#",$key)){unset($listof[$key]);}
 }}
 if($_SERVER['REQUEST_METHOD'] == "POST"){foreach($_POST as $key => $room){ $z = isset($z) ? $z + 1 : 0;
 $copy = $_POST[$key];
-$_SPIN[$key] = preg_replace("/[\x27]/","&#39;",preg_replace("/[\n]/","<br>",hack_free($copy))); 
+$_SPIN[$key] = preg_replace("/[\x27]/","&#39;",preg_replace("/[\n]/","<br>",hack_free($copy))); //so mysqli_real_escape string doesnt do its job correctly no
 $_DATA[$key] = $_SPIN[$key];
 $clone[$z] = $_SPIN[$key];             //increment array key
                    //lol spin and data are essentially the same thing

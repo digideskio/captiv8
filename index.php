@@ -34,6 +34,7 @@ echo "</head>";
 /*end html header, start actual content*/
 echo "<body>";
 
+
 require_once("template/nd2.php");
 
 

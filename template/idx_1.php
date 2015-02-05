@@ -49,7 +49,7 @@ mysqli_free_result($passes);
 echo "
 
 <input type='submit' value='".$nx['21']."'></div>";
-echo "</div></form>";  }
+echo "</div></form>";  
 
 
 //end submission form
@@ -57,6 +57,18 @@ echo "</div></form>";  }
 
 //later i'm going to add a message here if the user hasn't fully filled out their profile. 
 //later...
+//is now
+
+echo '<a href="http://localhost/captiv8/index.php?query=nolvorite" class="pawn"><div class="notice center">You will be one step closer to completing your profile by filling out your education details!</div></a>';
+
+ $edu_select = mysqli_query($db_main, "SELECT * FROM education WHERE forwhom='$_MONITORED[login_q]';");
+ if(mysqli_num_rows($edu_select) < 1): ?>
+
+
+
+
+
+<?php endif;         }
 
 
   if(isset($_SESSION['login_q'])){

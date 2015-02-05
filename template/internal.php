@@ -44,14 +44,14 @@ $logged_dt = mysqli_fetch_assoc($logged_query);
 
  
 
-if(isset($_GET['get_more'])){ //news_feed_php needs it
+if(isset($_GET['get_more'])){ //news_feed.php needs it
 
 require_once("auxiliary.php");
 define('index_page_check', true);
-}else{
+}else{             
 require_once("template/auxiliary.php");
-require_once("template/vars.php");
-define('index_page_check', preg_match("#index.php([\072]([0-9]){0,15})*$#", extraurl()));
+require_once("template/vars.php");  
+define('index_page_check',(preg_match("#index.php([\072]([0-9]){0,15})*$#", extraurl()) && !isset($_SERVER['REDIRECT_URL'])));
 }
 
 define('dflt_date_f',"F j, Y, g:i A");

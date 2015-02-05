@@ -1,9 +1,9 @@
  
 
 
-  <script src="template/jquery-.js" type="text/javascript"></script>
+  <script src="<?php echo $main_dir; ?>template/jquery-.js" type="text/javascript"></script>
 
-<script src="template/jquery-ui.js" type="text/javascript"></script>
+<script src="<?php echo $main_dir; ?>template/jquery-ui.js" type="text/javascript"></script>
 
 <script>(function ( $ ) {   
     //this is soooo tacky      
@@ -58,10 +58,12 @@ $("head").ready(function(){   //gets executed faster than $(document).ready()
 
 
 
+
+
 $(".quick_links a:last-child").css("background-image","none");
 
 $("#panel").css("width",screen.availWidth-240 + "px");
-$("#user_menu .uplink").append("<img src='template\/img\/9.png' alt='\(Options\)'>");
+$("#user_menu .uplink").append("<img src='<?php echo $image_dir; ?>9.png' alt='\(Options\)'>");
 $(".posts_t1:first").addClass("nobg");
 $(".profile_main,h3.content_q").wrapInner("<div class='part_1'><div class='part_2'><div class='part_3'></div></div></div>"); //everything that needs 3-part backgrounds
 
@@ -83,7 +85,7 @@ $(this).find(".dropdown_content").attr("style","left: "+nina2+"px; top: "+nina3+
 }, 'mouseleave':function(){
 $(this).find(".dropdown_content").attr("style","display:none");
 if($(this).is("#notifs_drop")){                                           
-$.get("template/simcheck.php",{"nm_time":"notifs","action":"clearnotifs"},function(data){if(data.notifs_left > 0){$("#notifs_bar .spacer .note").html("("+data.notifs_left+" new)");
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"nm_time":"notifs","action":"clearnotifs"},function(data){if(data.notifs_left > 0){$("#notifs_bar .spacer .note").html("("+data.notifs_left+" new)");
 
 }else{
 
@@ -103,6 +105,8 @@ $("title").html(zen3);
 
 
 /*fix this shit starting here*/
+
+
 
 $("#title_trigger").next("textarea").hide().end().on(
 'focus',function(){
@@ -150,6 +154,10 @@ $(this).parent().prev().find(".boxxy").detach();
 
 });    $("#user_menu .left,#user_menu .right,#user_menu .dropdown_content,#left1 div.box").wrapInner("<div class='spacer' />");
 
+                                      
+                                                  
+
+
 
 
 $("body").on('focus','.flick',function(){
@@ -176,7 +184,7 @@ if($(this).hasClass("school_search")){
 //or I could have just nulled the settimeout function before the last time it was executed
     event.stopPropagation();    
     if($(this).next().is("div")){   // $(this).next("#spark").html($(this).val());         
- $(this).next("div").load("template/simcheck.php?action=school_search&criteria="+encodeURIComponent($(this).parent().prev().text())+"&search_q=" +encodeURIComponent($(this).val()));
+ $(this).next("div").load("<?php echo $main_dir; ?>template/simcheck.php?action=school_search&criteria="+encodeURIComponent($(this).parent().prev().text())+"&search_q=" +encodeURIComponent($(this).val()));
 
 
     }else{
@@ -186,7 +194,10 @@ if($(this).hasClass("school_search")){
    
 
  }
- <?php endif; ?> <!-- end count($_GET) conditional -->      
+ <?php endif; ?> <!-- end count($_GET) conditional -->    
+ 
+ 
+   
  
  
    <?php endif; ?>
@@ -254,11 +265,17 @@ if($(this).hasClass("a1") && $(this).next("input").prop("checked",false)){$(this
 
 <?php if(isset($_SESSION['login_q'])): ?>
 
-function load_replies(){
-$.get("template/simcheck.php",{"action":"chat_with_user","user":zing},function(chat_sync){     //start em' here
-                                 
+function load_replies(user_in_call){
+zing = (typeof zing === "undefined" && typeof user_in_call == "string") ? user_in_call : zing;
+
+// $("#left1").prepend(zing);
+
+
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user","user":zing},function(chat_sync){     //start em' here
+
+      
                                                            
-if(chat_sync.message == "success"){
+if(chat_sync.message == "success"){ 
 //connection does exist                                                         
                                 
 if(typeof chat_sync.messages === "object"){
@@ -284,19 +301,20 @@ chat_box = "<div class='box chat-b' ref='" + chat_sync.user + "'><div class='spa
 if($(".chat-b[ref='"+chat_sync.user+"']").length < 1){ //check to see that it hasn't existed yet
 $("#chat_list").before(chat_box);
 }
+zen = $(".chat-b[ref='" + chat_sync.user + "'] .spacer .chat_box").prop("scrollHeight");
+$(".chat-b[ref='" + chat_sync.user + "'] .spacer .chat_box").scrollTop(zen);
 
 
-
- 
+delete zing; 
 } //end "success"ful message
 },"json");  //end get_tabbed_users get switch
 }
 
 
-<?php require_once("template/autorelays.js");endif; ?> 
+<?php require_once($main_dir. "template/autorelays.js");endif; ?> 
 
 
-<?php if(preg_match("#profile[=](.+)$#",extraurl())){require_once("template/profile_sync.js");} ?> 
+<?php if(preg_match("#profile[=](.+)$#",extraurl())){require_once($main_dir. "template/profile_sync.js");} ?> 
 
              var $black_layer = ["<div id='black_overlay'><div id='widthfix'>","</div></div>"];  
 
@@ -335,9 +353,7 @@ delete zing;
 
 if($(this).attr("href") == "submit-chat-msg"){
 
-$.post("template/simcheck.php?action=submit-chat-msg",{"towhom":$(this).parent().parent().attr("ref"),"message":$(this).parent().find(".chat_panel textarea").val()},function(message){
-$("#left1").prepend(message);
-});
+$.post("<?php echo $main_dir; ?>template/simcheck.php?action=submit-chat-msg",{"towhom":$(this).parent().parent().attr("ref"),"message":$(this).parent().find(".chat_panel textarea").val()});
 }
 
 
@@ -346,7 +362,7 @@ $values = [[$(this).prev("input").prop("defaultValue"),$(this).prev("input").val
 $zenx = [($values[0][0] == $values[0][1]) ? " " : $values[0][1],($values[1][0] == $values[1][1]) ? " " : $values[1][1]];
   $(this).after(function(){if($(this).next().is("div") == true){return false;}else{return "<div id='school_search' class='contentbox'>Loading...</div>"}});
   $(this).next("div").html("Loading...").addClass("contentbox");
-$.get("template/simcheck.php",{"action":"wikipedia_search","data":[$zenx[1],$zenx[0]]},function(data){
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"wikipedia_search","data":[$zenx[1],$zenx[0]]},function(data){
 $(".prompt[value='SEARCH SCHOOL']").next("div").removeClass("contentbox").html(data);
 });
 }
@@ -366,26 +382,29 @@ zeus[i] = $(this).attr("name") + " : " + $(this).val();
 
 
 alert(zeus);    
-$.get("template/simcheck.php",{"action":"complete_details","data":zeus}).done(function(msg){ alert(msg); 
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"complete_details","data":zeus}).done(function(msg){ alert(msg); 
 if(msg == "<?php echo $nx['38']; ?>"){
 window.location.assign('<?php echo $_SERVER['HTTP_HOST'] . "/" . $_SERVER['PHP_SELF']; ?>/index.php?query=<?php echo $_MONITORED['login_q']; ?>');         
 }
 });
 }
 
-<?php endif; ?>
+
+
+<?php endif; ?>   //end logged_in conditional
 
 
 if($(this).attr("href") == "submit-edit"){  
-$.post("template/simcheck.php?action=css_edit",{"data":$("#jones").val(),"file":$("#jones").attr("title")},function(data){ 
+$.post("<?php echo $main_dir; ?>template/simcheck.php?action=css_edit",{"data":$("#jones").val(),"file":$("#jones").attr("title")},function(data){
+alert(data); 
 if(data.notice == "success"){alert("Successfully edited file!");}                                                                       
-},"json");
+},"json");     
 }
 
 if($(this).attr("href") == "load-more"){
 $(this).attr("Loading...");
 
-$.get("template/news_feed.php",{"get_more":"true"},function(older_msgs){
+$.get("<?php echo $main_dir; ?>template/news_feed.php",{"get_more":"true"},function(older_msgs){
 $("#news_feed").append(older_msgs);
 });
 
@@ -398,14 +417,14 @@ $(this).attr("id","select4");
 
 if($(this).attr("datamine").length){
 
-$.get("template/simcheck.php",{"action":"confirm_school","data":$(this).attr("datamine")}).done(function(msg){
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"confirm_school","data":$(this).attr("datamine")}).done(function(msg){
 
 $("#select4").parent().append(msg);
 
 });
 }else{
 
-$.get("template/simcheck.php",{"action":"confirm_school"}).done(function(msg){
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"confirm_school"}).done(function(msg){
 
 $("#select4").after(msg);
 
@@ -418,7 +437,7 @@ $("#select4").after(msg);
 }
 if($(this).attr("href") == "confirm_school"){ $("#select4").removeAttr("id");
 $(this).attr("id","select4");
-$.get("template/simcheck.php",{"action":"confirm_school","name":$(this).attr("name")}).done(function(msg){
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"confirm_school","name":$(this).attr("name")}).done(function(msg){
 
 $("#select4").after(msg);
 
@@ -427,7 +446,8 @@ $("#select4").after(msg);
 
 if(/^edit[:]/g.test($(this).attr("href"))){    //murder murder murder murrdurrrrrrrrrrrrrrrrr murrrrrrdurrrrrrrrr
 //FINALLY. holy shit mother of god tweaking batman
-$zen_0 = $(this).attr('href');      
+$zen_0 = $(this).attr('href');     
+
 $zen_1 = $(this).attr('href');                
 $zen_1 = $zen_1.replace(/^edit[:](.+)$/,"$1");
 
@@ -435,7 +455,6 @@ $.get($zen_1).done(function(css){
      $("link[href='" +$zen_1+"']").remove();
 //modify directory file at url('')'s
      $snick = css;
-     $snick = $snick.replace(/url[\x28](.)[/]?(.+)(.)[\x29]/g,"url($1template/$2$3)");
      
      if($("head style[title='"+$zen_1+"']").length === 0){     
      $("head").append("<style title='"+$zen_1+"'>"+ $snick +"</style>");  
@@ -470,7 +489,7 @@ if(/^v[\137]/g.test($(this).attr("href"))){
 
 if($(".selected_link").attr("href") == $(this).attr("href")){
 
-}else{$.get("template/simcheck.php",{"action":"change_panels","view":$(this).attr("href")});
+}else{$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"change_panels","view":$(this).attr("href")});
 if($(this).attr("href") == "v_css"){
 $("#session_list").css({"width":"650px"});
 }else{$("#session_list").removeAttr("style");}
@@ -498,7 +517,7 @@ $(this).before("<input type='text' class='largeform flick' value='Add a choice h
 if($(this).attr("href") == "add-friend"){  
 
 $(this).addClass("greened");
-$.get("template/simcheck.php",{"friend_status[]":[$("#check_friend_status").attr("ref1"),$("#check_friend_status").attr("ref2")],"action":"sg_req"}).done(function(data){
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"friend_status[]":[$("#check_friend_status").attr("ref1"),$("#check_friend_status").attr("ref2")],"action":"sg_req"}).done(function(data){
 $("#check_friend_status").html(data);
 });   
 
@@ -559,9 +578,16 @@ $("#content").appendTo("#widthfix");  //keep the dynamicity?
 
 } 
 
-});   
+}); 
 
-/*and ending here*/
+<?php if(isset($_SESSION['login_q']) && compare_dz($logged_dt['password'],$_SESSION['salt_q'])): ?>  
+                            
+        
+                   
+
+<?php endif; ?>     
+
+/*and CUT*/
 
 });
 

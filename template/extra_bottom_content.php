@@ -1,25 +1,16 @@
 
-<script type="text/javascript">      /*
-$("input[name=url_id]").keyup(function(){
-$("#checkn1").load("template/simcheck.php?id=1", {"search_1": $(this).val()}); 
-}).tooltip({position: { my: "left+15 center", at: "right center" }, content: "<span id='checkn1'>Will appear as abstract.ws/(your input). Must contain no spaces, and only letters and numbers</span>"});
-$("input[name=t_name]").tooltip({position: { my: "left+15 center", at: "right center" }});        
+<script type="text/javascript">         
+                                     
+<?php if(index_page_check){ include($main_dir ."template/index_feed.js");} ?>    
 
-if($(this).prop("value","")){}
-
-       */                         
-      
-       
-<?php if(index_page_check){ include("template/index_feed.js");} ?>    
-
-<?php if(isset($logged_dt)) include("template/profile_edit.js");     ?>
+<?php if(isset($logged_dt)) include($main_dir ."template/profile_edit.js");?>
 
 $("#post_k input[type=submit]").click(function(){
 if($("#post_k input[name=tcha1]").val() == $("#post_k input[name=tcha1]").prop("defaultValue")){return false;alert('Please provide a title.')}else{
 if($("#post_k textarea[name=tcha2]").val() == $("#post_k textarea[name=tcha2]").prop("defaultValue")){$("#post_k textarea[name=tcha2]").val(" ");}
 }
 })   
-$("span.signup input, span.signup select, button#axe1check").bind('keyup input', function(){$("#checkn1").load("template/simcheck.php", {"search_1[]": [ $(this).attr('name') , $(this).val() ] });  });   
+$("span.signup input, span.signup select, button#axe1check").bind('keyup input', function(){$("#checkn1").load("<?php echo $main_dir; ?>template/simcheck.php", {"search_1[]": [ $(this).attr('name') , $(this).val() ] });  });   
 $("span.signup input, span.signup select, button#axe1check").bind('keyup focus mouseover', function(){ 
 $.get('template/simcheck.php',{"availability":$("input[name=username2]").val()},function(data){ 
 if(!data){nodoppels = "correct";}else{nodoppels = "wrong"}
@@ -52,9 +43,7 @@ if($(this).prop("defaultValue") == "Your full name"){$(this).tooltip({position: 
 
 
 
-$("span.signup input[type=submit]").on('submit',function(){ //data check
 
-});
 $("#snowglobe_opts input[type=checkbox]").each(function(){$(this).wrap("<div class='optionbox' />").after("<span class='text'>"+ $(this).attr('snowglobe') +"</span>")});
 $("#snowglobe_opts .optionbox:last").css("background-image","none");                 
 

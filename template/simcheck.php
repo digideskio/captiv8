@@ -40,12 +40,17 @@ switch($_GET['action']){
 case "css_edit":
 if(preg_match("#[.]css$#",$_POST['file'])){//nice try kids
 
-$file_opener = fopen("../".$_POST['file'],"w+");
-//convert the file strings back
-$_POST['data'] = preg_replace("#template[\057]#","",$_POST['data']);
-fwrite($file_opener, $_POST['data']);
+$_POST['file'] = preg_replace("#^".$main_dir."(template[/])?(.+)$#","$2",$_POST['file']);
 
-echo json_encode(array("notice" => "success","bash" => "two"),JSON_UNESCAPED_SLASHES);        }
+$file_opener = fopen($_POST['file'],"w+");
+//convert the file strings back
+//$_POST['data'] = preg_replace("#template[\057]#","",$_POST['data']);
+//no longer a need for above as i've replaced the trim with the full url
+$z = fwrite($file_opener, $_POST['data']);
+
+if($z){echo json_encode(array("notice" => "success","bash" => "two"),JSON_UNESCAPED_SLASHES);       } 
+
+}
 break;
 
 case "drag_box":   
@@ -80,7 +85,7 @@ case "submit-chat-msg":
   $chat_perms_check = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' AND a.granted_by = '$_SPIN[towhom]' LIMIT 5");
   
   if(mysqli_num_rows($chat_perms_check) == 1){ 
-$submit_post = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,bywhom,settings) VALUES('$_SPIN[message]','3','$_SPIN[towhom]','$_MONITORED[login_q]','2')"); //i'll use the settings column somehow for something in the future lol, probably privacy-related
+$submit_post = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,bywhom,settings,is_read) VALUES('$_SPIN[message]','3','$_SPIN[towhom]','$_MONITORED[login_q]','2','0')"); //i'll use the settings column somehow for something in the future lol, probably privacy-related
 echo (!$submit_post) ? mysqli_error($db_main) : "Successfully posted!";
 }
 mysqli_free_result($chat_perms_check);
@@ -129,6 +134,7 @@ mysqli_free_result($select_school);
   case "chat_with_user":
   
   //find whether they're able to actually chat with the user whom they're trying to engage with
+  if(isset($_GET['user'])){
   
   $chat_perms_check = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' AND a.granted_by = '$_FILTERED[user]' LIMIT 5");
   
@@ -142,11 +148,32 @@ mysqli_free_result($select_school);
   $search_cha = (mysqli_num_rows($search_for_posts) > 0) ? array_reverse($post_list) : $nx['41'];
   echo json_encode(["message"=>"success","user"=>$_FILTERED['user'],"messages"=>$search_cha],JSON_UNESCAPED_SLASHES);
   }
+     }
+     
+     
+if(isset($_GET['format'])){
+switch($_GET['format']){
+     case "sync_in":
+     $select_unreads = mysqli_query($db_main, "SELECT bywhom FROM posts WHERE forwhom='$_MONITORED[login_q]' AND is_read='0' AND cnttype='3' ORDER BY stamptime DESC LIMIT 0,99");
+     if(mysqli_num_rows($select_unreads) > 0){
+     while($zx = mysqli_fetch_assoc($select_unreads)){ //only the 5 most recent users among 100 latest replies, append duplicate names
+     $new_replies_num = isset($new_replies_num) ? $new_replies_num + 1 : 1;
+     $new_messages = (isset($row) && array_search($zx['bywhom'],$row) !== false) ? array_merge($row, $zx['bywhom']): [$zx['bywhom']];
+     }
+     }
+     echo json_encode(["new_messages" => (isset($new_messages)) ? $new_replies_num : 0,"senders" => (isset($new_replies_num) && $new_replies_num > 0) ? $new_messages : "none"]);
+      unset($new_messages);        unset($new_replies_num);   
+     break;
+}
+}
+
+if(isset($_GET['is_read'])){ //will be accessed upon the other user reading the messages
+//has to come after the respective post receptions
+  $mark_as_read = mysqli_query($db_main, "UPDATE posts SET is_read = '1' WHERE cnttype='3' AND forwhom='$_MONITORED[login_q]' AND bywhom='$_FILTERED[user]'");
+}
   
   
-  
-  break;
-  
+  break;    //end chat search 
 case "wikipedia_search":
             include("wikipedia_search.php");   
 break;

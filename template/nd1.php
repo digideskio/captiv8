@@ -1,5 +1,7 @@
-<link rel="stylesheet" type="text/css" href="template/css.css">     <!--style-->
-<link rel="icon" type="image/png" href="template/img/icon.png"> 
+
+
+<link rel="stylesheet" type="text/css" href="<?php echo $main_dir; ?>template/css.css">     <!--style-->
+<link rel="icon" type="image/png" href="<?php echo $main_dir; ?>template/img/icon.png"> 
 <?php
 
 
@@ -9,14 +11,14 @@ echo "<title>";
 if(isset($_GET['query']) && compare_dz($logged_dt['password'],$_SESSION['salt_q'])){
 switch(count($_GET)){
 case 1: echo "Editing Profile and Settings";        break;
-case 2: 
+case 2:    if(isset($_GET['dispos'])){
 switch($_GET['dispos']){
 case "new_school": 
 echo "Captivate - Adding unlisted school"; 
 break;
 }
 
-}
+}  }
 }
 
 if(isset($_GET['direct']) || preg_match("#index.php([\072]([0-9]){0,15})*$#", extraurl())){

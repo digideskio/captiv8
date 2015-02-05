@@ -114,7 +114,7 @@ $(this).css("bottom","inherit");
 
 
          
-}).on('dragstop',function(){$.get("template/simcheck.php",{"action":"drag_box","offsets":[positions[1],positions[0]]});  });
+}).on('dragstop',function(){$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"drag_box","offsets":[positions[1],positions[0]]});  });
 
 
 </script>
