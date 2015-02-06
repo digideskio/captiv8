@@ -135,9 +135,10 @@ mysqli_free_result($select_school);
   
   //find whether they're able to actually chat with the user whom they're trying to engage with
 
-     if(isset($_GET['box_action']) && $_GET["box_action"] == "open"){
+   
         if(isset($_GET['user'])){   //no idea why I set this for a conditional, figured it would help with validations and such
-  
+                                 
+    if((isset($_GET['box_action']) && $_GET["box_action"] == "open") || isset($_GET['is_read'])){    
   $chat_perms_check = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' AND a.granted_by = '$_FILTERED[user]' LIMIT 5");
   
   if(mysqli_num_rows($chat_perms_check) == 1){
@@ -153,6 +154,19 @@ mysqli_free_result($select_school);
   }
      }
      }
+     
+if(isset($_GET["box_action"])){
+switch($_GET["box_action"]){
+                                                      
+     case "open":
+     chat_list_q("open",$_FILTERED['user']); //saves chat box to be open for reference to next page load(s)
+     break;
+     
+     case "close":
+     chat_list_q("close",$_FILTERED['user']); //deletes the other user's name from the array
+     break;
+}
+}
          
 if(isset($_GET['format'])){
 switch($_GET['format']){    
@@ -173,18 +187,7 @@ switch($_GET['format']){
 
 
 
-if(isset($_GET["box_action"])){
-switch($_GET["box_action"]){
-                                                      
-     case "open":
-     chat_list_q("open",$_FILTERED['user']); //saves chat box to be open for reference to next page load(s)
-     break;
-     
-     case "close":
-     chat_list_q("close",$_FILTERED['user']); //deletes the other user's name from the array
-     break;
-}
-}
+
 
 
 if(isset($_GET['is_read'])){ //will be accessed upon the other user reading the messages

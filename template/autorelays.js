@@ -34,7 +34,7 @@ x = msg_sync.messages[num].postid; y = $(".chat-b[ref='"+other_user+"'] .spacer 
       
 if(typeof msg_sync.messages === "object" && x > y){ //inserting the chat box in      
 //check to see if there's a new post by checking if the most recent post ID is larger than the smaller one    
- $("#left1").prepend("1"); 
+
 //check to see that there's actually a conversation between the two, and the newest message is later than the most recent post
 
 for(i = 0;i <= msg_sync.messages.length - 1;i++){ 
@@ -44,7 +44,7 @@ postid = msg_sync.messages[i].postid;
 j = i -1;  
                                  
 r_format = ((j < 0 && i == 0) || (i > 0 && msg_sync.messages[j].bywhom != user)) ? "<div>"+user+"</div><p num='"+postid+"'>"+message+"</p>" : "<p num='"+postid+"'>"+message+"</p>"; //check whether previous user was the same one so I won't have to spell the username for each reply
-//count the very first message
+//count the very first message for first conditional statement
 
 messages_p = (typeof messages_p === "undefined") ? r_format : messages_p + r_format;   
 
