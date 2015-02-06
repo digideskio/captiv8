@@ -7,8 +7,8 @@ setTimeout(function(){
 setInterval(function(){
 
 
-$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user","format":"sync_in"},function(asyncd){ //$("#left1").prepend("1");
-if(asyncd.new_messages > 0){   // $("#left1").prepend("2");
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user","format":"sync_in"},function(asyncd){  
+if(asyncd.new_messages > 0){  
 for(i = 0;i <= asyncd.senders.length-1;i++){   //check to see if respective chat box is not opened and if there's less than 5 senders
 //actually for the latter conditional I will set up the deletion in previous 
 if($(".chat-b[ref='"+asyncd.senders[i]+"']").length == 0){ // $("#left1").prepend(asyncd.senders[i]);
@@ -22,15 +22,19 @@ if($(".chat-b").length <= 5 && $(".chat-b").length > 0){   //because potential D
 
 $(".chat-b").each(function(){ other_user = $(this).attr("ref");
 $.ajax({url:"<?php echo $main_dir; ?>template/simcheck.php",data:{"action":"chat_with_user","user":other_user,"is_read":"true"},success:function(msg_sync){
+     //get all messages in sync #436D5B  #264D3C      #4E7F6A
 
-delete messages_p;
+delete messages_p;  //old message array needs to be removed
+
+
 
 num = msg_sync.messages.length - 1;
 
 x = msg_sync.messages[num].postid; y = $(".chat-b[ref='"+other_user+"'] .spacer .chat_box p:last").attr("num");
       
-if(typeof msg_sync.messages === "object" && x > y){
-  
+if(typeof msg_sync.messages === "object" && x > y){ //inserting the chat box in      
+//check to see if there's a new post by checking if the most recent post ID is larger than the smaller one    
+ $("#left1").prepend("1"); 
 //check to see that there's actually a conversation between the two, and the newest message is later than the most recent post
 
 for(i = 0;i <= msg_sync.messages.length - 1;i++){ 

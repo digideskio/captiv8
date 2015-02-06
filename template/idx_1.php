@@ -9,17 +9,7 @@
 // mysqli_query($db_main, "CREATE TABLE polls(post_id_root INT NOT NULL,question varchar(100), num_values INT NOT NULL, a1 varchar(100), a2 varchar(100), a3 varchar(100), a4 varchar(100), a5 varchar(100), a6 varchar(100), a7 varchar(100), a8 varchar(100), a9 varchar(100), a10 varchar(100), a11 varchar(100), a12 varchar(100), a13 varchar(100), a14 varchar(100), a15 varchar(100), a16 varchar(100), a17 varchar(100), a18 varchar(100), a19 varchar(100), a20 varchar(100))");
 //this is the index template
 
-/*
 
-Goals for today: January 14, 2015
-
-   Fix notifications system
-   Fix posting system   
-   nvm with the posting system then, never had problems apparently
-   Make people able to see replies on news feed
-   Incorporate reply/comment list into a template accesible by an object
-
-*/
 
 if(logged_in_check && index_page_check){   //make a new post panel(for threads)
  echo "<div id='content' class='contentbox'>".$nx['31']."</div>";
@@ -59,10 +49,11 @@ echo "</div></form>";
 //later...
 //is now
 
-echo '<a href="http://localhost/captiv8/index.php?query=nolvorite" class="pawn"><div class="notice center">You will be one step closer to completing your profile by filling out your education details!</div></a>';
-
  $edu_select = mysqli_query($db_main, "SELECT * FROM education WHERE forwhom='$_MONITORED[login_q]';");
  if(mysqli_num_rows($edu_select) < 1): ?>
+ 
+ 
+ <a href="http://localhost/captiv8/profile_nuise/<?php echo $_MONITORED["login_q"]; ?>" class="pawn"><div class="notice center"><?php echo $nx[42]; ?></div></a>
 
 
 
@@ -216,7 +207,7 @@ if(mysqli_num_rows($search_for_thread) > 0){
 $post_data = mysqli_fetch_assoc($search_for_thread);                    
 $thread_query = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$post_data[thread_id]'");
 $thread_dt = mysqli_fetch_assoc($thread_query);
-header("Location:index.php?thread_view=" . $thread_dt['thread_nick'] . "_" . $thread_dt['topic_hash'] . "&comment=" . $_GET['comment']);
+header("Location:thread/" . $thread_dt['thread_nick'] . "_" . $thread_dt['topic_hash'] . "/comment/" . $_GET['comment']);
 }else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 }
 }

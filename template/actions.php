@@ -88,7 +88,7 @@ if(isset($snowglobes) || isset($_SPIN['parent_comment'])){  //check to see if it
 // $pass_check = mysqli_query($db_main, "SELECT * FROM ")
 $_SPIN['tcha1'] = isset($_SPIN['tcha1']) ? $_SPIN['tcha1'] : "";
 
-$thread_nick = mysqli_real_escape_string($db_main,substr(preg_replace("#[^-A-Za-z0-9]#","_",$_SPIN['tcha1']), 0, 50));
+$thread_nick = mysqli_real_escape_string($db_main,strtolower(substr(preg_replace("#[^_A-Za-z 0-9-]#","",preg_replace("# #","_",$_SPIN['tcha1'])), 0, 50)));
 $topic_hash = mysqli_real_escape_string($db_main,substr(sha1(microtime()),0,10));
 
 $_SESSION['db_query'] = "posted content-anything";

@@ -4,7 +4,7 @@
 
 
       
-echo "<span class='clear' id='nook'></span><div id='header'><a href='index.php' id='logo'><img src='".$image_dir."2.png'></a><div id='panel'>";       
+echo "<span class='clear' id='nook'></span><div id='header'><a href='".$main_dir."' id='logo'><img src='".$image_dir."2.png'></a><div id='panel'>";       
 if(!isset($_SESSION['login_q'])){       //not logged in to a user account, essentially. Should probably make this more elaborate too                       
 
 echo "<form action='index.php?verify=". $_SESSION['temp_n'] ."&direct=login' id='login' method='post'><input type='text' value='".$nx[0]."' name='usernorm' class='flick'><input type='password' name='pwrdnorm' value='".$nx[1]."' class='flick'><input type='submit' value='".$nx[2]."' class='dt1space'>
@@ -19,9 +19,11 @@ echo "</div></div>"  ;               }else{  //actually logged in. I know, such 
 //menu
 echo "<div id='user_menu'>
                                                   
-<span class='drop'><div class='left uplink'>".$nx[11].", <a class='username' href='profile/". $_MONITORED['login_q'] ."'>". $_MONITORED['login_q'] ."</a>.  </div><div class='dropdown_content rad'><span class='quick_links'><a href='index.php?find=usedservices&query=". $_MONITORED['login_q'] ."'>".$nx[12]."</a><a href='index.php?query=". $_MONITORED['login_q'] ."'>".$nx[13]."</a></span></div></span>";
+<span class='drop'><div class='left uplink'>".$nx[11].", <a class='username' href='".$main_dir."profile/". $_MONITORED['login_q'] ."'>". $_MONITORED['login_q'] ."</a>.  </div><div class='dropdown_content rad'><span class='quick_links'><a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/usedservices'>".$nx[12]."</a><a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."'>".$nx[13]."</a></span></div></span>";
+
+
 //Notifications
-echo "<span class='drop' id='notifs_drop'><div class='left uplink' id='notifs_bar'><a href='index.php?query=nolvorite&notifs=all'>Notifications</a> </div>";
+echo "<span class='drop' id='notifs_drop'><div class='left uplink' id='notifs_bar'><a href='".$main_dir."profile_nuise/".$_MONITORED['login_q']."/notifs'>Notifications</a> </div>";
 echo "<div class='dropdown_content rad' id='notifications'>";
 $notifs_grab = mysqli_query($db_main, "SELECT * FROM notifications WHERE towhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,10");
 if(mysqli_num_rows($notifs_grab) > 0){
@@ -44,7 +46,7 @@ echo"
 // welcome note                                                                            
 if(isset($_SESSION['welcome'])){echo "<div class='welcome_note' id='first1'>".$nx[4]."</div>";} 
 
-echo "</div><table><tr><td id='left1'>";
+echo "</div><table><tr><td id='left1'>" ;
 
                  
 if(logged_in_check){if(index_page_check){echo $nx['29'];
@@ -73,6 +75,9 @@ echo '</div>';
 
       echo "<div class='box space1'></div>";
 echo "</td><td width='99%' id='vc2'>";
+
+
+
 
 
 

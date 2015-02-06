@@ -124,7 +124,7 @@ Signing up is totally free and will take less than a minute at the most.</p><div
 "Unfortunately, the school you typed down is currently not in the directory. Click here to add your school into the current directory."
 , "Add your school","Your search query is going to be referenced with all wikipedia school entries. If your school is not listed in Wikipedia, you will have to type in details for yourself."
 , "","There are no more posts to display.","Successfully completed input!","Unfortunately, you have failed to enter correct details."   //39th at this point
-,"Chatting with: ","Start a conversation with this user!"
+,"Chatting with: ","Start a conversation with this user!","Are you currently enrolled in high school/college? Get a head start on your classes by signing up for our <em>Lecture Notes</em> feature!"
 
 
 

@@ -1,6 +1,66 @@
 <?php
 
+class reply_format { //first time doing classes
+//hm
+//better clock in
+public function show(&$array_name){  global $reply_wrap,$logged_dt;
+//get the reply template
+
+//going to load the reply template from vars.php
+//$array_name will be the array that's called from the for/while loop that'll be getting all the replies
+//you can find it at vars.php
+
+echo $reply_wrap[0]. "<h4><a href='/profile/".$array_name['bywhom']."'>".$array_name['bywhom']."</a></h4>".$reply_wrap[1].$array_name['content']. " ". $reply_wrap[2] ." <a href='/thread/".$_GET['thread_view']."/comment/".$array_name['topic_hash'] ."'>". date(dflt_date_f, strtotime($array_name['stamptime'])) . $reply_wrap[3]; 
+
+if(isset($_SESSION['login_q']) && compare_dz($logged_dt['password'],$_SESSION['salt_q'])){
+echo $reply_wrap[4] . " alt='".$array_name['postid']."'>";
+
+echo "<a href='#' class='comment_opts rad comment_q-u' id='post_".$array_name['postid']."' name='post_".$array_name['postid']."'>Reply</a>";
+//admin rights, mod rights, and then user's rights to their own posts
+if($logged_dt['userid'] == 1){
+echo "<a href='#' class='comment_opts rad edit' id='edit_".$array_name['postid']."'>Edit</a>";
+}
+
+echo $reply_wrap[5];
+
+} echo $reply_wrap[6];
+}
+
+}
+     
+
 require_once("lib/simple_html_dom.php");
+
+
+function chat_list_q($status,$user){ //get list of users
+//search for a user's current tabbed users
+global $db_main,$_MONITORED;
+$logged_dt_again = mysqli_query($db_main,"SELECT tabbed_users FROM users WHERE username='$_MONITORED[login_q]'");
+$logged_dt_c = mysqli_fetch_assoc($logged_dt_again);
+$logged_dt_c = ($logged_dt_c['tabbed_users'] !== "[]") ? json_decode($logged_dt_c['tabbed_users']) : "";
+//json_decode it
+
+
+
+switch($status){
+case "open": 
+//update it
+if(count($logged_dt_c) < 5){       //check if it's empty and that there's less than 5 of it in
+$logged_dt_c = (is_array($logged_dt_c) && array_search($user,$logged_dt_c) === false) ? array_merge($logged_dt_c,[$user]) : [$user]; //the latter condition is there to prevent name duplicates
+}
+break;
+case "close": 
+unset($logged_dt_c[array_search($user,$logged_dt_c)]);  //i'm very lazy
+break;
+}
+$logged_dt_c = json_encode($logged_dt_c);
+
+//json_encode it back, and reupload to server the new information  
+$update_q = mysqli_query($db_main, "UPDATE users SET tabbed_users='$logged_dt_c' WHERE username='$_MONITORED[login_q]'");
+
+mysqli_free_result($logged_dt_again);
+
+}
 
 if(isset($_GET['error_reporting']) && $_GET['error_reporting'] == "false"){      //This would be helpful for all get
 error_reporting(~E_ALL);
@@ -87,7 +147,7 @@ if(preg_match("#^".$search."#",$key)){unset($listof[$key]);}
 }}
 if($_SERVER['REQUEST_METHOD'] == "POST"){foreach($_POST as $key => $room){ $z = isset($z) ? $z + 1 : 0;
 $copy = $_POST[$key];
-$_SPIN[$key] = preg_replace("/[\x27]/","&#39;",preg_replace("/[\n]/","<br>",hack_free($copy))); //so mysqli_real_escape string doesnt do its job correctly no
+$_SPIN[$key] = mysqli_real_escape_string($db_main,preg_replace("/[\x27]/","&#39;",preg_replace("#[\n]#","<br>",htmlspecialchars($copy)))); //so mysqli_real_escape string doesnt do its job correctly no
 $_DATA[$key] = $_SPIN[$key];
 $clone[$z] = $_SPIN[$key];             //increment array key
                    //lol spin and data are essentially the same thing

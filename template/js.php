@@ -271,7 +271,7 @@ zing = (typeof zing === "undefined" && typeof user_in_call == "string") ? user_i
 // $("#left1").prepend(zing);
 
 
-$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user","user":zing},function(chat_sync){     //start em' here
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user","user":zing,"box_action":"open"},function(chat_sync){     //start em' here
 
       
                                                            
@@ -369,6 +369,7 @@ $(".prompt[value='SEARCH SCHOOL']").next("div").removeClass("contentbox").html(d
 
 if($(this).attr("href") == "close-chat"){
 $(this).parent().parent().empty().detach();
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user","user":$(this).parent().parent().attr("ref"),"box_action":"close"}); //close it in the array
 }
 
 <?php if(isset($_SESSION['login_q'])): ?>    //IT'S HERE
@@ -396,7 +397,6 @@ window.location.assign('<?php echo $_SERVER['HTTP_HOST'] . "/" . $_SERVER['PHP_S
 
 if($(this).attr("href") == "submit-edit"){  
 $.post("<?php echo $main_dir; ?>template/simcheck.php?action=css_edit",{"data":$("#jones").val(),"file":$("#jones").attr("title")},function(data){
-alert(data); 
 if(data.notice == "success"){alert("Successfully edited file!");}                                                                       
 },"json");     
 }

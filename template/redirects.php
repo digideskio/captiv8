@@ -51,19 +51,19 @@ unset($_SESSION[$nkey]);
   //check if it's either a reply to a comment, or not a thread to your own snowglobe, or a reply to your own thread/comment post, so that it wouldn't be a redundant notification               
   //i'm getting the most recent comment with $parent_call ... I mean its parent post
   //dang it I have to learn how to do comments better
-  $url_nu = ($actual['cnttype'] == "1") ? "thread_view=" . $actual['thread_nick'] . "_" . $actual['topic_hash'] : "comment=" . $actual['topic_hash'];      
-  $parent_type = ($parent_call['cnttype'] == 1) ? ["thread",substr(hack_free($parent_call['title']),0,30),"index.php?" .$url_nu] : ["comment",substr($parent_call['content'],0,30),"index.php?comment=" . $actual['topic_hash']];
+  $url_nu = ($actual['cnttype'] == "1") ? "thread/" . $actual['thread_nick'] . "_" . $actual['topic_hash'] : "comment/" . $actual['topic_hash'];      
+  $parent_type = ($parent_call['cnttype'] == 1) ? ["thread",substr(hack_free($parent_call['title']),0,30),"" .$url_nu] : ["comment",substr($parent_call['content'],0,30),"comment/" . $actual['topic_hash']];
 
   $notif_add = ($no_notif == "no") ? false : mysqli_query($db_main, "INSERT INTO notifications(content,url,towhom) VALUES('<span>".$_MONITORED['login_q']."</span> replied to your ".$parent_type[0].": ".$parent_type[1]."','$parent_type[2]','$parent_call[bywhom]')");    
   if(!$notif_add){$_SESSION['sql_error'] = mysqli_error($db_main);} 
   }
   mysqli_query($db_main,"INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MICRORFID[login_q]',CURRENT_TIMESTAMP,'$actual[postid]',1)");
-  if($actual['cnttype'] == "1"){  $url = "Location:index.php?thread_view=". $actual['thread_nick'] . "_" . $actual['topic_hash'];  mysqli_free_result($parent_clasp);
+  if($actual['cnttype'] == "1"){  $url = "Location:thread/". $actual['thread_nick'] . "_" . $actual['topic_hash'];  mysqli_free_result($parent_clasp);
   mysqli_free_result($latest);   echo "in! (2)<br>";
 redir_process($url);
   }
   
-  if($actual['cnttype'] == "2"){
+  if($actual['cnttype'] == "2"){         
    $url ="Location:index.php?comment=".$actual['topic_hash'];
     mysqli_free_result($parent_clasp);
   mysqli_free_result($latest); 

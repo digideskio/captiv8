@@ -91,7 +91,7 @@ td.rightside{padding-left:25px}
 .glow{box-shadow:0 0 10px #556378;}
 #user_menu img{vertical-align:middle;margin:-2px 2px 0 5px;}
 /*for the dropdowns*/
-.dropdown_content{position:absolute;display:none;width:auto;padding-top:10px;height:auto}
+.dropdown_content{position:absolute;display:none;width:auto;padding-top:10px;height:auto;z-index:150;}
 #user_menu .dropdown_content .spacer{background:#495567;border-top:2px solid #2F3743;border-bottom:2px solid #556378;box-shadow:0 0 13px #344256;font-size:11px;padding:2px 2px 0}
 #user_menu span.drop .uplink img{opacity:.4}
 #user_menu span.drop:hover .uplink{color:#c8c8c8}
@@ -160,7 +160,7 @@ a.comment_opts.edit{background:#B58053;border-top:2px solid #C29D70;color:#4D313
 #opts_textbox{margin-top:10px;}
 .contentbox h3 small a,span.white{color:#fff}
 .margin{padding-left:20px;}
-.margin:hover{background:transparent url('http://localhost/captiv8/template/img/1.png') repeat scroll;}
+.margin:hover{background:transparent url('http://localhost/captiv8/template/img/sep1.png') repeat scroll;}
 .side_info{font:12px "Lucida Sans Unicode";}
 .side_info a{color:#70A0C4;text-decoration:underline;}
 div.contentbox.selected{background:#535F70;border-bottom:2px solid #627085;margin:10px 0;box-shadow:0 3px 3px #536176;}
@@ -190,7 +190,7 @@ div.contentbox.index_post,a.chat-option{border-top:1px solid #556378;border-bott
 .extra_opts{padding:0 15px;z-index:4;background:#344256;}
 .extra_opts a,a.load-more-button{text-decoration:none;color:#82eda8;text-shadow:0 -1px 0 #30353C;padding:4px 8px;font-family:"Lucida Sans Unicode","Arial";text-align:center;background:#5C6676;border-top:2px solid #6C778D;box-shadow:0 -2px 2px #2F3743;}
 .extra_opts a{border-radius:5px 5px 0px 0px;-moz-border-radius:5px 5px 0px 0px;-webkit-border-radius:5px 5px 0px 0px;margin-top:2px;display:inline-block;width:auto;}
-#black_overlay{background:transparent url('http://localhost/captiv8/template/img/k.png') repeat scroll;width:100%;height:3000px;position:fixed;z-index:6}
+#black_overlay{background:transparent url('http://localhost/captiv8/template/img/black.png') repeat scroll;width:100%;height:3000px;position:fixed;z-index:6}
 #widthfix{margin:125px auto;width:56%;}
 #black_overlay .contentbox{border:0;}
 #black_overlay .contentbox input[type=text]{width:96%;display:block;margin:4px auto;}
@@ -276,4 +276,6 @@ div.box[ref] .spacer{text-align:right;}
 .chat_box div{background:transparent url('http://localhost/captiv8/template/img/4.png') repeat-x scroll bottom left;padding:3px 10px 5px;background-color:#424D5D;font-weight:bold;text-align:right}
 .chat_box p{padding:4px 5px;}
 #chat_list p{line-height:14px}
-a.pawn{text-decoration:none}
+a.pawn{text-decoration:none;}
+a.pawn div.notice{background:#436D5B;text-shadow: 0 0 transparent;color:#132a20;border-bottom:2px solid #4E7F6A;border-top:2px solid #132a20;opacity:.5}
+a.pawn:hover div.notice{opacity:1}

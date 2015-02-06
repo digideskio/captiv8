@@ -75,7 +75,7 @@ $select_class[1] = ($vote == "no" && isset($que_posts[2]) > 0) ? "selected" : ""
 $content_blur = preg_match("#^[ ]+$#",$que_own['content']) ? false : "<p>".$que_own['content'] ;
 $zing = ($content_blur == false) ? "" : "</p>";
 $align_blocks = preg_match("#^[ ]+$#",$que_own['content']) ? " valign='middle'" : "";
-echo "<div class='contentbox index_post' alt='".$que_own['postid']."'><table><tr><td width='1%' class='left_side'><strong><a href='index.php?profile=".$que_own['bywhom'] ."'>".$que_own['bywhom'] ."</a></strong></td>
+echo "<div class='contentbox index_post' alt='".$que_own['postid']."'><table><tr><td width='1%' class='left_side'><strong><a href='".$main_dir."profile/".$que_own['bywhom'] ."'>".$que_own['bywhom'] ."</a></strong></td>
 <td class='content'$align_blocks>";
 $title_code_patt = "#^[\050](One-liner)[\051]([ ]{0,5})[\133](.+)[\135]#";
 if(preg_match($title_code_patt,$que_own['title'])){
@@ -148,7 +148,7 @@ echo "<a href='vote' class='prompt button_samp rad'>VOTE!</a></span>";
 
 }     }                  echo "</td>";
 
-echo"<td width='1%' class='right_side'><span class='right side_info' alt='" .$que_own['postid'] . "'><a href='index.php?thread_view=".$que_own['thread_nick']."_".$que_own['topic_hash']."' class='topic_link'>".time_rounds($que_own['stamptime'])."</a><span class='score'> (".$score."%)</span>";
+echo"<td width='1%' class='right_side'><span class='right side_info' alt='" .$que_own['postid'] . "'><a href='thread/".$que_own['thread_nick']."_".$que_own['topic_hash']."' class='topic_link'>".time_rounds($que_own['stamptime'])."</a><span class='score'> (".$score."%)</span>";
 echo"<span class='votes'><a href='up' class='vote_" .$select_class[0] . "'><img src='template/img/up.png'></a><a href='down' class='vote_" .$select_class[1] . "'><img src='template/img/down.png'></a></span></span></td></tr></table></div>";
 };       
 

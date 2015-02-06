@@ -62,34 +62,7 @@ define('logged_in_check',isset($_SESSION['login_q']));
 
 if(!isset($_GET['get_more'])){
 
-class reply_format { //first time doing classes
-//hm
-//better clock in
-public function show(&$array_name){  global $reply_wrap,$logged_dt;
-//get the reply template
-
-//going to load the reply template from vars.php
-//$array_name will be the array that's called from the for/while loop that'll be getting all the replies
-//you can find it at vars.php
-
-echo $reply_wrap[0]. "<h4><a href='index.php?profile=".$array_name['bywhom']."'>".$array_name['bywhom']."</a></h4>".$reply_wrap[1].$array_name['content']. " ". $reply_wrap[2] ." <a href='?thread_view=".$_GET['thread_view']."&comment=".$array_name['topic_hash'] ."'>". date(dflt_date_f, strtotime($array_name['stamptime'])) . $reply_wrap[3]; 
-
-if(isset($_SESSION['login_q']) && compare_dz($logged_dt['password'],$_SESSION['salt_q'])){
-echo $reply_wrap[4] . " alt='".$array_name['postid']."'>";
-
-echo "<a href='#' class='comment_opts rad comment_q-u' id='post_".$array_name['postid']."' name='post_".$array_name['postid']."'>Reply</a>";
-//admin rights, mod rights, and then user's rights to their own posts
-if($logged_dt['userid'] == 1){
-echo "<a href='#' class='comment_opts rad edit' id='edit_".$array_name['postid']."'>Edit</a>";
-}
-
-echo $reply_wrap[5];
-
-} echo $reply_wrap[6];
-}
-
-} 
-                                                                                 
+                                                                            
 
 if(isset($_GET['profile'])){
 $username = $_FILTERED['profile'];

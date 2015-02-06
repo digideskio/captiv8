@@ -134,7 +134,9 @@ mysqli_free_result($select_school);
   case "chat_with_user":
   
   //find whether they're able to actually chat with the user whom they're trying to engage with
-  if(isset($_GET['user'])){
+
+     if(isset($_GET['box_action']) && $_GET["box_action"] == "open"){
+        if(isset($_GET['user'])){   //no idea why I set this for a conditional, figured it would help with validations and such
   
   $chat_perms_check = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' AND a.granted_by = '$_FILTERED[user]' LIMIT 5");
   
@@ -146,33 +148,51 @@ mysqli_free_result($select_school);
    }
    $post_list[] = $zen;}
   $search_cha = (mysqli_num_rows($search_for_posts) > 0) ? array_reverse($post_list) : $nx['41'];
+
   echo json_encode(["message"=>"success","user"=>$_FILTERED['user'],"messages"=>$search_cha],JSON_UNESCAPED_SLASHES);
   }
      }
-     
-     
+     }
+         
 if(isset($_GET['format'])){
-switch($_GET['format']){
+switch($_GET['format']){    
      case "sync_in":
      $select_unreads = mysqli_query($db_main, "SELECT bywhom FROM posts WHERE forwhom='$_MONITORED[login_q]' AND is_read='0' AND cnttype='3' ORDER BY stamptime DESC LIMIT 0,99");
      if(mysqli_num_rows($select_unreads) > 0){
      while($zx = mysqli_fetch_assoc($select_unreads)){ //only the 5 most recent users among 100 latest replies, append duplicate names
      $new_replies_num = isset($new_replies_num) ? $new_replies_num + 1 : 1;
-     $new_messages = (isset($row) && array_search($zx['bywhom'],$row) !== false) ? array_merge($row, $zx['bywhom']): [$zx['bywhom']];
+     $new_messages = (isset($row) && array_search($zx['bywhom'],$row) !== false) ? array_merge($row, $zx['bywhom']): [$zx['bywhom']];  
      }
      }
      echo json_encode(["new_messages" => (isset($new_messages)) ? $new_replies_num : 0,"senders" => (isset($new_replies_num) && $new_replies_num > 0) ? $new_messages : "none"]);
       unset($new_messages);        unset($new_replies_num);   
+          
+     break;  
+
+}         }
+
+
+
+if(isset($_GET["box_action"])){
+switch($_GET["box_action"]){
+                                                      
+     case "open":
+     chat_list_q("open",$_FILTERED['user']); //saves chat box to be open for reference to next page load(s)
+     break;
+     
+     case "close":
+     chat_list_q("close",$_FILTERED['user']); //deletes the other user's name from the array
      break;
 }
 }
+
 
 if(isset($_GET['is_read'])){ //will be accessed upon the other user reading the messages
 //has to come after the respective post receptions
   $mark_as_read = mysqli_query($db_main, "UPDATE posts SET is_read = '1' WHERE cnttype='3' AND forwhom='$_MONITORED[login_q]' AND bywhom='$_FILTERED[user]'");
 }
   
-  
+    unset($post_list);
   break;    //end chat search 
 case "wikipedia_search":
             include("wikipedia_search.php");   
@@ -490,24 +510,7 @@ echo json_encode($msgs);
 
 
 
-break;    case "chat-log":
-
-//find all messages sent to the user
-                                  
-if(isset($_SESSION['tabbed_users'])){
-
-foreach($_MONITORED['tabbed_users'] as $other_users_name){
-
-$sent_messages = mysqli_query($db_main, "SELECT * FROM posts user_1,posts user_2 WHERE user_1.bywhom = '$_MONITORED[login_q]' AND user_1.forwhom='$other_users_name' AND user_1.forwhom=user_2.bywhom AND user_1.cnttype='3' AND user_2.cnttype='3' AND user_2.bywhom=user_1.forwhom ORDER BY stamptime DESC");
-
-$que_messages = ($sent_messages) ? mysqli_fetch_array($sent_messages) : $nx['41']; 
-
-
-}
-
-}
-
-break;
+break;  
 
   }//end switch statement
 
