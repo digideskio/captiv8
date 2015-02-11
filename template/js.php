@@ -296,6 +296,8 @@ messages_p = "<p><em>" + chat_sync.messages + "</em></p>";
 }
 
 
+$("input[name='sg_name']").tooltip({position: { my: "left+10 center", at: "right center-1" }, content: "<span id='checkn1'>We just need a first and last name.</span>"});
+
 
 chat_box = "<div class='box chat-b' ref='" + chat_sync.user + "'><div class='spacer'><h3><?php echo $nx['40']; ?>" + chat_sync.user + "</h3><div class='chat_box'>"+messages_p+"</div><div class='chat_panel'><textarea></textarea></div><a class='prompt button_samp rad chat-buttons' href='submit-chat-msg'>SUBMIT</a><a class='prompt button_samp rad chat-buttons' href='close-chat'>Close</a></div></div></div>";
 if($(".chat-b[ref='"+chat_sync.user+"']").length < 1){ //check to see that it hasn't existed yet
@@ -329,7 +331,13 @@ $(this).next().attr("disabled","disabled").val("").trigger("change");
 });     
       
                   
-$("body").on('click',".prompt",function(event){event.preventDefault();
+$("body").on('click',".prompt",function(event){event.preventDefault();       //dynamic server interaction with a click
+
+
+
+<?php if(isset($_SESSION['login_q'])): ?>    //IT'S HERE
+
+
 
 if(/^chat-with-user[:]/.test($(this).attr("href"))){
 zing = $(this).attr("href").replace(/^chat-with-user:(.+)$/,"$1");
@@ -351,9 +359,11 @@ delete zing;
 }
 
 
-if($(this).attr("href") == "submit-chat-msg"){
+if($(this).attr("href") == "submit-chat-msg"){                 //submit a chat message
+//it's as good as that
 
 $.post("<?php echo $main_dir; ?>template/simcheck.php?action=submit-chat-msg",{"towhom":$(this).parent().parent().attr("ref"),"message":$(this).parent().find(".chat_panel textarea").val()});
+$(this).parent().find(".chat_panel textarea").val("");
 }
 
 
@@ -372,7 +382,6 @@ $(this).parent().parent().empty().detach();
 $.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user","user":$(this).parent().parent().attr("ref"),"box_action":"close"}); //close it in the array
 }
 
-<?php if(isset($_SESSION['login_q'])): ?>    //IT'S HERE
 
 if($(this).attr("value") == "Complete Details"){       i = -1;
 s_layer = $(this).attr("id");   zeus = new Array();        
@@ -392,7 +401,7 @@ window.location.assign('<?php echo $_SERVER['HTTP_HOST'] . "/" . $_SERVER['PHP_S
 
 
 
-<?php endif; ?>   //end logged_in conditional
+
 
 
 if($(this).attr("href") == "submit-edit"){  
@@ -431,9 +440,6 @@ $("#select4").after(msg);
 });
 
 }
-
-
-
 }
 if($(this).attr("href") == "confirm_school"){ $("#select4").removeAttr("id");
 $(this).attr("id","select4");
@@ -443,6 +449,8 @@ $("#select4").after(msg);
 
 });
 }
+
+<?php if(compare_dz($logged_zen['password'],$_SESSION['salt_q']) && $logged_dt['userid'] == 1): ?>   //admin panel stuff
 
 if(/^edit[:]/g.test($(this).attr("href"))){    //murder murder murder murrdurrrrrrrrrrrrrrrrr murrrrrrdurrrrrrrrr
 //FINALLY. holy shit mother of god tweaking batman
@@ -481,8 +489,29 @@ if($("style[title='"+$zen_1+"']").length === 0){
 }
 
 
+switch($(this).attr("href")){
+
+case "submit_sql":  
+$.post("template/simcheck.php?action=sql_q",{"sql_q":$("#" + $(this).attr('refer')).val()},function(message){
+$("#t_wrap").html(message);
+});
+break;
+}
+
+
 
 if(/^v[\137]/g.test($(this).attr("href"))){
+
+if($(this).attr("href") == "v_css" || $(this).attr("href") == "v_sql" ){
+$("#session_list").css({"width":"650px"});
+}else{$("#session_list").removeAttr("style");}
+
+
+if($(this).attr("href") == "v_sql"){
+$("#session_list").draggable("disable");
+}else{
+$("#session_list").draggable("enable");
+}
 
 
 
@@ -490,9 +519,7 @@ if(/^v[\137]/g.test($(this).attr("href"))){
 if($(".selected_link").attr("href") == $(this).attr("href")){
 
 }else{$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"change_panels","view":$(this).attr("href")});
-if($(this).attr("href") == "v_css"){
-$("#session_list").css({"width":"650px"});
-}else{$("#session_list").removeAttr("style");}
+
 
 $(".selected_link").removeClass("selected_link");  $(".open").removeClass("open");
 
@@ -501,6 +528,8 @@ $("div#" + $(this).attr("href")).addClass("open");
 
 }
 }
+
+<?php endif; ?>   //end admin panel stuff
 
 
 
@@ -578,14 +607,9 @@ $("#content").appendTo("#widthfix");  //keep the dynamicity?
 
 } 
 
+<?php endif; ?>   //end logged_in conditional
+
 }); 
-
-<?php if(isset($_SESSION['login_q']) && compare_dz($logged_dt['password'],$_SESSION['salt_q'])): ?>  
-                            
-        
-                   
-
-<?php endif; ?>     
 
 /*and CUT*/
 

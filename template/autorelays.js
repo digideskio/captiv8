@@ -8,11 +8,11 @@ setInterval(function(){
 
 
 $.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user","format":"sync_in"},function(asyncd){  
-if(asyncd.new_messages > 0){  
+if(asyncd.new_messages > 0){   //get users who most recently sent currently logged in user a message
 for(i = 0;i <= asyncd.senders.length-1;i++){   //check to see if respective chat box is not opened and if there's less than 5 senders
 //actually for the latter conditional I will set up the deletion in previous 
 if($(".chat-b[ref='"+asyncd.senders[i]+"']").length == 0){ // $("#left1").prepend(asyncd.senders[i]);
-load_replies(asyncd.senders[i]);
+load_replies(asyncd.senders[i]);  //this is where a chat box would be loaded if a new message is sent from the other user but this current user doesn't have it opened
 //$("#left1").prepend("3");
 }
 }}  },"json");
@@ -20,17 +20,22 @@ load_replies(asyncd.senders[i]);
 
 if($(".chat-b").length <= 5 && $(".chat-b").length > 0){   //because potential DDoS attacks...? Then again, they can always have multiple windows, so I have to regulate for that too 
 
+
+
 $(".chat-b").each(function(){ other_user = $(this).attr("ref");
 $.ajax({url:"<?php echo $main_dir; ?>template/simcheck.php",data:{"action":"chat_with_user","user":other_user,"is_read":"true"},success:function(msg_sync){
-     //get all messages in sync #436D5B  #264D3C      #4E7F6A
 
 delete messages_p;  //old message array needs to be removed
 
 
 
-num = msg_sync.messages.length - 1;
+num = msg_sync.messages.length - 1; 
 
-x = msg_sync.messages[num].postid; y = $(".chat-b[ref='"+other_user+"'] .spacer .chat_box p:last").attr("num");
+x = msg_sync.messages[num].postid;   //get the postid of the very last post in a chat comment chain
+
+ y = (typeof $(".chat-b[ref='"+other_user+"'] .spacer .chat_box p:last").attr("num") !== "string") ? 0 : $(".chat-b[ref='"+other_user+"'] .spacer .chat_box p:last").attr("num"); //just a quick fix for those pre-loaded chat boxes
+
+
       
 if(typeof msg_sync.messages === "object" && x > y){ //inserting the chat box in      
 //check to see if there's a new post by checking if the most recent post ID is larger than the smaller one    
@@ -50,6 +55,8 @@ messages_p = (typeof messages_p === "undefined") ? r_format : messages_p + r_for
 
 }       
  place = [$(".chat-b[ref='"+other_user+"'] .spacer .chat_box").prop("scrollHeight"),($(".chat-b[ref='"+other_user+"'] .spacer .chat_box").prop("scrollTop") < 150) ? $(".chat-b[ref='"+other_user+"'] .spacer .chat_box").prop("scrollTop") : 203422];    
+ 
+ place[1] = (y == 0) ? 2934923 : place[1];  //fixed so the pre-loaded chat boxes would automatically scroll to the bottom
  
                                                   
 $(".chat-b[ref='"+other_user+"'] .spacer .chat_box").html(messages_p).scrollTop(place[1]);

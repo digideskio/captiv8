@@ -1,7 +1,35 @@
 <?php if(isset($_GET['direct'])){ //all actions
 
 
-if(isset($_GET['verify']) && compare_dz($_GET['verify'],$_SESSION['temp_n'])){ //check for session hash 
+switch($_GET['direct']){
+case "snowglobes_submit":
+//get all the requirements for a passing snowglobe
+if(isset($_POST['sg_name']) && isset($_POST['sg_url']) && isset($_POST['sg_desc']) && isset($_POST['sg_privacy'])){
+
+
+if(preg_match("#^[-_A-Za-z0-9]{4,30}$#",$_POST['sg_url']) && preg_match("#^.{4,100}$#",$_POST['sg_name']) && strlen($_POST['sg_desc']) <= 4500 && preg_match("#^(public|private)$#",$_POST['sg_privacy'])){   //all set, post that shit
+
+
+$submit_sg = mysqli_query($db_main, "INSERT INTO snowglobes(sg_name,description,root_admin_id,sg_url,sg_privacy) VALUES('$_SPIN[sg_name]','$_SPIN[sg_desc]','$logged_dt[userid]','$_SPIN[sg_url]','$_SPIN[sg_privacy]')");
+if($submit_sg){   $_SESSION['db_query'] = "new_snowglobe";         $_SESSION['checks'] = $logged_dt['userid'];
+header("Location:index.php?phase=2");}else{
+echo mysqli_error($db_main);
+}
+
+
+
+}
+
+}else{
+header("Location:index.php"); $_SESSION['error'] = "Failed issets" . time();
+}
+break;
+}
+
+
+if(isset($_GET['verify']) && compare_dz($_GET['verify'],$_SESSION['temp_n'])){ //check for session hash, if necessary 
+
+
 
 if($_SERVER["REQUEST_METHOD"] == "POST" && $_GET['direct'] == "login"){ //session hash required
 
@@ -175,43 +203,7 @@ echo '<span class="signup"><!-- color changer, because i\'m procrastinating --><
                                       
 //clear all session variables
                                       
-if($_SERVER['REQUEST_METHOD'] == "POST"){
-/* mysqli_query($db_main, "ALTER TABLE users ADD (month2 INT(5), day2 INT(5), year2 INT(4))")
-
-
-/^[A-Za-z0-9-_]{4,16}$/.test($("span.signup input[name=username2]").val())
-&& /^(.){10,50}$/.test($("span.signup input[name=pwrd2]").val() )  
-&& /^([A-Za-z0-9-_])+[@]((([A-Za-z0-9_-])+[.]([A-Za-z0-9_-])+)+)$/.test($("span.signup input[name=email2]").val() ) 
-&& /^([A-Za-z-]{2,})+[ ]([A-Za-z-]{2,}[ ]){0,2}([A-Za-z-]{2,})+$/.test($("span.signup input[name=fullname2]").val() ) 
-&& $("span.signup input[name=fullname2]").val() != $("span.signup input[name=fullname2]").prop("defaultValue") 
-&& $("select[name=day2]").val() != "0" && $("select[name=month2]").val() != "0" && $("select[name=year2]").val() != "0" && $("button#axe1check").hasClass("a2")
-
-if(preg_match("#^[A-Za-z0-9-_]{4,16}$#", htmlspecialchars($_POST['']))){}
-
-if(preg_match("#^username2$#",$molded[0])){ //username check     
-$mns = mysqli_query($sync, "SELECT FROM users WHERE username REGEXP'^".$molded[1]."$'");
-if((is_bool($mns) && preg_match("#^[A-Za-z0-9-_]{4,16}$#", $molded[1]))){ //no usernames registered? and also the usual limits
-echo "<u>" .$molded[1] . "</u> has not been registered yet, and can be registered. &#10004";
-
-}else{if(preg_match("#^[A-Za-z0-9-_]{4,16}$#", $molded[1])){ //priority 1 is checking to see if it fits the username criteria
-if(mysqli_num_rows($mns) > 0){echo "This username is already taken.";
-//then if it's still available
-}else{echo $molded[1] . " has not been registered yet, and can be registered. &#10004";}}else{echo "Must be between 4-16 characters, numbers, letters and hyphens only";}
-
-}
-
-}  
- username2 = nolvoritea       1
-pwrd2 = sangra99asdasasda                     2
-email2 = askdajskdaksdka@asdaKASDKA.CASK        3
-fullname2 = Hans Marcon                     4
-day2 = 16                                  5
-month2 = 12                                6
-year2 = 1998                               6
-admin_notifs = on                           7
-*/
-         // post submission
-                                        
+if($_SERVER['REQUEST_METHOD'] == "POST"){                                        
 
 $mns = mysqli_query($sync, "SELECT * FROM users WHERE username='".$_SPIN['username2']."'"); 
 //data validity check on the server side

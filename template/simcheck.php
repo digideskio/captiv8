@@ -33,9 +33,67 @@ if(compare_dz($salt['password'],$_SESSION['salt_q'])){      //extra measures man
 
 
 
-if(isset($_GET['action']))    {
+if(isset($_GET['action'])){
 
 switch($_GET['action']){
+
+case "sql_q":   //first, test to check if it has a delete or drop statement
+echo "<br>";
+if(!preg_match("#[;]?[ ]{0,}(DELETE|DROP|delete|drop) #",$_POST['sql_q'])){
+
+if(preg_match("#[;]?[ ]{0,}SELECT#",$_POST['sql_q'])){
+
+$_POST['sql_q'] = (preg_match("#LIMIT[ ]+[0-9]+([,][ ][0-9]+)?[ ]{0,}[;]?[ ]{0,}$#",$_POST['sql_q'])) ? $_POST['sql_q'] : preg_replace("#^(.+)([;]?)[ ]{0,}$#","$1 LIMIT 0,100$2",$_POST['sql_q']) ;
+}
+
+$test_query = mysqli_query($db_main, $_POST['sql_q']);
+if($test_query){  //successful SQL query?          
+if(!preg_match("#^[ ]{0,}SELECT #",$_POST['sql_q'])){
+echo "The query \"" . $_SPIN['sql_q'] . "\" was successful.";    }else{ //display rows!
+//$get_rows = mysqli_fetch_assoc($test_query);
+/*foreach($get_rows as $keys => $values){
+$rows = isset($rows) ? array_merge([$keys],$rows) : [$keys];
+} */  
+echo "<table id='results'>";  
+
+while($get_data = mysqli_fetch_assoc($test_query)){
+$get_rows[] = $get_data;
+foreach($get_data as $keys => $values){
+$key_dump = (isset($key_dump) && array_search($keys,$key_dump) === false) ? array_merge($key_dump,[$keys]) : [$keys];  //all possible keys
+}
+}
+    echo "<tr>";  echo "<th>#</th>";
+foreach($key_dump as $field_names){
+echo "<th>".$field_names."</th>";
+}          
+  echo "</tr>";   
+foreach($get_rows as $get_rows2){  $x = isset($x) ? $x + 1 : 1; $y = (isset($y) && $y < 2) ? $y + 1 : 1;
+echo "<tr>"; echo "<th>".$x."</th>";
+foreach($get_rows2 as $keys => $values){  $z = (isset($z) && $z < 2) ? $z + 1 : 1;
+$values = (strlen($values) > 250) ? preg_replace("#^(.+){247}(.+)$#","$1...",$values) : $values;
+echo "<td class='a$y$z'>" . $values . "</td>";
+}  unset($z); echo "</tr>";
+
+} unset($y);
+echo "</table><br>";  unset($x);
+unset($key_dump); unset($get_rows);
+mysqli_free_result($test_query);
+}
+}else{
+echo "<div class='admin_notice'><strong>SQL error:</strong> ". mysqli_error($db_main) ." </div>";
+}
+
+}
+break;
+
+case "sg_url_avail":   
+$sg_url_search = mysqli_query($db_main,"SELECT * FROM snowglobes WHERE sg_url='$_FILTERED[test]'");
+if(mysqli_num_rows($sg_url_search) > 0){
+echo "<div class='notice'>Unfortunately, this URL is not available.</div>";
+}else{
+echo "<div class='notice green'>This URL is available</div>";
+}
+break;
 
 case "css_edit":
 if(preg_match("#[.]css$#",$_POST['file'])){//nice try kids
@@ -121,7 +179,7 @@ echo "</div>";
 
  if(preg_match("#([-A-Za-z]+)[ ]#",$_FILTERED['search_q'])){  
 
-echo "<a href='index.php?query=".$_MONITORED['login_q']."&dispos=new_school' class='add-new rad'>". $nx[33] ."</a>";
+echo "<a href='index.php?query=".$_MONITORED['login_q']."&find=new_school' class='add-new rad'>". $nx[33] ."</a>";
 
 }
 
@@ -153,9 +211,7 @@ mysqli_free_result($select_school);
   echo json_encode(["message"=>"success","user"=>$_FILTERED['user'],"messages"=>$search_cha],JSON_UNESCAPED_SLASHES);
   }
      }
-     }
-     
-if(isset($_GET["box_action"])){
+ if(isset($_GET["box_action"])){
 switch($_GET["box_action"]){
                                                       
      case "open":
@@ -166,7 +222,11 @@ switch($_GET["box_action"]){
      chat_list_q("close",$_FILTERED['user']); //deletes the other user's name from the array
      break;
 }
-}
+}    
+     
+     }
+     
+
          
 if(isset($_GET['format'])){
 switch($_GET['format']){    
@@ -191,7 +251,6 @@ switch($_GET['format']){
 
 
 if(isset($_GET['is_read'])){ //will be accessed upon the other user reading the messages
-//has to come after the respective post receptions
   $mark_as_read = mysqli_query($db_main, "UPDATE posts SET is_read = '1' WHERE cnttype='3' AND forwhom='$_MONITORED[login_q]' AND bywhom='$_FILTERED[user]'");
 }
   

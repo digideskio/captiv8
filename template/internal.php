@@ -2,11 +2,28 @@
 
 //I have no idea why I still don't want to finish the school registration. I mean there's nothing complicated about it, i've already done similar functions
 
+//I should probably find a better way to do this, but nevertheless
+//Here i'm going to define which $_GET's can't be put together (i.e. both profile view and topic view, etc)
+//It's going to be defined within its own isset($_GET['x']) conditional
+//the $_GET key will be the first argument, its possible associates are going to be in array form on the second
+function key_isolation($key_name,$other_associates){
+//this is so tacky
+
+/*foreach($_GET as $key_checks){
+if($key_checks !== $key_name){
+if(!preg_match("#^".$shrilled."$#",$key_name)){//check to see if it's not one of the associative keys
+header("Location:" .$main_dir);
+}
+}   
+}  */
+
+echo $key_name . "'s assoiates: "  . $other_associates;
+}
                      
 $db_main = mysqli_connect("localhost","root","","captiv8");      
 mysqli_set_charset($db_main,"ISO-8859-1");
 
-date_default_timezone_set('America/Chicago');
+date_default_timezone_set('America/Chicago');         
 
   $allow_redirs = true;
 

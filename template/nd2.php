@@ -5,7 +5,9 @@
 
       
 echo "<span class='clear' id='nook'></span><div id='header'><a href='".$main_dir."' id='logo'><img src='".$image_dir."2.png'></a><div id='panel'>";       
-if(!isset($_SESSION['login_q'])){       //not logged in to a user account, essentially. Should probably make this more elaborate too                       
+if(!isset($_SESSION['login_q'])){       //not logged in to a user account, essentially. Should probably make this more elaborate too       
+
+              
 
 echo "<form action='index.php?verify=". $_SESSION['temp_n'] ."&direct=login' id='login' method='post'><input type='text' value='".$nx[0]."' name='usernorm' class='flick'><input type='password' name='pwrdnorm' value='".$nx[1]."' class='flick'><input type='submit' value='".$nx[2]."' class='dt1space'>
 <a href='index.php?direct=signup' class='signup-a'>".$nx[3]."</a>";
@@ -16,10 +18,11 @@ setcookie("inc_ombination","yeah",time()-1);
 echo "</form>";   
 echo "</div></div>"  ;               }else{  //actually logged in. I know, such a fancy method for determining right, just a single session. I will probably change this. Preferably a session hash that's been salted. Was going to do it yesterday but had no time, now I don't feel like working on them
 
+$profile_link = $main_dir . "profile/" . $_MONITORED['login_q']; 
 //menu
 echo "<div id='user_menu'>
                                                   
-<span class='drop'><div class='left uplink'>".$nx[11].", <a class='username' href='".$main_dir."profile/". $_MONITORED['login_q'] ."'>". $_MONITORED['login_q'] ."</a>.  </div><div class='dropdown_content rad'><span class='quick_links'><a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/usedservices'>".$nx[12]."</a><a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."'>".$nx[13]."</a></span></div></span>";
+<span class='drop'><div class='left uplink'>".$nx[11].", <a class='username' href='$profile_link'>". $_MONITORED['login_q'] ."</a>.  </div><div class='dropdown_content rad'><span class='quick_links'><a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/usedservices'>".$nx[12]."</a><a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."'>".$nx[13]."</a></span></div></span>";
 
 
 //Notifications
@@ -49,11 +52,34 @@ if(isset($_SESSION['welcome'])){echo "<div class='welcome_note' id='first1'>".$n
 echo "</div><table><tr><td id='left1'>" ;
 
                  
-if(logged_in_check){if(index_page_check){echo $nx['29'];
+if(logged_in_check){
+
+echo "<div id='left_menu'> <h3>Main Menu</h3>
+<a href='$profile_link'>Your Profile</a>
+<a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/snowglobes'>Your Snowglobes</a>
+<a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/settings'>Display Settings</a>
+<a href='message_panel' class='prompt'>Message Panel</a>
+<a href='misc_opts' class='prompt'>Miscellaneous</a>
+</div>";          #2E3B4D
+
+if(index_page_check){     
+
+
+
+
+echo $nx['29'];    // posting tips
 
 //this is gonna be a fun SQL statement. Oh boy
 
 $find_users_to_chat_with = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' LIMIT 100");
+
+//get list of tabbed users
+
+foreach(json_decode($logged_dt['tabbed_users']) as $key => $value){  
+
+echo "<div class='box chat-b' ref='" . $value . "'><h3>". $nx['40'] . $value . "</h3><div class='chat_box'><div class='loading_text'>Loading...</div></div><div class='chat_panel'><textarea></textarea></div><a class='prompt button_samp rad chat-buttons' href='submit-chat-msg'>SUBMIT</a><a class='prompt button_samp rad chat-buttons' href='close-chat'>Close</a></div></div>";
+
+}
 
 echo "<div class='box' id='chat_list'><h3>Online Users</h3><p>Users will show up here if you both follow each other. Of course you can send a message regardless, but it will be shown somewhere less exposed.</p>";
 
@@ -84,8 +110,8 @@ echo "</td><td width='99%' id='vc2'>";
 
 
 //edit profile action, and all the other actions for query= [ ]
-if(isset($_GET['query'])){   $check_entry = mysqli_query($db_main,"SELECT * FROM users WHERE username='$_MONITORED[login_q]' AND password='$_MONITORED[salt_q]'");
-if(mysqli_num_rows($check_entry) == 1){ 
+if(isset($_GET['query'])){   
+if(logged_in_check){ 
 if(count($_GET) == 1){
 $edu_find = mysqli_query($db_main, "SELECT * FROM education where forwhom='$_MONITORED[login_q]'");
 
@@ -143,8 +169,10 @@ echo "</span>";
 
 
 echo "</div>";   } else{
-if(isset($_GET['dispos'])){
-switch($_GET['dispos']){
+
+
+if(isset($_GET['find'])){
+switch($_GET['find']){
 case "new_school":
 //time to switch up my coding style
 //I need to get into objects, as it just seems intuitive
@@ -164,8 +192,64 @@ case "new_school":
 <?php
 
 break;
+case "snowglobes":      //snowglobe
+
+//find other snowglobes by user
+
+$sg_search = mysqli_query($db_main,"SELECT * FROM snowglobes WHERE root_admin_id='$logged_dt[userid]' ORDER BY sg_id DESC") or die(mysqli_error($db_main));
+
+?>
+
+<div class="contentbox new_sg">
+<h3 class="dashes bottom"><?php echo $nx['43']; //Snowglobes. Obviously we're going to have the person's profile at least
+?></h3><h4><?php echo $nx['45'];?></h4>
+
+<p>
+<?php echo $nx['44'];?>
+</p>
+<h4><?php echo $nx['46'];?></h4>
+<p><strong>Link:</strong> <a href="<?php echo $profile_link; ?>"><?php echo $profile_link; ?></a></p>
+<h4>Other Snowglobes</h4>
+<?php if(mysqli_num_rows($sg_search) > 0){while($sg_snipe = mysqli_fetch_assoc($sg_search)){ ?>
+
+<div class="box"><h4><a href="<?php echo $main_dir. "sg/" .$sg_snipe['sg_url']; ?>"><?php echo $sg_snipe['sg_name']; ?></a></h4>
+<?php if(!preg_match("#^[ ]{0,}$#",$sg_snipe['description'])): ?>
+<p><?php echo $sg_snipe['description']; ?></p>  
+<?php endif; ?>                               
+</div>
+
+<?php }}else{  //
+ ?>
+
+<?php } ?>
+</div>
+
+<div class="contentbox new_sg">
+<h3 class="dashes bottom"><?php echo $nx['47']; //Snowglobes. Obviously we're going to have the person's profile at least
+?></h3>
+<div class="space">
+<form action="<?php echo $main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/snowglobes/submit"; ?>" method="POST">
+<table>
+<!-- <tr><td width="25%"></td><td></td></tr> -->
+<tr><td width="25%">Snowglobe name</td><td><input type="text" class="largeform flick" value="Name must be at least 4 characters." name="sg_name"></td></tr>
+<tr><td width="25%">Snowglobe URL</td><td><input type="text" class="largeform flick" value="Will be accessed via http://url.url/sg/{your input here}. Must be at least 4 characters." name="sg_url"></td></tr>
+<tr><td width="25%">Snowglobe description</td><td><textarea class="largeform flick" name="sg_desc">(Can be left blank)</textarea></td></tr>
+<tr><td width="25%">Privacy settings</td><td><input type="radio" name="sg_privacy" value="private" checked> Make this snowglobe only accessible to people who are invited in <input type="radio" name="sg_privacy" value="public"> Make the snowglobe accessible to everyone </td></tr>
+</table>
+<p class="right"><input type="submit" value="CREATE A NEW SNOWGLOBE!"> </p>
+</form>
+</div>
+
+</div>
+
+
+<?php    
+
+break;
 }
 }
+
+
 }
 }     
 }

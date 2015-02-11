@@ -8,8 +8,9 @@ a{color:#fff;text-decoration:underline;}
 #header{width:100%;height:60px;}
 #logo{width:200px;height:60px;float:left;display:block;}
 #panel{float:left}
-input,.contentbox,.signup-a,.welcome_note,.bottom_menu a,select,textarea,.ui-tooltip,.notice,#user_menu,#login .left,.rad,.spacer,.margin,#panelcd a,.load-more-button,a.chat-option,.chat_box{border-radius:4px;}
-#user_menu{background:#2D394A;border-top:2px solid #38475D;border-bottom:2px solid #26303F;box-shadow:0 -2px 2px #2D394B;text-shadow:0 1px 0 #000;color:#7993A7;font:13px "lucida sans unicode",arial,"sans serif";margin:14px 0 0 4px;}
+input,.contentbox,.signup-a,.welcome_note,.bottom_menu a,select,textarea,.ui-tooltip,.notice,#user_menu,#login .left,.rad,.spacer,.margin,#panelcd a,.load-more-button,a.chat-option,.chat_box,.loading_text,#left_menu,#left_menu a,.box{border-radius:4px;}
+
+#user_menu{margin:14px 0 0 4px;}
 #user_menu div.left,#user_menu div.right{display:inline-block;}
 .right{float:right;}
 .flick{color:#768594;}
@@ -50,7 +51,8 @@ a.side1{border-top-left-radius:0;border-bottom-right-radius:0;}
 a.side2{border-top-right-radius:0;border-bottom-left-radius:0}
 #left1 div.box{width:200px}
 #vc2{padding:0px 23px 0 0;}
-.boxxed{padding:8px;height:150px;overflow-y:scroll;}
+
+#user_menu,td#left1 #left_menu{background:#2D394A;border-top:2px solid #38475D;border-bottom:2px solid #26303F;box-shadow:0 -2px 2px #2D394B;text-shadow:0 1px 0 #000;color:#7993A7;font:13px "lucida sans unicode",arial,"sans serif";}.boxxed{padding:8px;height:150px;overflow-y:scroll;}
 .boxxed p{font-size:11px;padding:8px;margin:0}
 .boxxed h4{margin:0;color:#79A8C8;font:bold 13px "Lucida sans unicode",arial,"sans serif";}
 button{cursor:pointer}
@@ -177,15 +179,15 @@ td.content{padding-right:10px;}
 td.content strong a.prompt{font-weight:normal;font-style:italic;}
 td.left_side a{color:#C4E6EF}
 div.contentbox td.right_side{width:240px;}
-#left1 .spacer{width:150px;padding:5px;margin:0 auto 5px;background:#323B49;border-top:2px solid #292E35;border-bottom:2px solid #3C4D64;text-shadow:0 1px 0 #000;}
-#left1 .spacer h3,#left1 .spacer{font:12px "Lucida sans Unicode","Tahoma","Arial";}
-#left1 .spacer h3{color:#9ec1dc;font-weight:bold;text-align:center}
+#left1 .spacer{width:150px;padding:5px;margin:3px auto 8px;background:#323B49;border-top:2px solid #292E35;box-shadow:0 -3px 3px #2F3743;border-bottom:2px solid #3C4D64;text-shadow:0 1px 0 #000;}
+#left1 h3,#left1 .spacer{font:12px "Lucida sans Unicode","Tahoma","Arial";}
+#left1 h3{color:#9ec1dc;font-weight:bold;text-align:center}
 .code{border-bottom:1px dashed #fff;padding-bottom:1px;}
 .box.space1{opacity:0;}
 .spoiler{display:none;}
 .index_post p{font-size:12px;}
 .bywhom{font-size:11px;color:#8C98AD}
-div.contentbox.index_post,a.chat-option{border-top:1px solid #556378;border-bottom:1px solid #202834;box-shadow:0 0 4px #26303F;margin:15px 0;}
+div.contentbox.index_post,a.chat-option,.contentbox .box{border-top:1px solid #556378;border-bottom:1px solid #202834;box-shadow:0 0 4px #26303F;margin:15px 0;}
 .side_info a.topic_link{color:#7a869b;text-decoration:none;padding-bottom:1px;border-bottom:1px dashed #7a869b;}
 .extra_opts{padding:0 15px;z-index:4;background:#344256;}
 .extra_opts a,a.load-more-button{text-decoration:none;color:#82eda8;text-shadow:0 -1px 0 #30353C;padding:4px 8px;font-family:"Lucida Sans Unicode","Arial";text-align:center;background:#5C6676;border-top:2px solid #6C778D;box-shadow:0 -2px 2px #2F3743;}
@@ -266,16 +268,36 @@ input[type=text].inline{display:inline;width:auto;margin-left:5px}
 input[disabled]{opacity:.5}
 a.chat-option{display:block;margin:4px;padding:4px 15px 5px;text-decoration:none}
 .chat_box,.chat_panel textarea,#chat_list p{font:11px tahoma;}
-.chat_box{background:#495567;border-top:2px solid #2F3743;border-bottom:2px solid #556378;margin-bottom:4px;padding:3px;}
+.chat_box{background:#495567;border-top:2px solid #292E35;box-shadow:0 -3px 3px #2F3743;border-bottom:2px solid #556378;margin-bottom:4px;padding:3px;}
 .chat_panel textarea{width:100%;margin:0;padding:4px;min-height:11px;border-style:solid;border-color:transparent}
 .chat_panel textarea:focus{box-shadow:0 0 transparent;border-color:#667086}
 div.box[ref] .spacer{text-align:right;}
 .chat-b textarea{min-height:65px;border:1px solid #495567}
 .chat-b a.button_samp{font-size:10px;text-transform:uppercase;margin-right:0;box-shadow:0 0 0 transparent;border-bottom:2px solid #202834;padding:3px 8px 4px}
-.chat_box{max-height:150px;overflow-y:auto;}
-.chat_box div{background:transparent url('http://localhost/captiv8/template/img/4.png') repeat-x scroll bottom left;padding:3px 10px 5px;background-color:#424D5D;font-weight:bold;text-align:right}
+.chat_box{max-height:150px;overflow-y:auto;margin-top:5px}
+.chat_box div{background:transparent url('http://localhost/captiv8/template/img/4.png') repeat-x scroll bottom left;}
+.chat_box div{padding:3px 10px 5px;background-color:#424D5D;font-weight:bold;text-align:right}
 .chat_box p{padding:4px 5px;}
 #chat_list p{line-height:14px}
 a.pawn{text-decoration:none;}
-a.pawn div.notice{background:#436D5B;text-shadow: 0 0 transparent;color:#132a20;border-bottom:2px solid #4E7F6A;border-top:2px solid #132a20;opacity:.5}
+a.pawn div.notice,.notice.green{background:#436D5B;text-shadow: 0 0 transparent;color:#132a20;border-bottom:2px solid #4E7F6A;border-top:2px solid #132a20;opacity:.5}
+.notice.green{opacity:1}
 a.pawn:hover div.notice{opacity:1}
+div.loading_text{background:transparent none;padding:4px 0;text-align:center;font-weight:normal}
+#left_menu{padding:4px 6px;width:150px;margin:3px auto 10px;box-shadow: 0 0 3px #fff;}
+#left_menu h3{text-align:left;padding:5px 10px 6px;font-size:13px;}
+#left_menu a{display:block;padding:4px 10px;text-decoration:none;border:2px solid transparent;border-width:2px 0;opacity:.7}
+#left_menu a:hover{background:#38475D;border-top:2px solid #26303F;border-bottom:2px solid #556378;box-shadow:0 2px 2px #495567;z-index:569;opacity:1}
+.new_sg td{padding: 0 4px;}
+.new_sg td[width]{text-align:right;padding-right:20px;font-weight:bold;width:200px;font-family:"Lucida Sans Unicode"}
+p.right{float:none;text-align:right;margin-bottom:0;margin-top:2px;padding:0}
+p.right input[type=submit]{text-shadow: 0 0 1px inherit}
+.space{padding:10px;}
+.new_sg td{padding-bottom:10px}
+.new_sg td[width]{padding:3px 25px 15px}
+.new_sg .space{padding:10px 5px 0 10px}
+input[type=radio]{vertical-align:middle;margin-bottom:7px}
+.new_sg .notice{box-shadow: 0 0 0 transparent;margin-bottom:3px}
+.contentbox .box{margin:5px;font-family:"Tahoma","Arial";background:#38475D;border-bottom:1px solid #28374D;padding:0}
+.contentbox .box a{font-family:"Tahoma","Arial"}
+input[type=file]{width:100%;}

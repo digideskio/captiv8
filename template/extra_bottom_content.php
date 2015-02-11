@@ -3,7 +3,7 @@
                                      
 <?php if(index_page_check){ include($main_dir ."template/index_feed.js");} ?>    
 
-<?php if(isset($logged_dt)) include($main_dir ."template/profile_edit.js");?>
+<?php if(isset($logged_dt)) include($main_dir ."template/profile_edit.js");?>     
 
 $("#post_k input[type=submit]").click(function(){
 if($("#post_k input[name=tcha1]").val() == $("#post_k input[name=tcha1]").prop("defaultValue")){return false;alert('Please provide a title.')}else{
@@ -34,13 +34,41 @@ $('div#part_one').before("<div class='notice'><h3>Notice</h3><p>Please correct s
 })
 $("span.signup input[type=submit]").removeClass("signup-a").val('Register');}                                                        
 }).each(function(){
-//$(this).keyup(function(){$("#checkn1").load("template/simcheck.php?id=1", {$(this).prop("defaultValue"): $(this).val()});  });
-if($(this).prop("defaultValue") == "Desired username"){$(this).tooltip({position: { my: "left+10 center", at: "right center-1" }, content: "<span id='checkn1'>Must be between 4-16 characters, numbers, letters and hyphens only (also an underscore)</div>"})}
-if($(this).prop("defaultValue") == "Your password"){$(this).tooltip({position: { my: "left+10 center", at: "right center-1"}, content: "<span id='checkn1'>Must be at least 10 characters.</div>"})}
-if($(this).prop("defaultValue") == "Your email address"){$(this).tooltip({position: { my: "left+10 center", at: "right center-1"}, content: "<span id='checkn1'>Just the normal email address.</div>"})}
-if($(this).prop("defaultValue") == "Your full name"){$(this).tooltip({position: { my: "left+10 center", at: "right center-1" }, content: "<span id='checkn1'>We just need a first and last name.</div>"})}
+
+if($(this).prop("defaultValue") == "Desired username"){$(this).tooltip({position: { my: "left+10 center", at: "right center-1" }, content: "<span id='checkn1'>Must be between 4-16 characters, numbers, letters and hyphens only (also an underscore)</span>"})}
+if($(this).prop("defaultValue") == "Your password"){$(this).tooltip({position: { my: "left+10 center", at: "right center-1"}, content: "<span id='checkn1'>Must be at least 10 characters.</span>"})}
+if($(this).prop("defaultValue") == "Your email address"){$(this).tooltip({position: { my: "left+10 center", at: "right center-1"}, content: "<span id='checkn1'>Just the normal email address.</span>"})}
+if($(this).prop("defaultValue") == "Your full name"){$(this).tooltip({position: { my: "left+10 center", at: "right center-1" }, content: "<span id='checkn1'>We just need a first and last name.</span>"})}
 });
 
+
+$("input[name=sg_url]").bind("keyup input", function(){
+
+if(/^[-_A-Za-z0-9]{4,30}$/.test($(this).val())){
+msg_box = ($(this).next(".msg_notiff").length == 0) ? "<div class='msg_notiff'></div>" : " ";
+
+$(this).after(msg_box);
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"sg_url_avail","test":$(this).val()}).done(function(check_msg){
+$("input[name=sg_url]").next().html(check_msg);
+});
+}else{
+
+if($(this).val() == $(this).prop("defaultValue") || $(this).val() == ""){$(".msg_notiff").remove();  }else{
+//validation issuessssssss
+if(/^(.+){4,30}$/.test($(this).val())){
+$(this).next().html("<div class='notice'>You can only have letters, numbers, hyphens and underscores (- and _ respectively) for the URL.</div>");
+}
+}
+
+}
+
+});
+
+$(".new_sg input[type=submit]").click(function(){
+if($("textarea[name=sg_desc]").val() == $("textarea[name=sg_desc]").prop("defaultValue")){
+$("textarea[name=sg_desc]").val("");
+}
+})
 
 
 

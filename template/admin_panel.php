@@ -35,7 +35,13 @@ a.link_view2{background:#d4d4d4;}
 a.link_view2:hover{padding:4px 9px;border:1px dashed #808080;background:#f0f0f0;}
 a.link_view2:focus{background:#79A8C8;color:#fff;border:1px solid #79a8c8;}
 #session_list a.selected2{background:#333;color:#fff;cursor:default}
+#session_list a.prompt.submit{background:#000;color:#fff;text-decoration:none;padding:4px 7px;display:inline-block;margin:5px 0}
 
+#t_wrap{max-width:100%;overflow:auto;max-height:400px;}
+#t_wrap table#results td,#t_wrap table#results th{padding:4px 6px;max-width:300px;}
+#t_wrap table#results th{background:#000;color:#fff;}
+td.a12,td.a21{background:#e8e8e8;}
+td.a22{background:#e0e0e0}
 
                                                                   
 </style>
@@ -83,21 +89,30 @@ echo "</p> </div>
   
 
   </div>
+  <div id="v_sql"<?php echo selected_class('v_sql') ?>> <h3>SQL Queries</h3><div id="t_wrap"></div>
+  <div class="box"><textarea class="flick" id="sql_query">Type your SQL query here... Any SQL query that will drop a table, or delete a row will require a password.</textarea>
+  <a href="submit_sql" class="prompt submit rad" refer="sql_query">Submit Query</a>
+  </div></div>
+  
 
-<div id="panelcd"><a href="v_sess" class="prompt<?php echo selected_class("v_sess", true)?>">View Sessions</a><a href="v_css" class="prompt<?php echo selected_class("v_css", true)?>">View CSS</a></div>
+<div id="panelcd">
+<a href="v_sess" class="prompt<?php echo selected_class("v_sess", true)?>">View Sessions</a>
+<a href="v_css" class="prompt<?php echo selected_class("v_css", true)?>">View CSS</a>
+<a href="v_sql" class="prompt<?php echo selected_class("v_sql", true)?>">SQL Panel</a>
+</div>
+
 
 
 <?php
 
-echo"
-</div>";    
+echo"</div>";    
 ?>
 
 <script type="text/javascript"> 
 $("body").on('keyup','#jones',function(){  
 $("style[title='"+$(this).attr('title')+"']").html($(this).val());
 });
-if($(".selected_link").attr("href") == "v_css"){
+if($(".selected_link").attr("href") == "v_css" || $(".selected_link").attr("href") == "v_sql" ){
 $("#session_list").css({"width":"650px"});
 }
 
@@ -115,6 +130,10 @@ $(this).css("bottom","inherit");
 
          
 }).on('dragstop',function(){$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"drag_box","offsets":[positions[1],positions[0]]});  });
+
+if($(".selected_link").attr("href") == "v_sql"){
+$("#session_list").draggable("disable");
+}
 
 
 </script>

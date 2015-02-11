@@ -38,6 +38,16 @@ $snip = (isset($_GET['comment'])) ? $nx['26'] : "";
 echo preg_replace("#[^-_A-Za-z0-9/ ]#","",$thread_data['title']) . $snip . "";
 }
 
+if(isset($_GET['find'])){
+if(isset($_GET['query'])){
+switch($_GET['find']){
+case "snowglobes":
+echo "Snowglobes by " .$_FILTERED['query'];
+break;
+}
+}
+}
+
 echo "</title>";      /*html end*/    include("js.php");
 /*function effic($snipe,$variable,$test_value,$functionar){//for annoying isset checks
 if(!isset($snipe)){return false;  //won't show PHP errors, I think

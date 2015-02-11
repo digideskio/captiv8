@@ -27,8 +27,13 @@ unset($_SESSION[$nkey]);
   }
   if($_GET['phase'] == "2"){   //inquire for successful data entry messages  
   if(isset($_COOKIE['limbooo'][1])){ 
-  setcookie("glimpse","yuo",time()+1);
-  }    
+  setcookie("glimpse","yuo",time()+4);
+  } 
+  if(isset($_GET['db_query'])){switch($_GET['db_query']){
+  case "new_snowglobe":
+  header("Location:" . $main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/snowglobes/");
+  break;
+  }    }
   if(!isset($_SESSION['login_q'])){setcookie('incorrect_password_notice','incorrect',time()+1);}
   clear_array($_SESSION,"free_sess_");
   

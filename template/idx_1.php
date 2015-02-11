@@ -69,6 +69,10 @@ echo "</div></form>";
 
 
 if(isset($_GET['thread_view'])){
+
+key_isolation("thread_view","comment");
+
+
 //viewing threads
 //it'll be a combination of the topic's hash and it's thread nickname
 //should help with search engines
