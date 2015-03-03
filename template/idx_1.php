@@ -13,7 +13,7 @@
 
 if(logged_in_check && index_page_check){   //make a new post panel(for threads)
  echo "<div id='content' class='contentbox'>".$nx['31']."</div>";
-echo "<form method='POST' action='index.php?direct=new_post&verify=". $_SESSION['temp_n'] ."' id='post_k'>
+echo "<form method='POST' action='index.php?direct=new_post' id='post_k'>
 <span id='input_save'></span>
 <div class='extra_opts'><a href='add-poll' class='prompt' id='attach_poll_q'>".$nx[30]."</a></div><div id='main_new_post' class='contentbox'>"; 
 echo "<div class='sect_1'><input type='text' maxlength='150' value='".$nx['17']."' class='flick largeform' name='tcha1' id='title_trigger'>
@@ -61,16 +61,64 @@ echo "</div></form>";
 
 <?php endif;         }
 
+if(isset($_GET['snowglobe'])):   if(isset($_SESSION['last_postid'])){unset($_SESSION['last_postid']);}
+        //$sg_details['']
+?>
+<div class="header box" id="sg_header">
+<table><tr><td width="1%" class="sg_logo"></td><td class="header_etc">
+<h3><a href="<?php echo $main_dir; ?>sg/<?php echo $sg_details['sg_url']; ?>"><?php echo $sg_details['sg_name']; ?></a></h3></td></tr></table>    
+<!-- the snowglobe sidebar is back at nd2.php  -->
+</div>
 
-  if(isset($_SESSION['login_q'])){
 
-  echo mysqli_error($db_main);
-  }  
+
+<?php                       
+      
+ echo "<div id='content' class='contentbox'>".$nx['31']."</div>";            
+echo "<form action='".$main_dir."index.php?direct=new_post' method='POST' id='post_k'>
+<span id='input_save'></span>
+<div class='extra_opts'><a href='add-poll' class='prompt' id='attach_poll_q'>".$nx[30]."</a></div><div id='main_new_post' class='contentbox'>"; 
+echo "<div class='sect_1'><input type='text' maxlength='150' value='".$nx['17']."' class='flick largeform' name='tcha1' id='title_trigger'>
+<textarea name='tcha2' class='flick largeform'>".$nx['18']."</textarea></div>";  
+//post as: formats
+
+
+//title and content
+echo "<div class='sect_2 button_row'>
+
+";
+
+//check for all snowglobes they can make a thread in, of course being able to post in your own profile snowglobe is always your right, and it'll be called "1"
+echo "<input type='hidden' name='sg_".$sg_details['sg_url']."' value='on'>";
+//as for the rest...
+
+echo "
+
+<input type='submit' value='".$nx['21']."'></div>";
+echo "</div></form>";  
+// view posts
+
+if(mysqli_num_rows($sg_data[1]) > 0){
+
+include("template/news_feed.php");
+
+}else{
+?>
+<?php echo $nx['49']; ?>
+<?php
+} 
+?>
+
+
+
+
+
+<?php
+endif;   //end $_GET['snowglobe'] conditional
 
 
 if(isset($_GET['thread_view'])){
 
-key_isolation("thread_view","comment");
 
 
 //viewing threads
@@ -85,8 +133,12 @@ echo "<div class='contentbox' id='thread_main'><h3>".$thread_data['title']." <sm
 if(strlen($thread_data['content']) > 3){echo "<p>".$thread_data['content']."</p>";  }
 echo "</div>";
 //reply-action to thread
-if(isset($_SESSION['login_q'])){
-echo "<div id='thread_reply' class='contentbox'><form action='index.php?direct=new_post&verify=".hack_free($_SESSION['temp_n'])."' method='POST'>
+if(isset($_SESSION['login_q'])){                  //solution to our session hash failing to verify :/
+//maybe if I alias the submission page then it won't fail to verify somehow
+
+//echo "<div id='thread_reply' class='contentbox'><form action='".$main_dir."index.php?direct=new_post&verify=".$_SESSION['temp_n']."' method='POST'>
+
+echo "<div id='thread_reply' class='contentbox'><form action='".$main_dir."index.php?direct=new_post' method='POST'>
 <input type='hidden' value='". $thread_data['postid'] ."' name='parent_comment'>
 <input type='hidden' value='".$thread_id."' name='thread_id'>
 <textarea name='tcha2' class='flick largeform'>Comment on this thread...</textarea>   <input type='submit' value='POST REPLY'>
@@ -203,7 +255,7 @@ get_posts($comment_loop['postid'],$thread_data['postid']);
 }
 
 mysqli_free_result($snipe8);
-mysqli_free_result($view_thread); }else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
+mysqli_free_result($view_thread); }else{redir_process("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 }else{
 if(isset($_GET['comment'])){
 $search_for_thread = mysqli_query($db_main, "SELECT * FROM posts WHERE topic_hash='$_FILTERED[comment]' ORDER BY stamptime DESC");
@@ -211,8 +263,8 @@ if(mysqli_num_rows($search_for_thread) > 0){
 $post_data = mysqli_fetch_assoc($search_for_thread);                    
 $thread_query = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$post_data[thread_id]'");
 $thread_dt = mysqli_fetch_assoc($thread_query);
-header("Location:thread/" . $thread_dt['thread_nick'] . "_" . $thread_dt['topic_hash'] . "/comment/" . $_GET['comment']);
-}else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
+redir_process("Location:thread/" . $thread_dt['thread_nick'] . "_" . $thread_dt['topic_hash'] . "/comment/" . $_GET['comment']);
+}else{redir_process("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 }
 }
 
@@ -299,7 +351,7 @@ echo "</table></div>";
 mysqli_free_result($query_2);
 if(isset($snipe_7)){mysqli_free_result($snipe7);    }
 
-}else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
+}else{redir_process("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 mysqli_free_result($profile_query);
 }
 

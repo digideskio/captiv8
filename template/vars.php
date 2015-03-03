@@ -122,15 +122,22 @@ Signing up is totally free and will take less than a minute at the most.</p><div
 "<h3>Poll maker</h3><input type='text' class='largeform flick pollquestion' value='Insert poll question here...' name='poll_question'><h3>Poll choices<span> - You must have at least two</span></h3><input type='text' class='largeform flick' value='Add a choice here' name='poll_choice'><input type='text' class='largeform flick' value='Add a choice here' name='poll_choice'><a href='add-more-choices' class='prompt button_samp rad'>Add more choices...</a><h3>Poll options</h3><div class='optionbox'><input type='checkbox' name='choice_addition'><span>Make anyone able to add poll choices</span></div><div class='optionbox'><input type='checkbox' name='choice_selection'><span>Only one poll choice allowed for each user</span></div><a href='finished-poll-q' class='greened prompt button_samp rad'>Finish poll questions</a>"
 ,"Editing your profile"   , 
 "Unfortunately, the school you typed down is currently not in the directory. Click here to add your school into the current directory."
-, "Add your school","Your search query is going to be referenced with all wikipedia school entries. If your school is not listed in Wikipedia, you will have to type in details for yourself."
+, "Add your school","Your search query is going to be referenced with all Wikipedia school entries. If your school is not listed in Wikipedia, you will have to type in details for yourself."
 , "","There are no more posts to display.","Successfully completed input!","Unfortunately, you have failed to enter correct details."   //39th at this point
 ,"Chatting with: ","Start a conversation with this user!","Are you currently enrolled in high school/college? Get a head start on your classes by signing up for our <em>Lecture Notes</em> feature!","Your snowglobes",
 "A Snowglobe is pretty to look at, and usually represents some place that is suspended within the bounds of a sphere. In Captivate, however, there's a lot more depth to a Snowglobe. It's a place where you can talk about a specific topic, or maybe about a whole host of topics. Be it about anything mundane like road rage, stern like being a Call of Duty fan, or more serious discourse like your dog's pet peeves, the limits of discussion just don't exist. Anything as varied as your whims, and even your idleness, or boredom, can be talked about in a Snowglobe.", //What are snowglobes? #44
-"What is a Snowglobe anyway?","Your Profile","Create a new Snowglobe"
+"What is a Snowglobe anyway?","Your Profile","Create a new Snowglobe","<em>No current description for this snowglobe. Be sure to edit this to get more people to tune into your snowglobe!</em>","<div class='notice no_posts center'>There are currently no posts in this Snowglobe. Be the first to post by using the template above!</div>","<center>There is no description available for this Snowglobe at the moment.</center>","Posted in your own snowglobe","Posted in"
 
 
 
 );
+
+ $dir = "template/img/";  
+$server_mash = "http://" . $_SERVER['SERVER_NAME'] .$_SERVER['PHP_SELF'];
+
+$main_dir = preg_replace("#(index[.]php|template[/](.+)[.]php)[/]?#","",$server_mash) ;
+$image_dir = $main_dir . $dir;
+
 
 $dobordate = "<select name='day2' class='largeform'><option value='0'>--</option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option><option value='11'>11</option><option value='12'>12</option><option value='13'>13</option><option value='14'>14</option><option value='15'>15</option><option value='16'>16</option><option value='17'>17</option><option value='18'>18</option><option value='19'>19</option><option value='20'>20</option><option value='21'>21</option><option value='22'>22</option><option value='23'>23</option><option value='24'>24</option><option value='25'>25</option><option value='26'>26</option><option value='27'>27</option><option value='28'>28</option><option value='29'>29</option><option value='30'>30</option><option value='31'>31</option></select> 
   <select name='month2' class='largeform'><option value='0'>--</option><option value='1'>January</option><option value='2'>February</option><option value='3'>March</option><option value='4'>April</option><option value='5'>May</option><option value='6'>June</option><option value='7'>July</option><option value='8'>August</option><option value='9'>September</option><option value='10'>October</option><option value='11'>November</option><option value='12'>December</option></select> 

@@ -1,9 +1,19 @@
-
+                                                                                
 <script type="text/javascript">         
                                      
-<?php if(index_page_check){ include($main_dir ."template/index_feed.js");} ?>    
+<?php if(news_feed_check){ include($main_dir ."template/index_feed_js.php");} ?>    
 
-<?php if(isset($logged_dt)) include($main_dir ."template/profile_edit.js");?>     
+<?php if(isset($logged_dt)) include($main_dir ."template/profile_edit.js");?>   
+
+<?php if(isset($_GET['snowglobe'])): ?>
+
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"get_sg_follow_status","name":"<?php echo $_FILTERED['snowglobe']; ?>"}).done(function(html){
+
+$("#sg_header .header_etc").append(html);
+
+});
+
+<?php endif; ?>  
 
 $("#post_k input[type=submit]").click(function(){
 if($("#post_k input[name=tcha1]").val() == $("#post_k input[name=tcha1]").prop("defaultValue")){return false;alert('Please provide a title.')}else{

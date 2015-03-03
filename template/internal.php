@@ -6,78 +6,81 @@
 //Here i'm going to define which $_GET's can't be put together (i.e. both profile view and topic view, etc)
 //It's going to be defined within its own isset($_GET['x']) conditional
 //the $_GET key will be the first argument, its possible associates are going to be in array form on the second
-function key_isolation($key_name,$other_associates){
-//this is so tacky
 
-/*foreach($_GET as $key_checks){
-if($key_checks !== $key_name){
-if(!preg_match("#^".$shrilled."$#",$key_name)){//check to see if it's not one of the associative keys
-header("Location:" .$main_dir);
-}
-}   
-}  */
 
-echo $key_name . "'s assoiates: "  . $other_associates;
-}
                      
 $db_main = mysqli_connect("localhost","root","","captiv8");      
 mysqli_set_charset($db_main,"ISO-8859-1");
 
 date_default_timezone_set('America/Chicago');         
 
-  $allow_redirs = true;
-
-
-
-                                              /* input names: 
- username2: username register
- pwrd2: password
- email2: email register
- date of birth--
- day2, month2, year2: you get the idea
+  $allow_redirs = false;
+//  $stopping_point =  
  
- months are in English words
- 
- remember: for each form submission, make the session variables for each data, then redirect the page to another dummy page, and then back to the normal to prevent a form resubmission notice
- 
- also don't forget to check for incorrect data
- */
- //well good security can be a pain
- // for the password data, it's going to be the password + 
-
-
-
-
-
 if(isset($_SESSION['login_q']) && isset($_SESSION['salt_q'])){
 $logged_query = mysqli_query($db_main,"SELECT * FROM users WHERE username='$_SESSION[login_q]'");
 $logged_dt = mysqli_fetch_assoc($logged_query);
 }
 
-    if(!isset($_GET['verify'])){             $datfunk = microtime();
- $_SESSION['temp_n'] = substr(sha1(md5(base64_encode($datfunk))),0,25);
- }
-
-
- 
-
 if(isset($_GET['get_more'])){ //news_feed.php needs it
 
 require_once("auxiliary.php");
-define('index_page_check', true);
-}else{             
-require_once("template/auxiliary.php");
-require_once("template/vars.php");  
-define('index_page_check',(preg_match("#index.php([\072]([0-9]){0,15})*$#", extraurl()) && !isset($_SERVER['REDIRECT_URL'])));
+}else{
+if(!isset($_GET['verify'])){        
+$_SESSION['temp_n'] = 
+substr(sha1(md5(base64_encode(microtime()))),0,25) 
+// microtime(true)
+;//I've decided to just abandon session hashes for alised url's... for now.
+//Instead i'll monitor spam floods by checking every 30 seconds.
+}
+require("template/vars.php");                                                    
+require("template/auxiliary.php");
+
+
+
 }
 
 define('dflt_date_f',"F j, Y, g:i A");
-
-
+define('index_page_check',(preg_match("#index.php([\072]([0-9]){0,15})*$#", extraurl()) && !isset($_SERVER['REDIRECT_URL'])));
+define('news_feed_check',(index_page_check || isset($_GET['snowglobe']) || isset($_GET['get_more'])));
 define('logged_in_check',isset($_SESSION['login_q']));
 
 
+
+
+
 if(!isset($_GET['get_more'])){
+
+
+
+if(count($_GET) > 0){
+key_associations("thread_view,comment"); 
+key_associations("phase"); 
+key_associations("query,notifs,find,direct,verify"); 
+key_associations("snowglobe");
+}
+
+
+
+
+                                  
+if(isset($_GET['snowglobe'])){
+
+$sg_data[] = mysqli_query($db_main,"SELECT * FROM snowglobes WHERE sg_url='$_FILTERED[snowglobe]' AND (sg_privacy='public' OR EXISTS(SELECT * FROM sg_permissions WHERE granted_by='$_FILTERED[snowglobe]' AND access_type != 'blocked'))");
+
+$sg_data[] = mysqli_query($db_main, "SELECT * FROM posts WHERE forwhom='$_FILTERED[snowglobe]' ORDER BY stamptime DESC");  //get snowglobe data, check for validation if it's private, then topics
+
+ echo mysqli_error($db_main);
+
+if((!$sg_data[0] && !$sg_data[1]) || ($sg_data[0] && mysqli_num_rows($sg_data[0]) < 1)){
+redir_process("Location:index.php");
+}else{
+
+
+
+$sg_details = mysqli_fetch_assoc($sg_data[0]);
+}
+}
 
                                                                             
 
@@ -86,7 +89,7 @@ $username = $_FILTERED['profile'];
 $profile_query = mysqli_query($db_main, "SELECT * FROM users WHERE username='$username'"); $matched = mysqli_fetch_assoc($profile_query);
 if($profile_query){
 
-}else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
+}else{redir_process("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 
 }
 
@@ -137,8 +140,8 @@ if(!isset($_SESSION['db_query'])){
    }
    }
    
-if(isset($_SESSION['login_q'])){mysqli_query($db_main, "UPDATE users SET last_active_at=now() WHERE username='$_MICRORFID[login_q]'");    
-$logged_user_data = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_MICRORFID[login_q]'");
+if(isset($_SESSION['login_q'])){mysqli_query($db_main, "UPDATE users SET last_active_at=now() WHERE username='$_MONITORED[login_q]'");    
+$logged_user_data = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_MONITORED[login_q]'");
 $logged_zen = mysqli_fetch_assoc($logged_user_data);
 
 }
@@ -212,9 +215,9 @@ if(mysqli_num_rows($get_selected_comment) == "1"){
 if(mysqli_num_rows($get_comments_above_selected) > 0){
   $q_parents = mysqli_fetch_assoc($get_comments_above_selected);
 
-}else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
+}else{redir_process("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 
-}else{header("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
+}else{redir_process("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 
 //get all child posts of single-referred-post comment
 $get_child_comments = mysqli_query($db_main, "SELECT * FROM posts WHERE parent='$_SESSION[original_post_query]' AND thread_id='$thread_data[postid]' ORDER BY stamptime DESC LIMIT 0,25");

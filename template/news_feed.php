@@ -1,11 +1,15 @@
 <?php if(isset($_GET['get_more'])){    session_start();
-//crap, i'm gonna need a copy of a lot of the internalities, I should say, at internal.php
- require_once("vars.php");
+//crap, i'm gonna need a copy of a lot of the internalities, I should say, at internal.php           
+
+
+require_once("vars.php"); 
 require_once("internal.php");
+
+
 }
-if(index_page_check){     
+if(news_feed_check){     
 if(isset($_SESSION['salt_q']) && compare_dz($_SESSION['salt_q'],$logged_dt['password'])){     //personal news feed      
-echo (!isset($_GET['get_more'])) ? "<div id='news_feed'>" : "";
+echo (!(isset($_GET['get_more']) || isset($_GET['load_option']))) ? "<div id='news_feed'>" : "";
 //data we need to get:
 //the logged user's own posts, and every snowglobe he's subscribed to           
 
@@ -18,10 +22,18 @@ echo (!isset($_GET['get_more'])) ? "<div id='news_feed'>" : "";
 $que_posts[6] = mysqli_query($db_main, "SELECT * FROM sg_permissions WHERE towhom='$_MONITORED[login_q]'");
 
                                    
-$post_query = "SELECT * FROM posts INNER JOIN sg_permissions ON posts.bywhom = sg_permissions.granted_by AND sg_permissions.towhom = '$_MONITORED[login_q]' WHERE sg_permissions.access_type = 'friend snowglobe' AND posts.cnttype=1 ORDER BY stamptime DESC LIMIT 0,25";
+$post_query = "SELECT * FROM posts post_dt, sg_permissions sgp_dt WHERE post_dt.bywhom=sgp_dt.granted_by AND sgp_dt.towhom='$_MONITORED[login_q]' AND (post_dt.forwhom='self' OR EXISTS(SELECT * FROM snowglobes WHERE sg_url=post_dt.forwhom)) AND post_dt.cnttype=1 ORDER BY stamptime DESC LIMIT 0, 25";   
+if(isset($_GET['snowglobe']) || isset($_GET['load_option'])){
+$_FILTERED['snowglobe'] = isset($_FILTERED['snowglobe']) ? $_FILTERED['snowglobe'] : preg_replace("#^sg_(.+)$#","$1",$_FILTERED['load_option']);
+$post_query = "SELECT * FROM posts WHERE forwhom='$_FILTERED[snowglobe]' ORDER BY stamptime DESC LIMIT 0,25";
+}
 
 if(isset($_SESSION['last_postid'])){
-$post_query = (!isset($_GET['get_more'])) ? $post_query : "SELECT * FROM posts INNER JOIN sg_permissions ON posts.bywhom = sg_permissions.granted_by AND sg_permissions.towhom = '$_MONITORED[login_q]' WHERE sg_permissions.access_type = 'friend snowglobe' AND posts.cnttype=1 AND postid < '$_MONITORED[last_postid]' ORDER BY stamptime DESC LIMIT 0,25";
+$post_query = (!isset($_GET['get_more'])) ? $post_query : "SELECT * FROM posts post_dt, sg_permissions sgp_dt WHERE post_dt.bywhom=sgp_dt.granted_by AND sgp_dt.towhom='$_MONITORED[login_q]' AND (post_dt.forwhom='self' OR EXISTS(SELECT * FROM snowglobes WHERE sg_url=post_dt.forwhom)) AND post_dt.cnttype=1 AND post_dt.postid < '$_MONITORED[last_postid]' ORDER BY stamptime DESC LIMIT 0,25";
+
+if(isset($_GET['snowglobe']) || isset($_GET['load_option'])){
+$post_query = (!isset($_GET['get_more']) && isset($_GET['load_option'])) ? $post_query : "SELECT * FROM posts WHERE forwhom='$_FILTERED[snowglobe]' AND postid < '$_MONITORED[last_postid]' ORDER BY stamptime DESC LIMIT 0,25";
+}
   }                                                  
 $que_posts[0] = mysqli_query($db_main,$post_query);
 
@@ -39,6 +51,14 @@ echo "<div class='notice center'>". $nx['37'] ."</div>";
 
 
 while($que_own = mysqli_fetch_assoc($que_posts[0])){
+
+if(!preg_match("#(self|[\050][a-z][\051])$#",$que_own['forwhom'])){
+//test for non-profile posts, and therefore ones with their own snowglobe, and get its data
+$zen = mysqli_query($db_main, "SELECT * FROM snowglobes WHERE sg_url='$que_own[forwhom]'");
+$snowglobe_zen = mysqli_fetch_assoc($zen);
+}
+
+                          
 
 $_SESSION['last_postid'] = $que_own['postid'];    //get last record for later reference
 
@@ -88,8 +108,17 @@ echo"<span class='spoiler'>".$content_blur."</span>";
 }
 }else{
 $wraps = (empty($content_blur)) ? ["<strong>","</strong>"] : ["<div class='r_title'>","</div>"];
-echo $wraps[0] .$que_own['title'] . $wraps[1].$content_blur; } echo (isset($_SESSION['login_q']) && $que_own['forwhom'] == "self" && $que_own['bywhom'] == $_MONITORED['login_q']) ? "<span class='bywhom'> (Posted in your own snowglobe)</span>" : "";
-echo $zing;
+echo $wraps[0] .$que_own['title'] . $wraps[1].$content_blur; }
+echo "<span class='bywhom'> ";
+ echo (isset($_SESSION['login_q']) && $que_own['forwhom'] == "self" && $que_own['bywhom'] == $_MONITORED['login_q']) ? "(".$nx['51'].")" : "";
+
+if(index_page_check && isset($snowglobe_zen)){  
+echo "(".$nx['52'] . " <a href='".$main_dir."sg/".$snowglobe_zen['sg_url']."' class='sg_link'>" . $snowglobe_zen['sg_name']."</a>)";
+unset($zen);
+unset($snowglobe_zen);
+}
+
+echo "</span>" .$zing;
 //POLLS
 
  
@@ -149,7 +178,7 @@ echo "<a href='vote' class='prompt button_samp rad'>VOTE!</a></span>";
 }     }                  echo "</td>";
 
 echo"<td width='1%' class='right_side'><span class='right side_info' alt='" .$que_own['postid'] . "'><a href='thread/".$que_own['thread_nick']."_".$que_own['topic_hash']."' class='topic_link'>".time_rounds($que_own['stamptime'])."</a><span class='score'> (".$score."%)</span>";
-echo"<span class='votes'><a href='up' class='vote_" .$select_class[0] . "'><img src='template/img/up.png'></a><a href='down' class='vote_" .$select_class[1] . "'><img src='template/img/down.png'></a></span></span></td></tr></table></div>";
+echo"<span class='votes'><a href='up' class='vote_" .$select_class[0] . "'><img src='".$main_dir."template/img/up.png'></a><a href='down' class='vote_" .$select_class[1] . "'><img src='".$main_dir."template/img/down.png'></a></span></span></td></tr></table></div>";
 };       
 
 

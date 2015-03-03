@@ -62,7 +62,7 @@ $("head").ready(function(){   //gets executed faster than $(document).ready()
 
 $(".quick_links a:last-child").css("background-image","none");
 
-$("#panel").css("width",screen.availWidth-240 + "px");
+
 $("#user_menu .uplink").append("<img src='<?php echo $image_dir; ?>9.png' alt='\(Options\)'>");
 $(".posts_t1:first").addClass("nobg");
 $(".profile_main,h3.content_q").wrapInner("<div class='part_1'><div class='part_2'><div class='part_3'></div></div></div>"); //everything that needs 3-part backgrounds
@@ -238,7 +238,7 @@ $(this).attr("title", " ");
 $("body").on('click',"a.comment_opts",function(event){
 event.preventDefault();
 if($(this).parent().has("form").length){ $(this).parent().find("form").eq(0).detach();}else{
-$("a#"+this.name).parent().append("<form action='index.php?direct=new_post&verify=<?php echo hack_free($_SESSION['temp_n']) ?>' method='POST'><input type='hidden' value='<?php $thread_id = isset($thread_data['postid']) ? $thread_data['postid'] : '08676'; echo $thread_id; ?>' name='thread_id'><input type='hidden' value='Comments' name='tcha1'><input value='"+ $(this).parent('.opts_block').attr('alt') +"' name='parent_comment' type='hidden'><textarea name='tcha2' class='largeform flick'><?php echo $nx['24'] ?></textarea><input type='submit' value='<?php echo $nx['25'] ?>' class='comment_opts'>");
+$("a#"+this.name).parent().append("<form action='<?php echo $main_dir; ?>index.php?direct=new_post' method='POST'><input type='hidden' value='<?php $thread_id = isset($thread_data['postid']) ? $thread_data['postid'] : '08676'; echo $thread_id; ?>' name='thread_id'><input type='hidden' value='Comments' name='tcha1'><input value='"+ $(this).parent('.opts_block').attr('alt') +"' name='parent_comment' type='hidden'><textarea name='tcha2' class='largeform flick'><?php echo $nx['24'] ?></textarea><input type='submit' value='<?php echo $nx['25'] ?>' class='comment_opts'>");
 }
 
 
@@ -265,20 +265,24 @@ if($(this).hasClass("a1") && $(this).next("input").prop("checked",false)){$(this
 
 <?php if(isset($_SESSION['login_q'])): ?>
 
-function load_replies(user_in_call){
+
+$("input[name='sg_name']").tooltip({position: { my: "left+10 center", at: "right center-1" }, content: "<span id='checkn1'>We just need a first and last name.</span>"});
+
+function load_replies(user_in_call,append_last){ 
+
 zing = (typeof zing === "undefined" && typeof user_in_call == "string") ? user_in_call : zing;
 
-// $("#left1").prepend(zing);
-
-
 $.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user","user":zing,"box_action":"open"},function(chat_sync){     //start em' here
-
-      
                                                            
 if(chat_sync.message == "success"){ 
-//connection does exist                                                         
+//connection does exist            
+
+
+                                             
                                 
 if(typeof chat_sync.messages === "object"){
+
+
 for(i = 0;i <= chat_sync.messages.length - 1;i++){
 message = chat_sync.messages[i].content; 
 user = chat_sync.messages[i].bywhom; 
@@ -292,12 +296,15 @@ messages_p = (typeof messages_p === "undefined") ? r_format : messages_p + r_for
 
 }
 }else{                                  
-messages_p = "<p><em>" + chat_sync.messages + "</em></p>";
+messages_p = "<p><em>" + chat_sync.messages + "</em></p>";  //no messages in conversation yet
 }
 
 
-$("input[name='sg_name']").tooltip({position: { my: "left+10 center", at: "right center-1" }, content: "<span id='checkn1'>We just need a first and last name.</span>"});
+if(typeof append_last !== "undefined" && append_last == "reload"){ //reload posts after the user replies to a conversation box
 
+$(".chat-b[ref='" + chat_sync.user + "'] .spacer .chat_box").empty().html(messages_p);
+
+}
 
 chat_box = "<div class='box chat-b' ref='" + chat_sync.user + "'><div class='spacer'><h3><?php echo $nx['40']; ?>" + chat_sync.user + "</h3><div class='chat_box'>"+messages_p+"</div><div class='chat_panel'><textarea></textarea></div><a class='prompt button_samp rad chat-buttons' href='submit-chat-msg'>SUBMIT</a><a class='prompt button_samp rad chat-buttons' href='close-chat'>Close</a></div></div></div>";
 if($(".chat-b[ref='"+chat_sync.user+"']").length < 1){ //check to see that it hasn't existed yet
@@ -307,9 +314,11 @@ zen = $(".chat-b[ref='" + chat_sync.user + "'] .spacer .chat_box").prop("scrollH
 $(".chat-b[ref='" + chat_sync.user + "'] .spacer .chat_box").scrollTop(zen);
 
 
-delete zing; 
+
 } //end "success"ful message
 },"json");  //end get_tabbed_users get switch
+delete zing;    
+
 }
 
 
@@ -338,6 +347,18 @@ $("body").on('click',".prompt",function(event){event.preventDefault();       //d
 <?php if(isset($_SESSION['login_q'])): ?>    //IT'S HERE
 
 
+if($(this).attr("href") == "sg_scha"){
+
+if($(this).attr("sg").length){
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"sg_scha","sg":$(this).attr("sg")}).done(function(message){
+
+alert(message);
+});
+}
+
+}
+
+
 
 if(/^chat-with-user[:]/.test($(this).attr("href"))){
 zing = $(this).attr("href").replace(/^chat-with-user:(.+)$/,"$1");
@@ -364,6 +385,7 @@ if($(this).attr("href") == "submit-chat-msg"){                 //submit a chat m
 
 $.post("<?php echo $main_dir; ?>template/simcheck.php?action=submit-chat-msg",{"towhom":$(this).parent().parent().attr("ref"),"message":$(this).parent().find(".chat_panel textarea").val()});
 $(this).parent().find(".chat_panel textarea").val("");
+load_replies($(this).parent().parent().attr("ref"),"reload");
 }
 
 
@@ -413,7 +435,7 @@ if(data.notice == "success"){alert("Successfully edited file!");}
 if($(this).attr("href") == "load-more"){
 $(this).attr("Loading...");
 
-$.get("<?php echo $main_dir; ?>template/news_feed.php",{"get_more":"true"},function(older_msgs){
+$.get("<?php echo $main_dir; ?>template/news_feed.php",{"get_more":"true"<?php if(isset($_GET['snowglobe'])): ?>, "load_option": <?php echo '"sg_'.$_FILTERED['snowglobe'].'"'; endif;?>},function(older_msgs){
 $("#news_feed").append(older_msgs);
 });
 
@@ -492,7 +514,7 @@ if($("style[title='"+$zen_1+"']").length === 0){
 switch($(this).attr("href")){
 
 case "submit_sql":  
-$.post("template/simcheck.php?action=sql_q",{"sql_q":$("#" + $(this).attr('refer')).val()},function(message){
+$.post("<?php echo $main_dir; ?>template/simcheck.php?action=sql_q",{"sql_q":$("#" + $(this).attr('refer')).val()},function(message){
 $("#t_wrap").html(message);
 });
 break;

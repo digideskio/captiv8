@@ -3,7 +3,7 @@
 ?>
 
 <?php      
-if((count($_SESSION) > 0 || count($_COOKIE) > 0) && isset($_SESSION['login_q'])): 
+if(isset($_SESSION['login_q']) && (count($_SESSION) > 0 || count($_COOKIE) > 0)): 
 if(compare_dz($logged_zen['password'],$_SESSION['salt_q']) && $logged_dt['userid'] == 1):
 
 ?>
@@ -37,7 +37,7 @@ a.link_view2:focus{background:#79A8C8;color:#fff;border:1px solid #79a8c8;}
 #session_list a.selected2{background:#333;color:#fff;cursor:default}
 #session_list a.prompt.submit{background:#000;color:#fff;text-decoration:none;padding:4px 7px;display:inline-block;margin:5px 0}
 
-#t_wrap{max-width:100%;overflow:auto;max-height:400px;}
+#t_wrap{max-width:100%;overflow:auto;max-height:400px;text-align:left}
 #t_wrap table#results td,#t_wrap table#results th{padding:4px 6px;max-width:300px;}
 #t_wrap table#results th{background:#000;color:#fff;}
 td.a12,td.a21{background:#e8e8e8;}

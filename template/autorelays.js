@@ -2,10 +2,22 @@
 //hmmm
 
 
-setTimeout(function(){
+
 
 setInterval(function(){
 
+
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"sync_all"},function(sync){
+//activates if necessary
+
+sync_in = sync;        
+
+
+},"json");
+
+
+                   
+if(sync_in.chat > 0 || $(".chat-b[preloaded]").length > 0){
 
 $.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user","format":"sync_in"},function(asyncd){  
 if(asyncd.new_messages > 0){   //get users who most recently sent currently logged in user a message
@@ -64,15 +76,21 @@ $(".chat-b[ref='"+other_user+"'] .spacer .chat_box").html(messages_p).scrollTop(
 
                                                                                         
 }},dataType: "json"});
-
+$(this).removeAttr("preloaded");
 });
   
-}
+  
+}     }
+
+
 
 
 
 
 //saved users on chat
+
+
+if(chat_sync.notifs > 0){
 
 
 $.ajax({   //notification relay
@@ -122,7 +140,5 @@ $(this).wrap("<a href='"+ $zen +"' />");    //that was painful
 },dataType: "json"        
 });
 
-
-},2500);          }  ,5000 );
-          
-            
+                }
+},2500);     

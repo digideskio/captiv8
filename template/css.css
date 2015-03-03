@@ -4,13 +4,13 @@ table{border:0;border-collapse:collapse;padding:0;empty-cells:show;margin:0;widt
 td,div{text-align:justify}
 td,font{padding:0;white-space:normal;}
 a{color:#fff;text-decoration:underline;}
-::-moz-selection,::-moz-selection{background:#2D394A;color:#fff;text-decoration:none;text-shadow:0 1px 0 #000}
+::-moz-selection,::-moz-selection{background:#333;color:#fff;text-decoration:none;text-shadow:0 1px 0 #000}
 #header{width:100%;height:60px;}
 #logo{width:200px;height:60px;float:left;display:block;}
 #panel{float:left}
 input,.contentbox,.signup-a,.welcome_note,.bottom_menu a,select,textarea,.ui-tooltip,.notice,#user_menu,#login .left,.rad,.spacer,.margin,#panelcd a,.load-more-button,a.chat-option,.chat_box,.loading_text,#left_menu,#left_menu a,.box{border-radius:4px;}
 
-#user_menu{margin:14px 0 0 4px;}
+#user_menu{margin:14px 22px 0 0px;}
 #user_menu div.left,#user_menu div.right{display:inline-block;}
 .right{float:right;}
 .flick{color:#768594;}
@@ -49,7 +49,7 @@ td#left1{width:200px;}
 #first1 .bottom_menu a:hover{background:#303947 url('http://localhost/captiv8/template/img/1.png') repeat-x scroll top left}
 a.side1{border-top-left-radius:0;border-bottom-right-radius:0;}
 a.side2{border-top-right-radius:0;border-bottom-left-radius:0}
-#left1 div.box{width:200px}
+#left1 div.box{width:200px;margin-top:2px}
 #vc2{padding:0px 23px 0 0;}
 
 #user_menu,td#left1 #left_menu{background:#2D394A;border-top:2px solid #38475D;border-bottom:2px solid #26303F;box-shadow:0 -2px 2px #2D394B;text-shadow:0 1px 0 #000;color:#7993A7;font:13px "lucida sans unicode",arial,"sans serif";}.boxxed{padding:8px;height:150px;overflow-y:scroll;}
@@ -179,7 +179,7 @@ td.content{padding-right:10px;}
 td.content strong a.prompt{font-weight:normal;font-style:italic;}
 td.left_side a{color:#C4E6EF}
 div.contentbox td.right_side{width:240px;}
-#left1 .spacer{width:150px;padding:5px;margin:3px auto 8px;background:#323B49;border-top:2px solid #292E35;box-shadow:0 -3px 3px #2F3743;border-bottom:2px solid #3C4D64;text-shadow:0 1px 0 #000;}
+#left1 .spacer{width:150px;padding:5px;margin:12px auto 8px;background:#323B49;border-top:2px solid #292E35;box-shadow:0 -3px 3px #2F3743;border-bottom:2px solid #3C4D64;text-shadow:0 1px 0 #000;}
 #left1 h3,#left1 .spacer{font:12px "Lucida sans Unicode","Tahoma","Arial";}
 #left1 h3{color:#9ec1dc;font-weight:bold;text-align:center}
 .code{border-bottom:1px dashed #fff;padding-bottom:1px;}
@@ -187,7 +187,7 @@ div.contentbox td.right_side{width:240px;}
 .spoiler{display:none;}
 .index_post p{font-size:12px;}
 .bywhom{font-size:11px;color:#8C98AD}
-div.contentbox.index_post,a.chat-option,.contentbox .box{border-top:1px solid #556378;border-bottom:1px solid #202834;box-shadow:0 0 4px #26303F;margin:15px 0;}
+div.contentbox.index_post,a.chat-option,.contentbox .box,.header.box{border-top:1px solid #556378;border-bottom:1px solid #202834;box-shadow:0 0 4px #26303F;margin:15px 0;}
 .side_info a.topic_link{color:#7a869b;text-decoration:none;padding-bottom:1px;border-bottom:1px dashed #7a869b;}
 .extra_opts{padding:0 15px;z-index:4;background:#344256;}
 .extra_opts a,a.load-more-button{text-decoration:none;color:#82eda8;text-shadow:0 -1px 0 #30353C;padding:4px 8px;font-family:"Lucida Sans Unicode","Arial";text-align:center;background:#5C6676;border-top:2px solid #6C778D;box-shadow:0 -2px 2px #2F3743;}
@@ -260,7 +260,7 @@ a.load-more-button:hover{opacity:1}
 blockquote{margin:0 0 20px 10px;padding-bottom:8px}
 blockquote dt{background:transparent url('http://localhost/captiv8/template/img/4.png') repeat-x scroll;padding:7px;font:bold 13px "Tahoma";color:#94CCE0;}
 blockquote dd{margin-left:35px}
-.nam,.posts_t1 span,#left1 h3,.chat_box div{cursor:default;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+.nam,.posts_t1 span,#left1 h3,.chat_box div,.notice,#left_menu a{-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
 .nam{font:13px "Lucida Sans Unicode";}
 input[type=text].inline{display:inline;width:auto;margin-left:5px}
 #school_search a.school_box h3{padding:3px 0}
@@ -286,7 +286,7 @@ a.pawn:hover div.notice{opacity:1}
 div.loading_text{background:transparent none;padding:4px 0;text-align:center;font-weight:normal}
 #left_menu{padding:4px 6px;width:150px;margin:3px auto 10px;box-shadow: 0 0 3px #fff;}
 #left_menu h3{text-align:left;padding:5px 10px 6px;font-size:13px;}
-#left_menu a{display:block;padding:4px 10px;text-decoration:none;border:2px solid transparent;border-width:2px 0;opacity:.7}
+#left_menu a{display:block;padding:4px 10px;text-decoration:none;border:2px solid transparent;border-width:2px 0;opacity:.5}
 #left_menu a:hover{background:#38475D;border-top:2px solid #26303F;border-bottom:2px solid #556378;box-shadow:0 2px 2px #495567;z-index:569;opacity:1}
 .new_sg td{padding: 0 4px;}
 .new_sg td[width]{text-align:right;padding-right:20px;font-weight:bold;width:200px;font-family:"Lucida Sans Unicode"}
@@ -298,6 +298,20 @@ p.right input[type=submit]{text-shadow: 0 0 1px inherit}
 .new_sg .space{padding:10px 5px 0 10px}
 input[type=radio]{vertical-align:middle;margin-bottom:7px}
 .new_sg .notice{box-shadow: 0 0 0 transparent;margin-bottom:3px}
-.contentbox .box{margin:5px;font-family:"Tahoma","Arial";background:#38475D;border-bottom:1px solid #28374D;padding:0}
+.contentbox .box,.header.box{margin:5px;font-family:"Tahoma","Arial";background:#38475D;border-bottom:1px solid #28374D;padding:3px 7px}
+.contentbox .box h4{font-size:13px;line-height:16px;display:inline-block;font-style:italic;font-weight:normal;color:#9EC1DC;}
+.contentbox .box h4 a{font-style:normal;font-size:16px;font-weight:bold;}
 .contentbox .box a{font-family:"Tahoma","Arial"}
 input[type=file]{width:100%;}
+#snowglobe_list{overflow-y:hidden;}
+div.box.snowglobe_div{float:left;width:49%;margin:4px .5%;padding:0}
+.right_side{clear:right}
+p.desc{font-size:13px;padding:0 3px 5px;}
+p.desc em{color:#c0c0c0}
+p.misc{text-align:right;font:italic 13px "Lucida Sans Unicode";color:#9EC1DC;}
+.contentbox p.misc a.button_samp{font-size:11px;padding:3px 8px 4px;margin:0;margin-left:6px}
+.header.box{margin:3px 0 15px}
+.header.box h3{border-bottom:2px dotted #9EC1DC;display:inline-block;margin-bottom:8px}
+.header.box h3,.header.box h3 a{font:bold 25px "Lucida Sans Unicode";text-decoration:none;color:#9EC1DC}
+.header_etc a.button_samp{float:right;margin-top:10px;opacity:.7}
+.header_etc a.button_samp:hover{opacity:1}

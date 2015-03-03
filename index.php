@@ -1,4 +1,5 @@
-<?php      session_start();    
+<?php      session_start();     
+
 
 /*
 
@@ -43,7 +44,7 @@ require_once("template/admin_panel.php");
 
 echo "</body>";
 echo "</html>";     
-/*end actual content*/   //  session_unset();
+/*end actual content*/   //session_unset();
 clear_array($_SESSION, "error");
 
 

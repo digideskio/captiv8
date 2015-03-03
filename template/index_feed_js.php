@@ -1,9 +1,15 @@
 var sync;
 
+<?php  $dir = "template/img/";  
+$server_mash = "http://" . $_SERVER['SERVER_NAME'] .$_SERVER['PHP_SELF'];
+
+$main_dir = preg_replace("#(index[.]php|template[/](.+)[.]php)[/]?#","",$server_mash) ;
+$image_dir = $main_dir . $dir; ?>
+
 $("body").on("click",".index_post .votes a",function(event){ event.preventDefault();
 
 //get data of poster with regards to this vote
-$.get("template/simcheck.php",{"vote_action": $(this).attr("href") , "post_que":$(this).parent().parent().attr("alt")},function(data){
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"vote_action": $(this).attr("href") , "post_que":$(this).parent().parent().attr("alt")},function(data){
 alert(data);
 });
 
@@ -18,7 +24,7 @@ $(this).toggleClass("vote_selected");
  if($(this).parent().hasClass("is_radio")){
 var $choice_ref = [$(this).parent().find("input.poll_choice:checked").attr('ref'),$(this).parent().find("input.poll_choice:checked").attr('value'),$(this).parent()];
 //topic id where poll was posted, id of poll choice, and then the content where this will rightfully be appended into   ^^
-$.get("template/simcheck.php",{"poll_vote": $choice_ref[1] , "post_que": $choice_ref[0] },function(data){
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"poll_vote": $choice_ref[1] , "post_que": $choice_ref[0] },function(data){
 $choice_ref[2].html(data);
 });
 }

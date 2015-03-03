@@ -21,6 +21,12 @@ break;
 }  }
 }
 
+if(isset($_GET['snowglobe'])){
+echo $sg_details['sg_name'];
+}
+
+
+
 if(isset($_GET['direct']) || preg_match("#index.php([\072]([0-9]){0,15})*$#", extraurl())){
 
 if(isset($_GET['direct'])){if($_GET['direct'] == "signup"){

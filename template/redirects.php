@@ -31,7 +31,7 @@ unset($_SESSION[$nkey]);
   } 
   if(isset($_GET['db_query'])){switch($_GET['db_query']){
   case "new_snowglobe":
-  header("Location:" . $main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/snowglobes/");
+  redir_process("Location:" . $main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/snowglobes/");
   break;
   }    }
   if(!isset($_SESSION['login_q'])){setcookie('incorrect_password_notice','incorrect',time()+1);}
@@ -62,7 +62,7 @@ unset($_SESSION[$nkey]);
   $notif_add = ($no_notif == "no") ? false : mysqli_query($db_main, "INSERT INTO notifications(content,url,towhom) VALUES('<span>".$_MONITORED['login_q']."</span> replied to your ".$parent_type[0].": ".$parent_type[1]."','$parent_type[2]','$parent_call[bywhom]')");    
   if(!$notif_add){$_SESSION['sql_error'] = mysqli_error($db_main);} 
   }
-  mysqli_query($db_main,"INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MICRORFID[login_q]',CURRENT_TIMESTAMP,'$actual[postid]',1)");
+  mysqli_query($db_main,"INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MONITORED[login_q]',CURRENT_TIMESTAMP,'$actual[postid]',1)");
   if($actual['cnttype'] == "1"){  $url = "Location:thread/". $actual['thread_nick'] . "_" . $actual['topic_hash'];  mysqli_free_result($parent_clasp);
   mysqli_free_result($latest);   echo "in! (2)<br>";
 redir_process($url);

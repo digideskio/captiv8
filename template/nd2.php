@@ -4,7 +4,9 @@
 
 
       
-echo "<span class='clear' id='nook'></span><div id='header'><a href='".$main_dir."' id='logo'><img src='".$image_dir."2.png'></a><div id='panel'>";       
+echo "<span class='clear' id='nook'></span>
+
+<table><tr><td width='1%'><a href='".$main_dir."' id='logo'><img src='".$image_dir."2.png'></a></td><td>";       
 if(!isset($_SESSION['login_q'])){       //not logged in to a user account, essentially. Should probably make this more elaborate too       
 
               
@@ -44,12 +46,12 @@ echo"</span>";
 
 
 echo"
-</div>";}  echo "</div>";          
+</div>";}  echo "</td></tr></table>";          
 
 // welcome note                                                                            
 if(isset($_SESSION['welcome'])){echo "<div class='welcome_note' id='first1'>".$nx[4]."</div>";} 
 
-echo "</div><table><tr><td id='left1'>" ;
+echo "</div><table><tr><td id='left1'>" ; 
 
                  
 if(logged_in_check){
@@ -58,26 +60,43 @@ echo "<div id='left_menu'> <h3>Main Menu</h3>
 <a href='$profile_link'>Your Profile</a>
 <a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/snowglobes'>Your Snowglobes</a>
 <a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/settings'>Display Settings</a>
-<a href='message_panel' class='prompt'>Message Panel</a>
+<a href='message_panel' class='prompt'>Messages</a>
 <a href='misc_opts' class='prompt'>Miscellaneous</a>
-</div>";          #2E3B4D
+</div>";          #2E3B4D        
+} 
 
+if(isset($_GET['snowglobe'])):  ?>
+<div id="sg_desc" class="box rad">  <h3><?php echo $sg_details['sg_name']; ?></h3>
+<?php if((!empty($sg_details['description']) || !preg_match("#^[ ]+$#",$sg_details['description'])) ){?>
+ 
+<?php echo (preg_match("#^ {0,}$#",$sg_details['description'])) ? $nx['50'] : $sg_details['description']; ?>    
+
+<?php } ?>
+
+
+
+
+</div>
+<?php endif; 
+if(logged_in_check){
 if(index_page_check){     
 
 
 
-
+                                                 
 echo $nx['29'];    // posting tips
 
 //this is gonna be a fun SQL statement. Oh boy
 
 $find_users_to_chat_with = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' LIMIT 100");
 
-//get list of tabbed users
+
+
+//get list of tabbed users                      
 
 foreach(json_decode($logged_dt['tabbed_users']) as $key => $value){  
 
-echo "<div class='box chat-b' ref='" . $value . "'><h3>". $nx['40'] . $value . "</h3><div class='chat_box'><div class='loading_text'>Loading...</div></div><div class='chat_panel'><textarea></textarea></div><a class='prompt button_samp rad chat-buttons' href='submit-chat-msg'>SUBMIT</a><a class='prompt button_samp rad chat-buttons' href='close-chat'>Close</a></div></div>";
+echo "<div class='box chat-b' ref='" . $value . "' preloaded='true'><h3>". $nx['40'] . $value . "</h3><div class='chat_box'><div class='loading_text'>Loading...</div></div><div class='chat_panel'><textarea></textarea></div><a class='prompt button_samp rad chat-buttons' href='submit-chat-msg'>SUBMIT</a><a class='prompt button_samp rad chat-buttons' href='close-chat'>Close</a></div></div>";
 
 }
 
@@ -100,7 +119,9 @@ echo '</div>';
 //if(preg_match()){}\
 
       echo "<div class='box space1'></div>";
-echo "</td><td width='99%' id='vc2'>";
+echo "</td><td width='99%' id='vc2'>";   
+
+
 
 
 
@@ -205,20 +226,38 @@ $sg_search = mysqli_query($db_main,"SELECT * FROM snowglobes WHERE root_admin_id
 ?></h3><h4><?php echo $nx['45'];?></h4>
 
 <p>
-<?php echo $nx['44'];?>
+<?php echo $nx['44'];
+//input creation date
+//input privacy
+//check to see if it was finished being modified
+//Description
+
+?>
 </p>
 <h4><?php echo $nx['46'];?></h4>
 <p><strong>Link:</strong> <a href="<?php echo $profile_link; ?>"><?php echo $profile_link; ?></a></p>
 <h4>Other Snowglobes</h4>
-<?php if(mysqli_num_rows($sg_search) > 0){while($sg_snipe = mysqli_fetch_assoc($sg_search)){ ?>
+<?php if(mysqli_num_rows($sg_search) > 0){?>
+<div id="snowglobe_list">
+<?php while($sg_snipe = mysqli_fetch_assoc($sg_search)){ ?>
 
-<div class="box"><h4><a href="<?php echo $main_dir. "sg/" .$sg_snipe['sg_url']; ?>"><?php echo $sg_snipe['sg_name']; ?></a></h4>
-<?php if(!preg_match("#^[ ]{0,}$#",$sg_snipe['description'])): ?>
-<p><?php echo $sg_snipe['description']; ?></p>  
-<?php endif; ?>                               
+
+
+<div class="box snowglobe_div"><h4><a href="<?php echo $main_dir. "sg/" .$sg_snipe['sg_url']; ?>"><?php echo $sg_snipe['sg_name']; ?></a> created  <?php echo time_rounds($sg_snipe['creation_date']); ?></h4>
+
+<p class="desc"><?php echo (empty($sg_snipe['description'])) ? $nx['48'] : $sg_snipe['description']; ?></p>   
+<p class="misc"><?php echo $sg_snipe['followers']; ?> subscriber<?php echo ($sg_snipe['followers'] > 1) ? "s" : ""; ?> &middot; <?php echo $sg_snipe['no_threads'] . " threads, " .$sg_snipe['no_replies'] . " replies" ?></p>
+
+<?php if($sg_snipe['is_finished_being_modified'] == 0): ?>
+<p class="misc"><?php echo "(Unfinished Editing) <a href='edit_snowglobe:".$sg_snipe['sg_url']."' class='button_samp prompt rad'>FINISH EDITING</a>"; ?></p> 
+<?php endif; ?>                         
 </div>
 
-<?php }}else{  //
+
+
+<?php } ?>
+
+</div><?php }else{  //
  ?>
 
 <?php } ?>
@@ -233,6 +272,7 @@ $sg_search = mysqli_query($db_main,"SELECT * FROM snowglobes WHERE root_admin_id
 <!-- <tr><td width="25%"></td><td></td></tr> -->
 <tr><td width="25%">Snowglobe name</td><td><input type="text" class="largeform flick" value="Name must be at least 4 characters." name="sg_name"></td></tr>
 <tr><td width="25%">Snowglobe URL</td><td><input type="text" class="largeform flick" value="Will be accessed via http://url.url/sg/{your input here}. Must be at least 4 characters." name="sg_url"></td></tr>
+
 <tr><td width="25%">Snowglobe description</td><td><textarea class="largeform flick" name="sg_desc">(Can be left blank)</textarea></td></tr>
 <tr><td width="25%">Privacy settings</td><td><input type="radio" name="sg_privacy" value="private" checked> Make this snowglobe only accessible to people who are invited in <input type="radio" name="sg_privacy" value="public"> Make the snowglobe accessible to everyone </td></tr>
 </table>
@@ -255,7 +295,10 @@ break;
 }
 
 require_once("template/idx_1.php");
+
+if(index_page_check){
 require_once("template/news_feed.php");
+}
 
   
           

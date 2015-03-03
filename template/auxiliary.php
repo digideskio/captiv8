@@ -1,16 +1,16 @@
-<?php
+<?php       
 
 class reply_format { //first time doing classes
 //hm
 //better clock in
-public function show(&$array_name){  global $reply_wrap,$logged_dt;
+public function show(&$array_name){  global $reply_wrap,$logged_dt,$main_dir;
 //get the reply template
 
 //going to load the reply template from vars.php
 //$array_name will be the array that's called from the for/while loop that'll be getting all the replies
 //you can find it at vars.php
 
-echo $reply_wrap[0]. "<h4><a href='/profile/".$array_name['bywhom']."'>".$array_name['bywhom']."</a></h4>".$reply_wrap[1].$array_name['content']. " ". $reply_wrap[2] ." <a href='/thread/".$_GET['thread_view']."/comment/".$array_name['topic_hash'] ."'>". date(dflt_date_f, strtotime($array_name['stamptime'])) . $reply_wrap[3]; 
+echo $reply_wrap[0]. "<h4><a href='/profile/".$array_name['bywhom']."'>".$array_name['bywhom']."</a></h4>".$reply_wrap[1].$array_name['content']. " ". $reply_wrap[2] ." <a href='".$main_dir."/thread/".$_GET['thread_view']."/comment/".$array_name['topic_hash'] ."'>". date(dflt_date_f, strtotime($array_name['stamptime'])) . $reply_wrap[3]; 
 
 if(isset($_SESSION['login_q']) && compare_dz($logged_dt['password'],$_SESSION['salt_q'])){
 echo $reply_wrap[4] . " alt='".$array_name['postid']."'>";
@@ -31,62 +31,59 @@ echo $reply_wrap[5];
 
 require_once("lib/simple_html_dom.php");
 
-
-function chat_list_q($status,$user){ //get list of users
-//search for a user's current tabbed users
-global $db_main,$_MONITORED;
-$logged_dt_again = mysqli_query($db_main,"SELECT tabbed_users FROM users WHERE username='$_MONITORED[login_q]'");
-$logged_dt_c = mysqli_fetch_assoc($logged_dt_again);
-$logged_dt_c = ($logged_dt_c['tabbed_users'] !== "[]") ? json_decode($logged_dt_c['tabbed_users']) : "";
-//json_decode it
-
-
-
-switch($status){
-case "open": 
-//update it
-if(count($logged_dt_c) < 5){       //check if it's empty and that there's less than 5 of it in
-$logged_dt_c = (is_array($logged_dt_c) && array_search($user,$logged_dt_c) === false) ? array_merge($logged_dt_c,[$user]) : [$user]; //the latter condition is there to prevent name duplicates
-}
-break;
-case "close": 
-unset($logged_dt_c[array_search($user,$logged_dt_c)]);  //i'm very lazy
-break;
-}
-$logged_dt_c = json_encode($logged_dt_c);
-
-//json_encode it back, and reupload to server the new information  
-$update_q = mysqli_query($db_main, "UPDATE users SET tabbed_users='$logged_dt_c' WHERE username='$_MONITORED[login_q]'");
-
-mysqli_free_result($logged_dt_again);
-
-}
-
 if(isset($_GET['error_reporting']) && $_GET['error_reporting'] == "false"){      //This would be helpful for all get
 error_reporting(~E_ALL);
+}
+
+
+function merge(&$array_to_merge_in,&$merge_object,$placement_method = "prepend",$override = true){
+
+if(isset($array_to_merge_in)){
+if($override = true || ($override = false && !isset($merge_object))){
+switch($placement_method){
+case "prepend":
+$array_to_merge_in = array_merge($merge_object,$array_to_merge_in);
+break;
+case "append":
+$array_to_merge_in = array_merge($array_to_merge_in,$merge_object);
+break;
+
+}
+
+}
+
+}else{
+
+$array_to_merge_in = (!is_array($merge_object)) ? [$merge_object] : $merge_object; //turn strings into array with the string being first in the array
+
+}
+
 }
 
 function extraurl(){
 if(strlen($_SERVER['QUERY_STRING']) > 0){$snp = $_SERVER['PHP_SELF'] ."?". $_SERVER['QUERY_STRING'];}else{$snp = $_SERVER['PHP_SELF'];}
 return $snp;
 }
-$dir = "template/img/";  
+
 $error = "<div class='contentbox'> <h3>SQL error</h3><p>" .mysqli_error($db_main) . "</p></div>";
 
 
 
-$server_mash = "http://" . $_SERVER['SERVER_NAME'] .$_SERVER['PHP_SELF'];
-
-$main_dir = preg_replace("#(index[.]php|template[/](.+)[.]php)[/]?#","",$server_mash) ;
-$image_dir = $main_dir . $dir;
 
 
 
 
 
 
-function redir_process($url){ global $allow_redirs;
-if($allow_redirs == true){header($url);      }
+
+function redir_process($url){   global $allow_redirs,$stopping_point;
+$egg = "";
+if(isset($stopping_point)){ $preg_test = preg_match("#".$stopping_point."#",$_SERVER['QUERY_STRING']); 
+if($preg_test === 1){unset($egg);}
+}
+
+if($allow_redirs === true && isset($egg)){
+header($url);      }
 }
 
 $time = [
@@ -96,7 +93,7 @@ $time = [
 ];
  
 
-function compare_dz($a, $b) {
+function compare_dz($a, $b) {   //Nanosecond timing attack prevention 
     if (strlen($a) !== strlen($b)) {
         return false;
     }
@@ -106,6 +103,21 @@ function compare_dz($a, $b) {
     }
     return $result == 0;
 }
+
+function key_associations($key_names,$is_one_to_others = null){//this limits which GET parameters you can have on any page to only appropriate associations.
+//this is so tacky
+global $main_dir;      
+
+$key_names = explode(",",$key_names);
+foreach($_GET as $keys => $values){$key_params[] = $keys;}
+$matches = array_intersect($key_params,$key_names);
+if(count($matches) > 0){
+foreach($key_params as $keys){ 
+if(in_array($keys,$key_names) == false){  redir_process("Location: " .$main_dir);  }   
+}
+}unset($key_params);
+}
+
 function hack_free(&$data,$start = "0"){           global $db_main,$sync; $child_count = $start;
    
   if(is_array($data)){  //check if it's array
@@ -157,7 +169,7 @@ $clone[$z] = $_SPIN[$key];             //increment array key
 }
 foreach($_SESSION as $mkey => $mvalue){ //reiterate each session and array 
 $_MONITORED[$mkey] = hack_free($mvalue);
-$_MICRORFID[$mkey] = mysqli_real_escape_string($db_main, $_MONITORED[$mkey]);
+//$_MONITORED[$mkey] = mysqli_real_escape_string($db_main, $_MONITORED[$mkey]);
 }
 foreach($_GET as $mkey => $mvalue){
 $_FILTERED[$mkey] = hack_free($mvalue);
@@ -171,6 +183,7 @@ $_FILTERED[$mkey] = hack_free($mvalue);
  $string2 = substr(hash('sha512', $string),0, $limit);
  return $string2;
  }
+
  
  function time_rounds($date){
 $diff = time() - strtotime($date);
@@ -205,5 +218,35 @@ $z = 0;
 function mlmt($snipe,$nd = "28"){
 substr($snipe,$nd);
 }
+function chat_list_q($status,$user){ //get list of users
+//search for a user's current tabbed users
+global $db_main,$_MONITORED;
+$logged_dt_again = mysqli_query($db_main,"SELECT tabbed_users FROM users WHERE username='$_MONITORED[login_q]'");
+$logged_dt_c = mysqli_fetch_assoc($logged_dt_again);
+$logged_dt_c = ($logged_dt_c['tabbed_users'] !== "[]") ? json_decode($logged_dt_c['tabbed_users']) : "";
+//json_decode it
+
+
+
+switch($status){
+case "open": 
+//update it
+if(count($logged_dt_c) < 5){       //check if it's empty and that there's less than 5 of it in
+$logged_dt_c = (is_array($logged_dt_c) && array_search($user,$logged_dt_c) === false) ? array_merge($logged_dt_c,[$user]) : [$user]; //the latter condition is there to prevent name duplicates
+}
+break;
+case "close": 
+unset($logged_dt_c[array_search($user,$logged_dt_c)]);  //i'm very lazy
+break;
+}
+$logged_dt_c = json_encode($logged_dt_c);
+
+//json_encode it back, and reupload to server the new information  
+$update_q = mysqli_query($db_main, "UPDATE users SET tabbed_users='$logged_dt_c' WHERE username='$_MONITORED[login_q]'");
+
+mysqli_free_result($logged_dt_again);
+
+}
+
 
 ?>

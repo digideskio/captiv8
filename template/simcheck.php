@@ -1,6 +1,8 @@
 <?php              //AJAX calls page
 //this is the hotline center, bitchessssss     \
 
+
+
 session_start();      
 
 date_default_timezone_set('America/Chicago');
@@ -23,7 +25,7 @@ mysqli_free_result($mns);
 
 
 
-if(isset($_SESSION['login_q'])){  //logged in? This is for all the AJAX functions when you're logged in
+if(isset($_SESSION['login_q'])){  //logged in? This is for all the AJAX functions when a user's logged in
 
 
 $salt_check = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_SESSION[login_q]'");
@@ -31,11 +33,102 @@ $salt = mysqli_fetch_assoc($salt_check);
 
 if(compare_dz($salt['password'],$_SESSION['salt_q'])){      //extra measures man
 
-
-
 if(isset($_GET['action'])){
 
 switch($_GET['action']){
+
+case "sync_all":
+
+
+$sync_in = 
+[
+[mysqli_query($db_main,"SELECT * FROM notifications WHERE towhom='$_MONITORED[login_q]' AND status='0' ORDER BY stamptime DESC"),"notifs"]
+ ,
+[mysqli_query($db_main, "SELECT * FROM posts WHERE forwhom='$_MONITORED[login_q]' AND is_read='0' AND cnttype='3'"),"chat"]
+];
+
+for($i = 0; $i <= count($sync_in) -1;$i++){  $shill = [$sync_in[$i][1] => mysqli_num_rows($sync_in[$i][0])];
+merge($new_unreads,$shill);
+
+if(mysqli_num_rows($sync_in[$i][0]) > 0){
+mysqli_free_result($sync_in[$i][0]);
+}
+}
+
+
+echo json_encode($new_unreads);
+
+unset($new_unreads);
+
+
+break;
+
+case "sg_scha":
+
+if(isset($_GET['sg'])){
+
+$sg_call_and_pass = [mysqli_query($db_main,"SELECT * FROM snowglobes WHERE sg_name='$_FILTERED[sg]'"),mysqli_query($db_main,"SELECT * FROM sg_permissions WHERE granted_by='$_FILTERED[sg]' AND towhom='$_MONITORED[login_q]'")];
+
+if($sg_call_and_pass[0] && $sg_call_and_pass[1] && mysqli_num_rows($sg_call_and_pass[0]) > 0){
+//if a user's banned from posting, then he'll have "none" on his posting rights
+//if a user unsubscribes and he has no posting rights, we're not going to delete that data field, but rather just have it as "unsubscribed"
+
+if(mysqli_num_rows($sg_call_and_pass[1]) > 0){  //you've done something in this snowglobe before, or got banned from it somehow lol
+$sgp_data_parse = mysqli_fetch_assoc($sg_call_and_pass[1]);
+
+if($sgp_data_parse['access_type'] !== "blocked"){
+
+if($sgp_data_parse['posting_rights'] == "none"){ //check if they're banned
+//then check if they're subscribed or unsubscribed
+if($sgp_data_parse['access_type'] !== "snowglobe follow"){ $update_sg = [mysqli_query($db_main, "UPDATE sg_permissions SET access_type='snowglobe follow' WHERE granted_by='$_FILTERED[sg]' AND towhom='$_MONITORED[login_q]'"),"follow and banned"]; }else{
+
+ $update_sg = [mysqli_query($db_main, "UPDATE sg_permissions SET access_type='unfollowed but banned' WHERE granted_by='$_FILTERED[sg]' AND towhom='$_MONITORED[login_q]'"),"unfollowed and banned"]; 
+
+}
+
+}else{
+
+ $update_sg = [mysqli_query($db_main, "DELETE * FROM sg_permissions WHERE granted_by='$_FILTERED[sg]' AND towhom='$_MONITORED[login_q]'"),"unfollowed normally"]; 
+
+}      }             }
+else{ //first time following/subcribing/etc
+
+$update_sg = [mysqli_query($db_main, "INSERT INTO sg_permissions(access_type,towhom,date_g,granted_by,posting_rights) VALUES('snowglobe follow','$_MONITORED[login_q]',now(),'$_FILTERED[sg]','both')"),"newly subscribed"]; 
+
+}
+
+if(!$update_sg[0]){  //SQL error somehow
+echo mysqli_error($db_main);
+}
+
+ }}
+
+break;
+
+
+case "get_sg_follow_status":
+//make a new column under sg_permissions, and it'll define posting rights. It's going to be none, topics, posts, or both with default being both and none for people who are banned from posting.
+
+if(isset($_GET['name'])){
+$sg_caps = mysqli_query($db_main, "SELECT * FROM snowglobes WHERE sg_url='$_FILTERED[name]'");  $sg_parse = mysqli_fetch_assoc($sg_caps);
+if(mysqli_num_rows($sg_caps) > 0){  //check if snowglobe exists and you can in fact follow it
+//private snowglobes 
+$sg_perm_check = mysqli_query($db_main, "SELECT * FROM sg_permissions WHERE granted_by = '$_FILTERED[name]' AND towhom='$_MONITORED[login_q]'");
+if(mysqli_num_rows($sg_perm_check) > 0){  //then check if you've already been either banned or already followed/a mod/owner/etc
+//if you're a mod/admin, you automatically have the snowglobe followed.
+$spc_data = mysqli_fetch_assoc($sg_perm_check);
+if($spc_data['access_type'] !== "blocked"){ //admins/mods lose their rights if they click the unfollow button when they're currently mods for that site
+echo "<a href='sg_scha' class='prompt button_samp rad' sg='".$_FILTERED['name']."'>Unfollow</a>";
+}
+}else{
+
+ if($sg_parse['sg_privacy'] == "public"){
+echo "<a href='sg_scha' class='prompt button_samp rad greened' sg='".$_FILTERED['name']."'>Follow</a>";
+}
+}
+
+ }  }
+break;  //end snowglobe follow status
 
 case "sql_q":   //first, test to check if it has a delete or drop statement
 echo "<br>";
@@ -43,7 +136,8 @@ if(!preg_match("#[;]?[ ]{0,}(DELETE|DROP|delete|drop) #",$_POST['sql_q'])){
 
 if(preg_match("#[;]?[ ]{0,}SELECT#",$_POST['sql_q'])){
 
-$_POST['sql_q'] = (preg_match("#LIMIT[ ]+[0-9]+([,][ ][0-9]+)?[ ]{0,}[;]?[ ]{0,}$#",$_POST['sql_q'])) ? $_POST['sql_q'] : preg_replace("#^(.+)([;]?)[ ]{0,}$#","$1 LIMIT 0,100$2",$_POST['sql_q']) ;
+$_POST['sql_q'] = (preg_match("#LIMIT[ ]+[0-9]+([,][ ]{0,}[0-9]+)?[ ]{0,}[;]?[ ]{0,}$#",$_POST['sql_q'])) ? $_POST['sql_q'] : preg_replace("#^(.+)([;]?)[ ]{0,}$#","$1 LIMIT 0,100$2",$_POST['sql_q']) ;
+$type = "row fetch";
 }
 
 $test_query = mysqli_query($db_main, $_POST['sql_q']);
@@ -54,6 +148,12 @@ echo "The query \"" . $_SPIN['sql_q'] . "\" was successful.";    }else{ //displa
 /*foreach($get_rows as $keys => $values){
 $rows = isset($rows) ? array_merge([$keys],$rows) : [$keys];
 } */  
+
+if(mysqli_num_rows($test_query) == 0) {
+echo "No rows returned. Your SQL syntax is valid, but maybe your search criteria is wrong.";
+}
+
+if(mysqli_num_rows($test_query) !== null && mysqli_num_rows($test_query) > 0){
 echo "<table id='results'>";  
 
 while($get_data = mysqli_fetch_assoc($test_query)){
@@ -69,7 +169,7 @@ echo "<th>".$field_names."</th>";
   echo "</tr>";   
 foreach($get_rows as $get_rows2){  $x = isset($x) ? $x + 1 : 1; $y = (isset($y) && $y < 2) ? $y + 1 : 1;
 echo "<tr>"; echo "<th>".$x."</th>";
-foreach($get_rows2 as $keys => $values){  $z = (isset($z) && $z < 2) ? $z + 1 : 1;
+foreach($get_rows2 as $keys => $values){  $z = (isset($z) && $z < 2) ? $z + 1 : 1;       //let's get stylish
 $values = (strlen($values) > 250) ? preg_replace("#^(.+){247}(.+)$#","$1...",$values) : $values;
 echo "<td class='a$y$z'>" . $values . "</td>";
 }  unset($z); echo "</tr>";
@@ -78,6 +178,7 @@ echo "<td class='a$y$z'>" . $values . "</td>";
 echo "</table><br>";  unset($x);
 unset($key_dump); unset($get_rows);
 mysqli_free_result($test_query);
+}
 }
 }else{
 echo "<div class='admin_notice'><strong>SQL error:</strong> ". mysqli_error($db_main) ." </div>";
@@ -792,5 +893,9 @@ else{       echo "Remember, letters, numbers, a hyphen and an underscore only an
 if($_GET['id'] == "2"){ 
 echo "Time will be shown as " . date($_REQUEST['search_2'], $_SERVER['REQUEST_TIME']);
 }
-  */      exit();                  
+  */  
+  
+
+  
+      exit();                  
 ?>
