@@ -12,9 +12,9 @@ if(compare_dz($logged_zen['password'],$_SESSION['salt_q']) && $logged_dt['userid
 #session_list{opacity:.3;box-shadow:0 3px 5px #292E35;font:11px "lucida sans unicode",arial,"sans serif"; text-align:left;
 border-radius:2px;color:#000;background:#fff;width:350px;padding:5px;
 position:fixed;<?php echo (isset($_SESSION['xpos'])) ? "top" : "bottom" ?>:<?php echo (isset($_SESSION['ypos'])) ? $_SESSION['ypos'] : "10" ?>px;
-<?php echo (isset($_SESSION['xpos'])) ? "left" : "right" ?>:<?php echo (isset($_SESSION['xpos'])) ? $_SESSION['xpos'] : "10" ?>px;text-shadow:none;text-align:left;line-height:15px;word-wrap:break-word;<?php echo (isset($_SESSION['hide'])) ? "display:none;" : ""; ?>}
+<?php echo (isset($_SESSION['xpos'])) ? "left" : "right" ?>:<?php echo (isset($_SESSION['xpos'])) ? $_SESSION['xpos'] : "10" ?>px;text-shadow:none;text-align:left;line-height:15px;word-wrap:break-word;<?php echo (isset($_SESSION['hide'])) ? "display:none;" : ""; ?> z-index:2934923492}
 #session_list a{color:#000;cursor:pointer}
-#session_list h3{text-align:center}
+#session_list h3{text-align:center;}
 #session_list:hover{opacity:1}
 #session_list *{cursor:default}
 #session_list h3,#session_list{cursor:move;}
@@ -96,7 +96,7 @@ echo "</p> </div>
   
 
 <div id="panelcd">
-<a href="v_sess" class="prompt<?php echo selected_class("v_sess", true)?>">View Sessions</a>
+<a href="v_sess" class="prompt<?php echo selected_class("v_sess", true)?>">Environment Variables</a>
 <a href="v_css" class="prompt<?php echo selected_class("v_css", true)?>">View CSS</a>
 <a href="v_sql" class="prompt<?php echo selected_class("v_sql", true)?>">SQL Panel</a>
 </div>

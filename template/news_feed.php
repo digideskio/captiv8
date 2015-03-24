@@ -119,10 +119,19 @@ unset($snowglobe_zen);
 }
 
 echo "</span>" .$zing;
-//POLLS
+//image posts
 
+if($que_own['image_embed'] !== "none"){
+
+$que_image = mysqli_query($db_main, "SELECT url_hash,type FROM images WHERE under_post='$que_own[postid]'");
+$que_image = mysqli_fetch_assoc($que_image);
+
+echo "<p class='image_embed'>";
+echo "<img src='".$main_dir."images/".$que_image['url_hash'].".".$que_image['type']."'>";
+echo "</p>";
+}
  
-echo "</td>";
+echo "</td>";      //POLLS
 if(mysqli_num_rows($que_posts[3]) > 0){echo "<td class='poll_choosy'>";  $z = 0; $poll_dt = [];         $poll_choice_zen = [];      $total = 0;
 while($poll_extract = mysqli_fetch_assoc($que_posts[3])){
 //check if current poll data query in-loop is a poll choice and if there are previous results that are poll choices, then merge the array

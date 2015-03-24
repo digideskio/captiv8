@@ -12,7 +12,7 @@
 
 
 if(logged_in_check && index_page_check){   //make a new post panel(for threads)
- echo "<div id='content' class='contentbox'>".$nx['31']."</div>";
+ echo "<div id='content' class='contentbox hide'>".$nx['31']."</div>";
 echo "<form method='POST' action='index.php?direct=new_post' id='post_k'>
 <span id='input_save'></span>
 <div class='extra_opts'><a href='add-poll' class='prompt' id='attach_poll_q'>".$nx[30]."</a></div><div id='main_new_post' class='contentbox'>"; 
@@ -20,9 +20,13 @@ echo "<div class='sect_1'><input type='text' maxlength='150' value='".$nx['17'].
 <textarea name='tcha2' class='flick largeform'>".$nx['18']."</textarea></div>";  
 //post as: formats
 
+//image uploads
+
 
 //title and content
 echo "<div class='sect_2 button_row'>
+<input type='file' name='file_upload' class='upload inline2' title=''>
+<div class='placeholder cute_button'>Upload Image[s]</div>
 <span class='drop user_opts'><div class='uplink rad'>".$nx['19']."</div><div class='dropdown_content' id='snowglobe_opts'>
 
 <div class='spacer rad'>
@@ -49,7 +53,7 @@ echo "</div></form>";
 //later...
 //is now
 
- $edu_select = mysqli_query($db_main, "SELECT * FROM education WHERE forwhom='$_MONITORED[login_q]';");
+
  if(mysqli_num_rows($edu_select) < 1): ?>
  
  
@@ -84,10 +88,9 @@ echo "<div class='sect_1'><input type='text' maxlength='150' value='".$nx['17'].
 
 
 //title and content
-echo "<div class='sect_2 button_row'>
-
-";
-
+echo "<div class='sect_2 button_row'>";
+   echo "<input type='file' name='file_upload' class='upload inline' title=''>
+<div class='placeholder cute_button'>Upload Image[s]</div>";
 //check for all snowglobes they can make a thread in, of course being able to post in your own profile snowglobe is always your right, and it'll be called "1"
 echo "<input type='hidden' name='sg_".$sg_details['sg_url']."' value='on'>";
 //as for the rest...
@@ -138,7 +141,7 @@ if(isset($_SESSION['login_q'])){                  //solution to our session hash
 
 //echo "<div id='thread_reply' class='contentbox'><form action='".$main_dir."index.php?direct=new_post&verify=".$_SESSION['temp_n']."' method='POST'>
 
-echo "<div id='thread_reply' class='contentbox'><form action='".$main_dir."index.php?direct=new_post' method='POST'>
+echo "<div id='thread_reply' class='contentbox'><form action='".$main_dir."index.php?direct=new_post&verify=".$_SESSION['temp_n']."' method='POST'>
 <input type='hidden' value='". $thread_data['postid'] ."' name='parent_comment'>
 <input type='hidden' value='".$thread_id."' name='thread_id'>
 <textarea name='tcha2' class='flick largeform'>Comment on this thread...</textarea>   <input type='submit' value='POST REPLY'>
@@ -277,7 +280,7 @@ if(isset($_SESSION['login_q'])){
 echo " <span id='check_friend_status' class='flick side_links' ref1='".$_MONITORED['login_q']."' ref2='".$matched['username']."'>Loading friendship status...</span>";
 }                                                                    
 
-echo"</td><td class='side_2' width='1%' style='min-width:200px;'>Last active ".time_rounds($matched['last_active_at'])."</td></tr>";  //row 1
+echo"</td><td class='side_2' width='1%' style='min-width:200px;'>Last active ".strtolower(time_rounds($matched['last_active_at']))."</td></tr>";  //row 1
 
 echo "<tr class='row_2'><td class='side_1' width='99%'><div class='auto_filler'>";
 echo "<h3 class='content_q'> ".$matched['username']."'s posts </h3>";

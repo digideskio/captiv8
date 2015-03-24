@@ -126,10 +126,18 @@ Signing up is totally free and will take less than a minute at the most.</p><div
 , "","There are no more posts to display.","Successfully completed input!","Unfortunately, you have failed to enter correct details."   //39th at this point
 ,"Chatting with: ","Start a conversation with this user!","Are you currently enrolled in high school/college? Get a head start on your classes by signing up for our <em>Lecture Notes</em> feature!","Your snowglobes",
 "A Snowglobe is pretty to look at, and usually represents some place that is suspended within the bounds of a sphere. In Captivate, however, there's a lot more depth to a Snowglobe. It's a place where you can talk about a specific topic, or maybe about a whole host of topics. Be it about anything mundane like road rage, stern like being a Call of Duty fan, or more serious discourse like your dog's pet peeves, the limits of discussion just don't exist. Anything as varied as your whims, and even your idleness, or boredom, can be talked about in a Snowglobe.", //What are snowglobes? #44
-"What is a Snowglobe anyway?","Your Profile","Create a new Snowglobe","<em>No current description for this snowglobe. Be sure to edit this to get more people to tune into your snowglobe!</em>","<div class='notice no_posts center'>There are currently no posts in this Snowglobe. Be the first to post by using the template above!</div>","<center>There is no description available for this Snowglobe at the moment.</center>","Posted in your own snowglobe","Posted in"
+"What is a Snowglobe anyway?","Your Profile","Create a new Snowglobe","<em>No current description for this snowglobe. Be sure to edit this to get more people to tune into your snowglobe!</em>","<div class='notice no_posts center'>There are currently no posts in this Snowglobe. Be the first to post by using the template above!</div>","<center>There is no description available for this Snowglobe at the moment.</center>","Posted in your own snowglobe","Posted in","Logout","You have already finished attending this school",
+'Unfortunately, there are currently no <strong message="Snowglobes that are registered to a class in a school." dd_class="reg">Classroom Snowglobes</strong> registered to your school. However, you should certainly sign up (one of) your class(es) to enjoy all the benefits of it, well, being signed up, which includes, but is certainly not limited to:
 
+<ol>
+<!-- <li></li> -->
+<li>Being caught up in the class schedule.</li>
+<li>Getting feedback on your own class projects.</li>
+<li>Reminding your teacher/professor/etc. on your sick days, etc.</li>
+<li>Studying material related to the class subject.</li>
+<li>Other students in the class regularly updating the site with homework advice, class results, and miscellaneous questions regarding lecture material, or merely the class as a whole.</li>
 
-
+</ol>',"<div class='box notice2' reference='future_classes'><h3>School Classes <a href='close_box' class='prompt' message=\"Don't show again\" dd_class='reg'>[x]</a></h3><p>Will you be taking classes in the near future? If so, then Captivate has features that will help you greatly in your studies.</p></div>"
 );
 
  $dir = "template/img/";  

@@ -14,7 +14,7 @@ mysqli_set_charset($db_main,"ISO-8859-1");
 
 date_default_timezone_set('America/Chicago');         
 
-  $allow_redirs = false;
+  $allow_redirs = true;
 //  $stopping_point =  
  
 if(isset($_SESSION['login_q']) && isset($_SESSION['salt_q'])){
@@ -27,11 +27,10 @@ if(isset($_GET['get_more'])){ //news_feed.php needs it
 require_once("auxiliary.php");
 }else{
 if(!isset($_GET['verify'])){        
-$_SESSION['temp_n'] = 
-substr(sha1(md5(base64_encode(microtime()))),0,25) 
+$_SESSION['temp_n'] = substr(sha1(md5(base64_encode(sqrt(microtime(true))))),0,25) 
 // microtime(true)
-;//I've decided to just abandon session hashes for alised url's... for now.
-//Instead i'll monitor spam floods by checking every 30 seconds.
+;//FIXED finally wooo
+
 }
 require("template/vars.php");                                                    
 require("template/auxiliary.php");
@@ -39,6 +38,9 @@ require("template/auxiliary.php");
 
 
 }
+
+
+
 
 define('dflt_date_f',"F j, Y, g:i A");
 define('index_page_check',(preg_match("#index.php([\072]([0-9]){0,15})*$#", extraurl()) && !isset($_SERVER['REDIRECT_URL'])));
@@ -82,6 +84,8 @@ $sg_details = mysqli_fetch_assoc($sg_data[0]);
 }
 }
 
+        
+        
                                                                             
 
 if(isset($_GET['profile'])){
@@ -140,9 +144,21 @@ if(!isset($_SESSION['db_query'])){
    }
    }
    
-if(isset($_SESSION['login_q'])){mysqli_query($db_main, "UPDATE users SET last_active_at=now() WHERE username='$_MONITORED[login_q]'");    
+if(logged_in_check){
+//anything (data needed to be received, data needed to be updated, etc.) when a user's logged in
+mysqli_query($db_main, "UPDATE users SET last_active_at=now() WHERE username='$_MONITORED[login_q]'");    
 $logged_user_data = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_MONITORED[login_q]'");
 $logged_zen = mysqli_fetch_assoc($logged_user_data);
+
+if($logged_zen['image_in_limbo'] !== 0 && (microtime(true) - $logged_zen['image_in_limbo'] >= 3600*24)){
+//delete all images that were uploaded but didn't have a post to be embedded into after 24 hours being posted
+mysqli_query($db_main, "DELETE FROM images WHERE under_post='0' AND uploaded_by='$_MONITORED[login_q]'"); 
+}
+
+if(index_page_check){
+$edu_select = mysqli_query($db_main, "SELECT * FROM education WHERE forwhom='$_MONITORED[login_q]';"); 
+
+}
 
 }
 if(isset($_GET['thread_view'])){
@@ -244,34 +260,8 @@ setcookie("limbooo[".$bm."]","a",time()-1);
 
 
 
-
-//we need to define which topic it's under    check
-//other user's permissions in the poll
-//show who voted in which
-//mysqli_query($db_main, "ALTER TABLE posts ADD COLUMN(upvotes INT NOT NULL DEFAULT 1,downvotes INT NOT NULL DEFAULT 0)");
-//mysqli_query($db_main, "ALTER TABLE polls ADD COLUMN(votes INT NOT NULL DEFAULT 0)");
-//mysqli_query($db_main, "CREATE TABLE friend_limbo(user1 INT NOT NULL,user2 INT NOT NULL, time DATETIME NOT NULL, fl_id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(fl_id))");
-//mysqli_query($db_main, "CREATE TABLE notifications(n_id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(n_id),content varchar(100) NOT NULL,url varchar(110) NOT NULL)");  
-
-
-/* time to create the chat system
-defining chat rights
-
--if an acount's banned, it cannot use the chat.
--Disable chat option for those who don't want to get PM's from random people.
-
--If they're both following each other, each other will be added on each other's chat list.
-
--Make the chats appear on the sidebar
-
-*/
-
-
-}  
+}
 
 
 
-
-
- 
-  ?>                                                               
+?>                                                               

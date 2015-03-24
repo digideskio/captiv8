@@ -45,9 +45,20 @@ unset($_SESSION[$nkey]);
   
   $parent_clasp = mysqli_query($db_main, "SELECT * FROM posts WHERE postid=$clasp_tip ORDER BY stamptime DESC") or die(mysqli_error($db_main)); $_SESSION['abc'] = mysqli_num_rows($parent_clasp); 
    $parent_call = mysqli_fetch_assoc($parent_clasp);
+   
+   if($actual['cnttype'] == 1 && !preg_match("#^none$#",$actual['image_embed'])){//for images
+
+$update_image = mysqli_query($db_main, "UPDATE images SET under_post='$actual[postid]' WHERE uploaded_by='$_MONITORED[login_q]' AND under_post='0'");
+
+if(!$update_image){$_SESSION['changing_error'] = mysqli_error($db_main);}
+  
+}
+
   if(mysqli_num_rows($parent_clasp) > 0 && (($parent_call['bywhom'] != $_MONITORED['login_q']) || ($parent_call["bywhom"] == $_MONITORED['login_q'] && $parent_call["forwhom"] != "self"))){       echo "in! (1)<br>";
   //this is so messy.
   //make sure you don't get replies in comments to your own replies or your own snowglobe
+  
+
   
   
   

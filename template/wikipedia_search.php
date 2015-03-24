@@ -10,8 +10,7 @@
   //not gonna lie this is a pathetic way to search for schools, I could have just used Wikipedia's sandbox JSON API
   //but then again, I don't think it could get side information
   //nevertheless, this is by far the TACKIEST thing i've ever coded to date.
-
-
+  
   $search_query["bulk"] = [file_get_html("http://www.google.com/search?q=". rawurlencode($_FILTERED['data'][0] . ' ' . $_FILTERED['data'][1]) . "%20Wikipedia")];
   foreach($search_query["bulk"] as $html_bulk){ //   $i = isset($i) ? $i+1 : 0;      //stupid logic dyslexia
   $html_composite = isset($html_composite) ? $html_composite .= $html_bulk->find("div#ires",0) : $html_bulk->find("div#ires",0);
@@ -86,13 +85,14 @@
  }      
          //finally, phase 2
          $page_title = preg_replace("#(.+)- Wikipedia(.+)$#","$1",$parsed_2[1]->plaintext);
-         if(isset($properties['enrollment']) || isset($properties['students']) || isset($properties['numberofstudents'])) {   //eugh
+         if(isset($properties['enrollment']) || isset($properties['students']) || isset($properties['numberofstudents']) && !preg_match("/district/i",$properties['name'])){   //eugh
          $properties['numberofstudents'] = isset($properties['numberofstudents']) ? $properties['numberofstudents'] : "";
          $counts = isset($properties['students']) ? $properties['students'] : $properties['numberofstudents'];
          $student_count = (isset($properties['enrollment'])) ? $properties['enrollment'] : $counts;
      
         $properties['link'] = $urlencode;  //link for later reference  
           $properties['name'] = $page_title;
+          
          $toformat = json_encode($properties);
   echo "<div class='school_shell'><a href='select-school' class='prompt school_box rad' datamine='$toformat'><h3>".$page_title." <span>";      
       $enrolled = preg_replace("#^(([0-9]+[,]?)+)(.{0,})$#","$1",$student_count);

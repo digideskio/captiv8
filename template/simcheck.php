@@ -1,5 +1,8 @@
-<?php              //AJAX calls page
-//this is the hotline center, bitchessssss     \
+<?php              
+//AJAX calls page
+//this is the hotline center, bitchessssss 
+
+//made that comment months ago, I just gotta say: what an obscure metaphor.
 
 
 
@@ -17,7 +20,7 @@ require_once("auxiliary.php");
 
 if(isset($_GET['availability'])){
 $filter = hack_free($_GET['availability']);
-$mns = mysqli_query($db_main, "SELECT * FROM users WHERE username='$filter'");
+$mns = mysqli_query($db_main, "SELECT username FROM users WHERE username='$filter'");
 if(mysqli_num_rows($mns) > 0 ){echo "taken";}
 mysqli_free_result($mns);
 }
@@ -25,13 +28,15 @@ mysqli_free_result($mns);
 
 
 
-if(isset($_SESSION['login_q'])){  //logged in? This is for all the AJAX functions when a user's logged in
 
+
+
+if(isset($_SESSION['login_q'])){  //Inside this conditional are all the server requests from a page that requires a user to be logged in
 
 $salt_check = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_SESSION[login_q]'");
 $salt = mysqli_fetch_assoc($salt_check);
 
-if(compare_dz($salt['password'],$_SESSION['salt_q'])){      //extra measures man
+if(compare_dz($salt['password'],$_SESSION['salt_q'])){      //extra measures
 
 if(isset($_GET['action'])){
 
@@ -240,7 +245,7 @@ break;
 
 //$.post("template/simcheck.php",{"action":"submit-chat-msg","towhom":$(this).parent().parent().attr("ref"),"message":$(this).parent().find(".chat_panel textarea").val()},function(message){
 
-case "submit-chat-msg":      
+case "submit-chat-msg":               
   $chat_perms_check = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' AND a.granted_by = '$_SPIN[towhom]' LIMIT 5");
   
   if(mysqli_num_rows($chat_perms_check) == 1){ 
@@ -252,7 +257,7 @@ break;
 
 case "school_search":   
 
-$select_school = mysqli_query($db_main,"SELECT * FROM school WHERE name LIKE '%$_FILTERED[search_q]%' AND ed_level='$_FILTERED[criteria]' ORDER BY name ASC LIMIT 0,5");
+$select_school = mysqli_query($db_main,"SELECT * FROM school WHERE name LIKE '%$_FILTERED[search_q]%' ORDER BY name ASC LIMIT 0,5");
 
 if($select_school && mysqli_num_rows($select_school) > 0){    echo "<div id='school_search'>";
 
@@ -274,24 +279,21 @@ while($properties = mysqli_fetch_assoc($select_school)){
 }
 
 echo "</div>";          
+ mysqli_free_result($select_school);
+}else{
 
-} else{
+if(preg_match("#([-A-Za-z]+)[ ]#",$_FILTERED['search_q'])){  
 
-
- if(preg_match("#([-A-Za-z]+)[ ]#",$_FILTERED['search_q'])){  
-
-echo "<a href='index.php?query=".$_MONITORED['login_q']."&find=new_school' class='add-new rad'>". $nx[33] ."</a>";
+echo "<a href='".$main_dir."profile_nuise/".$_MONITORED['login_q']."/find/new_school' class='add-new rad'>". $nx[33] ."</a>";
 
 }
 
 }      
 
-mysqli_free_result($select_school);
 
-  break;
-  
-  case "chat_with_user":
-  
+
+break;
+case "chat_with_user":  
   //find whether they're able to actually chat with the user whom they're trying to engage with
 
    
@@ -304,6 +306,7 @@ mysqli_free_result($select_school);
   $search_for_posts = mysqli_query($db_main,"SELECT * FROM posts WHERE bywhom='$_MONITORED[login_q]' AND forwhom='$_FILTERED[user]' AND cnttype = '3' UNION SELECT * FROM posts WHERE bywhom='$_FILTERED[user]' AND forwhom='$_MONITORED[login_q]' AND cnttype = '3' ORDER BY stamptime DESC LIMIT 0,36");       
    while($zen = mysqli_fetch_assoc($search_for_posts)){
    foreach($zen as $key => $value){
+   if($key == "stamptime"){$zen[$key] = strtolower(time_rounds($zen[$key]));}
    if($zen[$key] == null){unset($zen[$key]);}
    }
    $post_list[] = $zen;}
@@ -320,6 +323,7 @@ switch($_GET["box_action"]){
      break;
      
      case "close":
+     echo "ahh";
      chat_list_q("close",$_FILTERED['user']); //deletes the other user's name from the array
      break;
 }
@@ -358,7 +362,7 @@ if(isset($_GET['is_read'])){ //will be accessed upon the other user reading the 
     unset($post_list);
   break;    //end chat search 
 case "wikipedia_search":
-            include("wikipedia_search.php");   
+include("wikipedia_search.php");   
 break;
 
 case "confirm_school":
@@ -414,7 +418,7 @@ $recheck->clear();
 }else{
 $properties = $strings;
 }
-if($school_level){
+if(isset($school_level)){
              switch($school_level){
                    case "1":
                      $properties['ed_level'] = "High School";  
@@ -437,38 +441,25 @@ if(isset($strings['link']) && preg_match("#en[.]wikipedia[.]org#",$strings['link
                $properties['link'] = $strings['link'];  //link for later reference  
           $properties['name'] = $strings['name'];
           
+  //March 7, 2015 edit: I'm going to limit the data queries to only the name, location, and number of students, and the kind of school that it is.
+  //I guess i'm going to start dating my comments now
+  //I originally intended the location to be the city name, but I haven't found a search method for cities that is consistent in all wikipedia entries
+  
+  $school_data = 
+  [
+  "name" => $properties['name'],
+  "location" => isset($properties['coordinates']) ? $properties['coordinates'] : '',
+  "enrollment" => $properties["numberofstudents"],
+  "school_type"=> $properties["ed_level"],
+  "link" => $properties["link"] 
+  ]; //all that work and it turns out we only need those five data values...
+  
+  array_map("sql_filter",$school_data);
 
- 
- foreach($properties as $nougatey => $nougats){ //oh boy
- $datafield_check = mysqli_query($db_main, "SHOW COLUMNS FROM school WHERE `$nougatey`");
- if(!$datafield_check){  //column doesn't exist
- $new_lines = mysqli_query($db_main, "ALTER TABLE school ADD COLUMN `".hack_free($nougatey)."` varchar(50)");
- if($new_lines){}
- }
- 
- //but either way
- 
- //prepend column names and respective values
- 
-
- $adjoiner = !isset($adjoiner) ? [$nougatey . ", ","'".$nougats . "', "] : [$nougatey.", " .$adjoiner[0],"'".hack_free($nougats). "', " . $adjoiner[1]] ;
- $trims = [preg_replace("#(.+)[,][ ]$#","$1",$adjoiner[0]),preg_replace("#(.+)[,][ ]$#","$1",$adjoiner[1])];
- $clear = $datafield_check ? mysqli_free_result($datafield_check) : "";
- 
- }
- //put them in one SQL statement!
-  //actually...
-
-
-  $school_data = mysqli_query($db_main, "INSERT INTO school($trims[0]) VALUES(".hack_free($trims[1]).")");
+  $school_data = mysqli_query($db_main, "INSERT INTO school(name,location,enrollment_no,school_type,link) VALUES('$school_data[name]','$school_data[location]','$school_data[enrollment]','$school_data[school_type]','$school_data[link]')") or die(mysqli_error($db_main));
   if($school_data){
   $fill_details = "yes";
   }
-  
-    
-
-
-
    unset($school_level);      unset($adjoiner);           }
    
 
@@ -487,8 +478,11 @@ $z = (isset($z)) ? $z + 1 : $z;
 
                                              $znip = "i";
 if(isset($fill_details) && !isset($_SESSION[$znip])):   
- $znip = preg_replace("#[^A-Za-z]#","",strtolower($properties['ed_level']));
+$ed_level = isset($properties['school_type']) ? $properties['school_type'] : $properties['ed_level'];
+
+ $znip = preg_replace("#[^A-Za-z]#","",strtolower($ed_level));
 $_SESSION[$znip] = "yes";     //start form
+
 ?>
 <form class="zenith">
     <br>
@@ -497,8 +491,13 @@ $_SESSION[$znip] = "yes";     //start form
 <table><tr><th class="marginals" style="width:200px">School Name</th><td>
 <input type="text" name="school" value="<?php echo $strings['name'] ?>" class="largeform <?php echo 'a' . $z; ?>" disabled="disabled" name="school_name" style="opacity:.5">          </td>
 </tr>
+
 <tr><th>Started:</th><td><input type="text" name="year_s" class="largeform flick <?php echo 'a' . $z; ?>" value="Input the year that you started going to this school."></td></tr>
-<tr><th>Finished:</th><td><select class="largeform <?php echo 'a' . $z; ?>"  name="current_status"><option class="current <?php echo 'a' . $z; ?>" value="current" selected="selected">Currently Attending</option><option value="did_finish" value="finished">I finished attending this school.</option></select><input type="text" class="largeform flick inline <?php echo 'a' . $z; ?>" value="Insert Year Here..." name="year_finished" disabled="disabled">   <input type="text" style="display:none" name="edu_type" class="a1" value="<?php echo $properties['ed_level']; ?>">
+<tr><th>Finished:</th><td>
+<select class="largeform <?php echo 'a' . $z; ?>"  name="current_status"><option class="current <?php echo 'a' . $z; ?>" value="current" selected="selected">Currently Attending</option>
+<option value="did_finish" value="finished">I finished attending this school.</option></select>
+<input type="text" class="largeform flick inline <?php echo 'a' . $z; ?>" value="Insert Year Here..." name="year_finished" disabled="disabled">  
+ <input type="hidden" name="edu_type" class="a1" value="<?php echo $ed_level; ?>"> 
 <input type="submit" value="Complete Details" class="prompt" id="<?php echo 'a' . $z; ?>">
 </td></tr>
 <?php if(isset($school_level)){ switch($school_level){ case "1": ?> 
@@ -527,57 +526,109 @@ $_SESSION[$znip] = "yes";     //start form
 
 <?php   }   
 endif;   //end submission form
-        unset($properties);     unset($fill_details);   unset($_SESSION[$znip]);
-        unset($znip);
+unset($properties);     unset($fill_details);   unset($_SESSION[$znip]);          unset($znip);
 
-break; //end case "confirm_school"
+break; //end case "confirm_school"              
+//for now let's set the maximum image size to 3 MB. I know kind of large, but i'll find a way to compress it somehow in the future
 
+
+case "file_test": //image uploads
+//for now i'll just limit each new post to one image upload
+@$image_data = getimagesize($_FILES['file_upload']['tmp_name']);
+
+//if the file is an image, then instantiating a variable with getimagesize to call the file name turns it into an array, so yeah
+//no need to check for file extensions heeh
+
+$json_message = ["message" => "","result" => ""];
+if(isset($_POST) && is_array($image_data) && is_uploaded_file($_FILES['file_upload']['tmp_name']) && !isset($_SESSION['posted_an_image'])){
+
+$size=$_FILES['file_upload']['size'];  
+$max_size = isset($max_size) ? $max_size : 3000000;     
+$name_for_ref = preg_replace("#(.+)[.].+$#","$1",$_FILES['file_upload']['name']);    
+
+if($size < $max_size){   
+$image_content = addslashes(file_get_contents($_FILES['file_upload']['tmp_name']));
+$file_type = preg_replace("#image/(.+)$#","$1",$_FILES['file_upload']['type']);
+
+$hash = substr(hash('sha512',sqrt(microtime(true))), 0, 25);
+$check_duplicates = mysqli_query($db_main, "SELECT img_name,url_hash FROM images WHERE img_name='$name_for_ref' AND url_hash='$hash'");
+
+if(mysqli_num_rows($check_duplicates) > 0){$hash_clone = strrev($hash_clone);}
+
+$technically_uploading = mysqli_query($db_main, "INSERT INTO images(img_name,url_hash,image_blob,type,size,dimensions,uploaded_by,under_post) VALUES('$name_for_ref','$hash','$image_content','$file_type','$size','".$image_data[0]."x".$image_data[1]."','$_MONITORED[login_q]','0')");
+
+if($technically_uploading){
+
+$json_message['message'] = "File successfully uploaded!";
+$json_message['result'] = "success";
+$json_message['hash'] = $hash;
+$json_message['file_type'] = $file_type;
+
+mysqli_query($db_main, "UPDATE users SET image_in_limbo='".microtime(true)."' WHERE username='$_MONITORED[login_q]'");
+}  else{echo mysqli_error($db_main);}
+
+
+}else{
+$json_message['message'] = "File too large. Please use another file.";
+$json_message['result'] = "fail";
+}
+
+}else{
+$json_message['message'] = "Only images are allowed to be uplaoded";
+$json_message['result'] = "fail";
+}
+
+echo json_encode($json_message);
+break;
 
 case "complete_details":
                                
 foreach($_GET['data'] as $q_k => $q_v){
 
-$zing = preg_split("#[ ]:[ ]#",$q_v);
-$zing[0] = preg_replace("#[ ]#","",$zing[0]);
-$zing[1] = preg_replace("#^(.+)$#","$1",$zing[1]);
+$zing = preg_split("#:#",$q_v);
+
+for($i = 0;$i <= count($zing) - 1; $i++){
+$zing[$i] = preg_replace("#^[ ]+|[ ]+$#","",$zing[$i]);
+}
 
 $parse[$zing[0]] = hack_free($zing[1]);
 
 }
 
 //test for validity
-
 //school : Nettleton High School (Arkansas),year_s : 2012,current_status : did_finish,undefined : current,year_finished : 201
-
 
 if(isset($parse['school']) && isset($parse['year_s']) && isset($parse['current_status']) && isset($parse['year_finished']) && isset($parse['edu_type'])){     //first
 
 
 //check to see that they haven't registered their education for that school yet
-$parse['school'] = preg_replace("#;#","",$parse['school']);
-$edu_search= mysqli_query($db_main,"SELECT * FROM education WHERE school_name='$parse[school]' AND username='$_MONITORED[login_q]'");
-if(mysqli_num_rows($edu_search) > 0){
+$parse['school'] = sql_filter($parse['school']);
+$x = "SELECT * FROM education e, school s WHERE s.name='$parse[school]' AND e.school_id = s.s_id AND e.forwhom='$_MONITORED[login_q]'";  
+//only one education entry per school per person
+$edu_search= mysqli_query($db_main,$x) or die(mysqli_error($db_main));
+if(mysqli_num_rows($edu_search) < 1){ 
                                                                                        
-$school_confirm = mysqli_query($db_main, "SELECT * FROM school WHERE name='$parse[school]' AND ed_level='". hack_free($parse['edu_type'])."'");
+$school_confirm = mysqli_query($db_main, "SELECT * FROM school WHERE name='$parse[school]'");
 
 
 
 if(mysqli_num_rows($school_confirm) > 0){  //second
+//just to get some extra details
+
+$get_deets = mysqli_fetch_assoc($school_confirm);
+
 if($parse['current_status'] == "current"){
 $parse['year_finished'] = 0;
 }
-$opt_degree = ($parse['edu_type'] == "College") ? ",degree" : "";
+$opt_degree = ($parse['edu_type'] == "College") ? "degree," : "";
 
 $degrees = (isset($parse['degrees'])) ? "'".hack_free($parse['degrees']) . "'," : "";
-$status = ($parse['current_status'] == "did_finish") ? "true" : "false";
+$status = ($parse['current_status'] !== "did_finish") ? "true" : "false";
 
-$submit_results = mysqli_query($db_main, "INSERT INTO education(school_name".$opt_degree.",started,finished,is_current,forwhom) VALUES('$parse[school]',".$degrees."'$parse[year_s]','$parse[year_finished]','$status','$_MONITORED[login_q]')");
+$submit_results = mysqli_query($db_main, "INSERT INTO education(".$opt_degree."started,finished,is_current,forwhom,school_id) VALUES(".$degrees."'$parse[year_s]','$parse[year_finished]','$status','$_MONITORED[login_q]','$get_deets[s_id]')") or die(mysqli_error($db_main));
 
-if($submit_results){
+if($submit_results){   
 echo $nx['38'];
-}
-else{
-echo mysqli_error($db_main); //echo $nx['39'];
 }
 
 }

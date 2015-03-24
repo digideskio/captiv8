@@ -8,8 +8,7 @@ a{color:#fff;text-decoration:underline;}
 #header{width:100%;height:60px;}
 #logo{width:200px;height:60px;float:left;display:block;}
 #panel{float:left}
-input,.contentbox,.signup-a,.welcome_note,.bottom_menu a,select,textarea,.ui-tooltip,.notice,#user_menu,#login .left,.rad,.spacer,.margin,#panelcd a,.load-more-button,a.chat-option,.chat_box,.loading_text,#left_menu,#left_menu a,.box{border-radius:4px;}
-
+input,.contentbox,.signup-a,.welcome_note,.bottom_menu a,select,textarea,.ui-tooltip,.notice,#user_menu,#login .left,.rad,.spacer,.margin,#panelcd a,.load-more-button,a.chat-option,.chat_box,.loading_text,#left_menu,#left_menu a,.box,.placeholder,.cute_button,#image_embed a,.chat_box p[time_posted]{border-radius:4px;}
 #user_menu{margin:14px 22px 0 0px;}
 #user_menu div.left,#user_menu div.right{display:inline-block;}
 .right{float:right;}
@@ -52,7 +51,7 @@ a.side2{border-top-right-radius:0;border-bottom-left-radius:0}
 #left1 div.box{width:200px;margin-top:2px}
 #vc2{padding:0px 23px 0 0;}
 
-#user_menu,td#left1 #left_menu{background:#2D394A;border-top:2px solid #38475D;border-bottom:2px solid #26303F;box-shadow:0 -2px 2px #2D394B;text-shadow:0 1px 0 #000;color:#7993A7;font:13px "lucida sans unicode",arial,"sans serif";}.boxxed{padding:8px;height:150px;overflow-y:scroll;}
+#user_menu,td#left1 #left_menu,.spec{background:#2D394A;border-top:2px solid #38475D;border-bottom:2px solid #26303F;box-shadow:0 -2px 2px #2D394B;text-shadow:0 1px 0 #000;color:#7993A7;font:13px "lucida sans unicode",arial,"sans serif";}.boxxed{padding:8px;height:150px;overflow-y:scroll;}
 .boxxed p{font-size:11px;padding:8px;margin:0}
 .boxxed h4{margin:0;color:#79A8C8;font:bold 13px "Lucida sans unicode",arial,"sans serif";}
 button{cursor:pointer}
@@ -123,13 +122,13 @@ h3.content_q .part_3{background:transparent url('http://localhost/captiv8/templa
 .auto_filler{min-height:120px;}
 h3.notice2{text-align:center;font-weight:normal;color:#94CCE0;display:block;padding-top:20px;}
 .posts_t1{padding:8px 4px 4px;margin:0 30px;}
-.posts_t1 h4{margin:0;font:bold 14px "lucida sans unicode","Tahoma","Arial";color:#bad6ea;padding:4px;}
-.contentbox#main_new_post{border-top:2px solid #5c6676;box-shadow:0 -4px 8px #2F3743;background:#424d5d;border-bottom:2px solid #2f3743;}
+.posts_t1 h4,tr.h4_row{margin:0;font:bold 14px "lucida sans unicode","Tahoma","Arial";color:#bad6ea;padding:4px;}
+.contentbox#main_new_post{border-top:2px solid #5c6676;box-shadow:0 -4px 8px #2F3743;background:#424d5d;border-bottom:2px solid #2f3743;overflow:hidden}
 #main_new_post input[type=text],#main_new_post textarea{margin:3px auto 7px;}
 input.flick#title_trigger{color:#fff;}
 #title_trigg:focus{font-weight:normal}
 #main_new_post textarea:focus{border:2px dashed #607088}
-.user_opts div.uplink,#main_new_post input[type=submit]{display:inline-block;width:auto;padding:4px 10px;font-size:10px;margin:2px 5px;text-transform:uppercase;background:#2D394A;border-top:2px solid #38475D;border-bottom:2px solid #26303F;box-shadow:0 -2px 2px #2D394B;text-shadow:0 1px 0 #000;color:#fff;}
+.user_opts div.uplink,#main_new_post input[type=submit],.cute_button,#image_embed a{display:inline-block;width:auto;padding:4px 10px;font-size:10px;margin:2px 5px 0 0;text-transform:uppercase;background:#2D394A;border-top:2px solid #38475D;border-bottom:2px solid #26303F;box-shadow:0 -2px 2px #2D394B;text-shadow:0 1px 0 #000;color:#fff;}
 .user_opts .dropdown_content{margin:0;padding-top:15px;}
 #snowglobe_opts{padding-top:15px;}
 #snowglobe_opts .spacer{padding:2px 0;background:#495567;}
@@ -154,7 +153,7 @@ small{font-size:70%}
 #thread_reply input[type=submit]{float:right;}
 .contentbox h4{font-family:"Lucida sans unicode","Arial","sans-serif";margin:0;padding:5px}
 .comment_box table td{vertical-align:middle}
-.comment_box table td.user_info{min-width:125px;width:125px;text-align:center;vertical-align:top}
+.comment_box table td.user_info{min-width:125px;width:125px;text-align:center;vertical-align:middle}
 .comment_box table td.user_info a{color:#83ddff}
 a.comment_opts,input[type=submit].comment_opts{box-shadow:0 0 5px #344256;font-size:10px;padding:2px 8px 4px;text-decoration:none;text-transform:uppercase;margin:3px 4px 0;display:inline-block;min-width:1px;text-align:center;border-bottom:2px solid #344256}
 a.comment_opts.edit{background:#B58053;border-top:2px solid #C29D70;color:#4D313D;text-shadow:0 1px 0 #D1B073;}
@@ -201,8 +200,8 @@ a.button_samp{font-size:11px;padding:4px 8px;margin:4px;display:inline-block;wid
 .optionbox{padding:4px;font-size:11px}
 .optionbox input[type=checkbox]{vertical-align:middle;margin-top:2px;}
 .optionbox span{margin-left:5px;}
-#content{display:none}
-#widthfix #content{display:block}
+.hide{display:none}
+#widthfix .hide{display:block}
 td.poll_choosy{width:350px;}
 .poll_choosy input[type=radio]{vertical-align:middle;}
 .poll_choosy h4{background:#334054;border-top:1px solid #292E35;border-bottom:1px solid #63738C;text-align:center}
@@ -218,6 +217,7 @@ a.side_links{text-decoration:none;font-size:11px}
 div.bar_1{padding:10px 25px;color:#fff;}
 .notifs{padding:5px 10px;font-family:"Tahoma","sans-serif";}
 #notifs_bar .note{color:#00FE9B;}
+#notifs_bar a{text-decoration:none}
 #notifications .spacer a:first-child .notifs{background-image:none;}
 #notifications .spacer a{text-decoration:none}
 #notifications .spacer a .notifs{color:#f0f0f0}
@@ -257,10 +257,11 @@ pre{font-size:12px;}
 .fill_details th{text-align:right;font-size:15px;padding-right:15px}
 a.load-more-button{display:block;font:bold 15px "Lucida Sans Unicode";text-transform:uppercase;box-shadow:0px 0 4px #202020;padding:4px 0 6px;opacity:.7}
 a.load-more-button:hover{opacity:1}
+input:focus,button:focus{outline:0}
 blockquote{margin:0 0 20px 10px;padding-bottom:8px}
 blockquote dt{background:transparent url('http://localhost/captiv8/template/img/4.png') repeat-x scroll;padding:7px;font:bold 13px "Tahoma";color:#94CCE0;}
 blockquote dd{margin-left:35px}
-.nam,.posts_t1 span,#left1 h3,.chat_box div,.notice,#left_menu a{-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+.nam,.posts_t1 span,#left1 h3,.chat_box div,.notice,#left_menu a,.noselect{-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
 .nam{font:13px "Lucida Sans Unicode";}
 input[type=text].inline{display:inline;width:auto;margin-left:5px}
 #school_search a.school_box h3{padding:3px 0}
@@ -276,7 +277,7 @@ div.box[ref] .spacer{text-align:right;}
 .chat-b a.button_samp{font-size:10px;text-transform:uppercase;margin-right:0;box-shadow:0 0 0 transparent;border-bottom:2px solid #202834;padding:3px 8px 4px}
 .chat_box{max-height:150px;overflow-y:auto;margin-top:5px}
 .chat_box div{background:transparent url('http://localhost/captiv8/template/img/4.png') repeat-x scroll bottom left;}
-.chat_box div{padding:3px 10px 5px;background-color:#424D5D;font-weight:bold;text-align:right}
+.chat_box div{padding:3px 10px 5px;background-color:#424D5D;font-weight:bold;text-align:right;margin:2px 0}
 .chat_box p{padding:4px 5px;}
 #chat_list p{line-height:14px}
 a.pawn{text-decoration:none;}
@@ -315,3 +316,33 @@ p.misc{text-align:right;font:italic 13px "Lucida Sans Unicode";color:#9EC1DC;}
 .header.box h3,.header.box h3 a{font:bold 25px "Lucida Sans Unicode";text-decoration:none;color:#9EC1DC}
 .header_etc a.button_samp{float:right;margin-top:10px;opacity:.7}
 .header_etc a.button_samp:hover{opacity:1}
+input.inline{float:left;width:auto;margin:3px 5px 0 0!important;}
+input.inline2{float:left;width:auto;padding:0px;margin:0 0;border:0;cursor:pointer}
+#image_embed{margin-top:10px}
+#image_embed a{padding:6px 6px 4px;margin-right:8px;float:left}
+#image_embed a img{max-width:100px;max-height:100px}
+.content p.image_embed{padding:10px 10px 5px}
+.chat_box p[time_posted]:hover{background:#424D5D}
+span.time{display:block;padding:4px;font-size:10px;color:#C4E6EF;}
+.edu_listing td{background-image:none}
+.edu_listing th.left_side{min-width:150px;width:0px;max-width:200px;text-align:right;padding:0 10px;font:bold 12px "Lucida Sans Unicode";color:#9EC1DC;}
+.edu_listing .box h4{font-weight:bold;display:block;border-bottom:1px solid #28374D;color:#64B0DF}
+.edu_listing .box table{border-top:1px solid #556378}
+.edu_listing .box td{text-shadow: 0 1px 0 #000}
+.noselect{cursor:default}
+.contentbox h3[class].inline_block{display:inline-block;background-image:none} 
+.box a.school_menu{text-decoration:none;font:11px "Lucida Sans Unicode";padding:3px 6px;color:#fff;opacity:.5;border-width:1px}
+.box a.full_glow{border-top:1px solid #556378;opacity:1;font-weight:bold}
+.full_glow,.box a.school_menu:hover{opacity:1;}
+a.school_menu span{font-weight:normal}
+.notice2 ol,.notice2 ul{margin:10px 0;padding:0 5%;}
+#new_snowglobe td{vertical-align:top}
+tr.h4_row td{padding:0 7px 4px}
+#black_overlay .contentbox input.largeform, .form_cobble form textarea{margin:3px 0 7px;width:100%}
+tr.message td{padding:4px 8px}
+.edu_listing th.left_side{width:150px;}
+#left1 .dropdown_content{padding-top:9px}
+#left1 .dropdown_content .spacer,.reg .spacer{color:#333;background:#fff;border:0;box-shadow: 0 0;text-shadow: 0 0;margin:0;width:auto;box-shadow: 0 2px 3px #333;}
+.reg .dropdown_content{font:11px "Tahoma"}
+.notice2 .reg .dropdown_content{padding-top:4px}
+.right.q_submit{margin:10px 0;}

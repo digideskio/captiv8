@@ -24,7 +24,7 @@ $profile_link = $main_dir . "profile/" . $_MONITORED['login_q'];
 //menu
 echo "<div id='user_menu'>
                                                   
-<span class='drop'><div class='left uplink'>".$nx[11].", <a class='username' href='$profile_link'>". $_MONITORED['login_q'] ."</a>.  </div><div class='dropdown_content rad'><span class='quick_links'><a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/usedservices'>".$nx[12]."</a><a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."'>".$nx[13]."</a></span></div></span>";
+<span class='drop'><div class='left uplink'>".$nx[11].", <a class='username' href='$profile_link'>". $_MONITORED['login_q'] ."</a>.  </div><div class='dropdown_content rad'><span class='quick_links'><a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/usedservices'>".$nx[12]."</a><a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."'>".$nx[13]."</a><a href='".$main_dir."logout/".$_MONITORED['temp_n']."'>".$nx[53]."</a></span></div></span>";
 
 
 //Notifications
@@ -62,39 +62,68 @@ echo "<div id='left_menu'> <h3>Main Menu</h3>
 <a href='".$main_dir."profile_nuise/". $_MONITORED['login_q'] ."/find/settings'>Display Settings</a>
 <a href='message_panel' class='prompt'>Messages</a>
 <a href='misc_opts' class='prompt'>Miscellaneous</a>
-</div>";          #2E3B4D        
+</div>";  
+
+       
 } 
 
 if(isset($_GET['snowglobe'])):  ?>
 <div id="sg_desc" class="box rad">  <h3><?php echo $sg_details['sg_name']; ?></h3>
-<?php if((!empty($sg_details['description']) || !preg_match("#^[ ]+$#",$sg_details['description'])) ){?>
+<?php if((!empty($sg_details['description']) || !preg_match("#^[ ]+$#",$sg_details['description'])) ){
  
-<?php echo (preg_match("#^ {0,}$#",$sg_details['description'])) ? $nx['50'] : $sg_details['description']; ?>    
+echo (preg_match("#^ {0,}$#",$sg_details['description'])) ? $nx['50'] : $sg_details['description']; 
 
-<?php } ?>
+ } ?>
 
 
 
 
 </div>
-<?php endif; 
-if(logged_in_check){
-if(index_page_check){     
+<?php 
+
+endif; 
+
+if(logged_in_check){ if(index_page_check){  //promotion for our school lecture snowglobe feature
+//Originally I had planned to call it "lecture notes" but it seems kind of ambiguous at this point
+
+if(mysqli_num_rows($edu_select) > 0):
+
+$find_followed_class_snowglobes = mysqli_query($db_main, "SELECT * FROM sg_permissions WHERE towhom='$_MONITORED[login_q]' AND granted_by REGEXP '[/05B]sc[/05C]$' AND EXISTS(SELECT * FROM education WHERE forwhom='$_MONITORED[login_q]' AND is_current='true')");
+
+if(mysqli_num_rows($find_followed_class_snowglobes) > 0){
+?>
+
+<div class="box notice2">
+<h3>School Classes</h3>
+
+<?php 
+      $get_school_regs = mysqli_fetch_assoc($find_followed_class_snowglobes);
+      while($regs_dt = mysqli_fetch_assoc($get_school_regs)){
+      merge($regs,preg_replace("#^([0-9]+)#","$1",$regs_dt['granted_by']));
+      }
+      $regs = preg_replace("#[^,0-9]#","",json_encode($regs)); //so tacky
+      var_dump($regs);
+     //if(){
+?>
 
 
+<?php// }   ?>  
 
-                                                 
+</div>
+
+<?php }else{ ?>
+
+<?php echo $nx['56']; ?>
+
+<?php } endif;                                             
 echo $nx['29'];    // posting tips
-
-//this is gonna be a fun SQL statement. Oh boy
-
 $find_users_to_chat_with = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' LIMIT 100");
 
 
 
 //get list of tabbed users                      
 
-foreach(json_decode($logged_dt['tabbed_users']) as $key => $value){  
+foreach(json_decode($logged_dt['tabbed_users']) as $num => $value){  
 
 echo "<div class='box chat-b' ref='" . $value . "' preloaded='true'><h3>". $nx['40'] . $value . "</h3><div class='chat_box'><div class='loading_text'>Loading...</div></div><div class='chat_panel'><textarea></textarea></div><a class='prompt button_samp rad chat-buttons' href='submit-chat-msg'>SUBMIT</a><a class='prompt button_samp rad chat-buttons' href='close-chat'>Close</a></div></div>";
 
@@ -119,14 +148,7 @@ echo '</div>';
 //if(preg_match()){}\
 
       echo "<div class='box space1'></div>";
-echo "</td><td width='99%' id='vc2'>";   
-
-
-
-
-
-
-
+echo "</td><td width='99%' id='vc2'>";           
 
 
 
@@ -134,7 +156,7 @@ echo "</td><td width='99%' id='vc2'>";
 if(isset($_GET['query'])){   
 if(logged_in_check){ 
 if(count($_GET) == 1){
-$edu_find = mysqli_query($db_main, "SELECT * FROM education where forwhom='$_MONITORED[login_q]'");
+$edu_find = mysqli_query($db_main, "SELECT * FROM education e, school s WHERE e.school_id = s.s_id AND e.forwhom='$_MONITORED[login_q]'");
 
 //editing your own profile
 echo "<form action='index.php?verify=". $_SESSION['temp_n'] ."&action=edit_profile' method='POST'>";
@@ -164,9 +186,6 @@ echo "<table class='dashed'>";
 echo "<tr><td>";
 
 //create the form
-
-
-      echo "<br>";
 if(mysqli_num_rows($edu_find) < 1){                                
 echo "<p class='notice center'>You have not made any education entries.</p>";
 echo "<div class='panel rad'><table><tr><td width='25%' class='left_side'>College</td><td>";
@@ -179,17 +198,92 @@ echo "<div class='panel rad'><table><tr><td width='25%' class='left_side'>High S
      echo "<input class='largeform flick school_search' value='High school entered/currently entering...'>";
 echo "</td></tr></table></div>";
 
-}else{
+}else{ 
+echo '<div class="edu_listing">';
+while($edu_list = mysqli_fetch_assoc($edu_find)){   
+
+$class_sg_check = mysqli_query($db_main, "SELECT * FROM snowglobes WHERE special_settings='school' AND reference_num='$edu_list[s_id]'");
+?>
+<div class="contentbox hide" s_id="<?php echo $edu_list['s_id']; ?>">
+<h3>Classes on <em><?php echo $edu_list['name']; ?></em></h3> 
+
+
+<div id="new_snowglobe"> <table>
+<tr class="h4_row"><td>Classroom Snowglobe</td><td>Fill-in Form</td></tr>
+
+<tr class="message"><td width="50%" class="notice2">
+
+
+<?php if(mysqli_num_rows($class_sg_check) > 0){ 
+//has classes in school or none
+?>
+
+<div class="load_classes"></div>  
+
+<?php } else { ?>
+
+<?php echo $nx['55']; ?>
+
+<?php } ?>    </td>
+
+<td class="form_cobble" valign="top">
+ 
+<!-- <input type="text" value="" name="" class="flick largeform" validation="{new_sg:x}">  -->
+<input type="text" value="Name of class/subject, or teacher's name, or both." name="sg_name" class="flick largeform" validation="new_sg:name">
+<textarea name="sg_desc" class="flick largeform" validation="new_sg:desc">
+Describe the class, insert useful material, etc.
+</textarea>
+
+<input type="submit" value="Start classroom discussions!" class="right q_submit" heading="<?php echo $main_url;?>">
+
+</td> </tr></table>    
+</div>
+
+</div>
+     <!-- <h3><?php echo $edu_list['school_name']; ?></h3>
+
+
+
+<?php echo $edu_list['']; ?> -->   
+
+<div class="box">                      
+<h3 class='inline_block'><?php echo $edu_list['name']; ?></h3><a href="find-classes" class="school_menu spec rad prompt full_glow" school_id="<?php echo $edu_list['s_id']?>"><span>&#10004;</span> Find Your Classes!</a>
+<a href="delete_record:<?php echo $edu_list['e_id']; ?>" class="school_menu spec rad prompt">Delete Education Entry</a>
+<a href="other_options" class="school_menu spec rad prompt">Other Options</a>
+<h4 class='noselect'>History</h4>    
+<table>
+<tr>
+<th class="left_side">Year Started</th>
+<td><?php echo $edu_list['started']; ?></td>
+</tr>
+<tr>
+<th class="left_side">Year Finished</th>
+<td><?php echo ($edu_list['is_current'] == "true") ? $nx['54'] : $edu_list['finished']; ?></td>
+</tr>
+
+</table>
+<h4 class='noselect'>School Details</h4>
+<table><tr>
+<th class="left_side">Link</th>  
+<td><a href='<?php echo $edu_list['link']; ?>'><?php echo $edu_list['link']; ?></a></td>
+</tr></table>
+</div> 
+
+<?php
+}     echo "</div>";
+
 }
-     echo "<br>";
-echo "</tr></td>";  
+echo "</td></tr>";  
 
 echo "</table>";
 
 echo "</span>";
 
 
-echo "</div>";   } else{
+echo "</div>";   
+
+
+}else{
 
 
 if(isset($_GET['find'])){

@@ -56,33 +56,27 @@ $("head").ready(function(){   //gets executed faster than $(document).ready()
 
 //no background image on last child
 
-
-
-
-
 $(".quick_links a:last-child").css("background-image","none");
 
 
 $("#user_menu .uplink").append("<img src='<?php echo $image_dir; ?>9.png' alt='\(Options\)'>");
 $(".posts_t1:first").addClass("nobg");
-$(".profile_main,h3.content_q").wrapInner("<div class='part_1'><div class='part_2'><div class='part_3'></div></div></div>"); //everything that needs 3-part backgrounds
+//everything that needs 3-part backgrounds
+$(".profile_main,h3.content_q").wrapInner("<div class='part_1'><div class='part_2'><div class='part_3'></div></div></div>"); 
 
-//lazy dropdowns - also I have to work on a border on .right later
-//started over, there's no shame in doing it
+//lazy dropdowns
 //this time I hope to make it even more fluid, making a parent span element the trigger to open the dropdown box
-//lol it actually worked
 //can't have margins inbetween dropdown boxes and their respective menus, otherwise it'll trigger the mouseleave. span.drop's encapsulation in the area space is limited to objects that are connected, and margins separate the connection.
-$("span.drop").each(function(){
 
-$(this).on({'mouseover':function(){
+$("body").on('mouseover',".drop",function(){
+
 var nina = $(this).find(".uplink");
 var nina2 = nina.offset().left;
 var nina3 = nina.offset().top + nina.height();
 $(this).find(".dropdown_content").attr("style","left: "+nina2+"px; top: "+nina3+"px;display:block;position:absolute");
 
+}).on('mouseleave',".drop",function(){
 
-
-}, 'mouseleave':function(){
 $(this).find(".dropdown_content").attr("style","display:none");
 if($(this).is("#notifs_drop")){                                           
 $.get("<?php echo $main_dir; ?>template/simcheck.php",{"nm_time":"notifs","action":"clearnotifs"},function(data){if(data.notifs_left > 0){$("#notifs_bar .spacer .note").html("("+data.notifs_left+" new)");
@@ -95,16 +89,19 @@ zen3 = $("title").html();
 zen3 = zen3.replace(/[\050]([0-9]{1,3})[\051][ ](.+)/,"$2");
 $("title").html(zen3);
 
-
 }},"json");
 }
-}
-
-})
 });
 
+$("*[message]").each(function(){
 
-/*fix this shit starting here*/
+class_inserts = (typeof $(this).attr("dd_class") !== "undefined") ? " "+ $(this).attr("dd_class") : "";
+
+
+$(this).wrap("<span class='drop"+ class_inserts +"'><span class='uplink'></span></span>").parent().after("<div class='dropdown_content'><div class='spacer'>"+$(this).attr('message')+"</div></div>");
+});
+
+$("#user_menu .left,#user_menu .right,#user_menu .dropdown_content,#left1 div.box").wrapInner("<div class='spacer' />");
 
 
 
@@ -150,16 +147,45 @@ $(this).parent().prev().find(".boxxy").detach();
 
 }
 }
-
-
-});    $("#user_menu .left,#user_menu .right,#user_menu .dropdown_content,#left1 div.box").wrapInner("<div class='spacer' />");
-
                                       
-                                                  
+
+}); 
 
 
 
+$("body").on("change",".upload",function(){
 
+if(typeof set_limbo_images !== "string"){ //only one upload per post.
+
+var formData = new FormData($('#post_k')[0]);
+$.ajax({
+url: "<?php echo $main_dir;?>template/simcheck.php?action=file_test",
+data: formData,
+async: false,
+contentType: false,
+processData: false,
+type: 'POST', 
+cache: false, 
+dataType: "json", 
+success: function(image_sync)
+{   alert(image_sync.message);
+
+if(image_sync.result == "success"){
+url = "<?php echo $main_dir; ?>images/"+image_sync.hash+"."+image_sync.file_type+"";
+
+$("#main_new_post").append("<div id='image_embed'><a href='"+url+"' target='_blank'><img src='"+url+"' alt='"+image_sync.hash+"'></a></div><input type='hidden' name='image_data' value='"+image_sync.hash+"'>");
+set_limbo_images = "";
+}
+
+}
+});
+
+}else{
+alert("You have already uploaded an image for this post you are about to make.");
+}
+//$.get("<?php echo $main_dir;?>template/simcheck.php",{"action":"file_test","file_src":$(this).val()},function(messages){ alert(messages);  });
+});                                       
+                                            
 $("body").on('focus','.flick',function(){
 if($(this).val()==$(this).prop("defaultValue")){
 $(this).attr("extra",$(this).val()).val("");       
@@ -168,11 +194,9 @@ $(this).val($(this).prop("defaultValue"));
 } }).on('change','.flick',function(){if($(this).hasClass("named") && ($(this).val().length == 0 || $(this).val()==$(this).prop("defaultValue"))){$(this).removeClass("named")}else{$(this).addClass("named")}
 if($(this).val().length == 0){
 $(this).val($(this).prop("defaultValue")); //had to change it to this for textareas
-}}).on('keyup','.flick',function(event){             
+}}).on('keyup','.flick',function(event){
+             
 <?php if(isset($_SESSION['login_q']) && compare_dz($logged_dt['password'],$_SESSION['salt_q'])): ?>  
-
-
-
 <?php if(count($_GET) == 1): ?>
 
 if($(this).hasClass("school_search")){    
@@ -185,47 +209,40 @@ if($(this).hasClass("school_search")){
     event.stopPropagation();    
     if($(this).next().is("div")){   // $(this).next("#spark").html($(this).val());         
  $(this).next("div").load("<?php echo $main_dir; ?>template/simcheck.php?action=school_search&criteria="+encodeURIComponent($(this).parent().prev().text())+"&search_q=" +encodeURIComponent($(this).val()));
-
-
-    }else{
-    $(this).after("<div></div>");    }
-
-
-   
-
- }
- <?php endif; ?> <!-- end count($_GET) conditional -->    
- 
- 
-   
- 
- 
+}else{
+$(this).after("<div></div>");    }
+}
+ <?php endif; ?>
+  
    <?php endif; ?>
 //add em'
 });
 
 
+//uploaderrrrrrrr durr
 
 
-/*
-$(".flick").each(function(){
+//image upload placeholder, but maybe I could set it up for other CSS hacks in the future
+//I have to use setinterval because apparently the positioning of the placeholder might be changed
+
+$(".placeholder").each(function(){$(this).prev().toggle();});
+
+setInterval(function(){
+
+$(".placeholder").each(function(){
+if($(this).prev().length == 0){$(this).before("<div></div>");}
 
 
+dimensions = [$(this).outerWidth(),$(this).outerHeight()];
+positions = [$(this).offset().top,$(this).offset().left];  
 
-$(this).on('focus', function(){
-if($(this).val()==$(this).prop("defaultValue")){
-$(this).attr("extra",$(this).val()).val("");       
+
+if(($(this).prev().attr("style") == "display: none;") || ($(this).prev().offset().top - positions[0] > 2) || ($(this).prev().offset().top - positions[0] < -2) || ($(this).prev().offset().left - positions[1] > 2) || ($(this).prev().offset().left - positions[1] < -2)){
+$(this).css("z-index","3").prev().toggle().css({"width":dimensions[0] + "px","height": dimensions[1] + "px","top":positions[0] + "px","left":positions[1] + "px","position":"absolute","z-index":"1","opacity":"0"});
 }
-
-}).blur(function(){if($(this).val().length == 0){
-$(this).val($(this).prop("defaultValue"));
-} }).change(function(){if($(this).hasClass("named") && ($(this).val().length == 0 || $(this).val()==$(this).prop("defaultValue"))){$(this).removeClass("named")}else{$(this).addClass("named")}
-if($(this).val().length == 0){
-$(this).val($(this).prop("defaultValue")); //had to change it to this for textareas
-}
- //yup, change covers more than blur
-});     
-});  */                  
+});                                                                                                        
+}, 1000);
+                
 $("#first1").attr("extra",$("#first1").height()).addClass("lolbuffer").animate({height:$("#first1").attr('extra')},2200).removeClass("lolbuffer");
 $("#close_button1").click(function(event){event.preventDefault();
 $(this).parents("td#left1 div").detach();});  
@@ -265,8 +282,17 @@ if($(this).hasClass("a1") && $(this).next("input").prop("checked",false)){$(this
 
 <?php if(isset($_SESSION['login_q'])): ?>
 
+$("input[name='sg_name']").tooltip({position: { my: "left+10 center", at: "right center-1" }, content: "<span id='checkn1'>We just need a first and last name.</span>"});                                  
 
-$("input[name='sg_name']").tooltip({position: { my: "left+10 center", at: "right center-1" }, content: "<span id='checkn1'>We just need a first and last name.</span>"});
+$("body").on('mouseenter',".chat_box p[time_posted]", function(){
+
+$(this).addClass("get_time").append("<span class='time'>"+$(this).attr('time_posted')+"</span>");
+
+if(last_id == $(this).attr("num")){$(this).parent().scrollTop("234234");} //scroll the chat box all the way down on the last message to see the timestamp without having to do it manually
+
+}).on('mouseleave',".chat_box p[time_posted]",function(){
+
+$(this).removeClass("get_time"); $(this).find(".time").remove();    });
 
 function load_replies(user_in_call,append_last){ 
 
@@ -276,34 +302,20 @@ $.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user"
                                                            
 if(chat_sync.message == "success"){ 
 //connection does exist            
+                                                                         
+if(typeof chat_sync.messages === "object"){  $("#no_messages_yet").remove();
 
+if(typeof append_last !== "undefined" && append_last == "reload"){delete messages_p;}
 
-                                             
-                                
-if(typeof chat_sync.messages === "object"){
+<?php include("template/post_list.js"); ?>
 
-
-for(i = 0;i <= chat_sync.messages.length - 1;i++){
-message = chat_sync.messages[i].content; 
-user = chat_sync.messages[i].bywhom; 
-postid = chat_sync.messages[i].postid;
-j = i -1;  
-                                 
-r_format = ((j < 0 && i == 0) || (i > 0 && chat_sync.messages[j].bywhom != user)) ? "<div>"+user+"</div><p num='"+postid+"'>"+message+"</p>" : "<p num='"+postid+"'>"+message+"</p>"; //check whether previous user was the same one so I won't have to spell the username for each reply
-//count the very first message
-
-messages_p = (typeof messages_p === "undefined") ? r_format : messages_p + r_format;   
-
-}
 }else{                                  
-messages_p = "<p><em>" + chat_sync.messages + "</em></p>";  //no messages in conversation yet
+messages_p = "<p id='no_messages_yet'><em>" + chat_sync.messages + "</em></p>";  //no messages in conversation yet
 }
 
 
 if(typeof append_last !== "undefined" && append_last == "reload"){ //reload posts after the user replies to a conversation box
-
 $(".chat-b[ref='" + chat_sync.user + "'] .spacer .chat_box").empty().html(messages_p);
-
 }
 
 chat_box = "<div class='box chat-b' ref='" + chat_sync.user + "'><div class='spacer'><h3><?php echo $nx['40']; ?>" + chat_sync.user + "</h3><div class='chat_box'>"+messages_p+"</div><div class='chat_panel'><textarea></textarea></div><a class='prompt button_samp rad chat-buttons' href='submit-chat-msg'>SUBMIT</a><a class='prompt button_samp rad chat-buttons' href='close-chat'>Close</a></div></div></div>";
@@ -317,8 +329,7 @@ $(".chat-b[ref='" + chat_sync.user + "'] .spacer .chat_box").scrollTop(zen);
 
 } //end "success"ful message
 },"json");  //end get_tabbed_users get switch
-delete zing;    
-
+delete zing;
 }
 
 
@@ -363,7 +374,7 @@ alert(message);
 if(/^chat-with-user[:]/.test($(this).attr("href"))){
 zing = $(this).attr("href").replace(/^chat-with-user:(.+)$/,"$1");
 
-if($(".chat-b").length <= 5){
+if($(".chat-b").length < 5){
 
 load_replies();
 
@@ -380,8 +391,7 @@ delete zing;
 }
 
 
-if($(this).attr("href") == "submit-chat-msg"){                 //submit a chat message
-//it's as good as that
+if($(this).attr("href") == "submit-chat-msg"){ //submit a chat message
 
 $.post("<?php echo $main_dir; ?>template/simcheck.php?action=submit-chat-msg",{"towhom":$(this).parent().parent().attr("ref"),"message":$(this).parent().find(".chat_panel textarea").val()});
 $(this).parent().find(".chat_panel textarea").val("");
@@ -400,8 +410,12 @@ $(".prompt[value='SEARCH SCHOOL']").next("div").removeClass("contentbox").html(d
 }
 
 if($(this).attr("href") == "close-chat"){
-$(this).parent().parent().empty().detach();
-$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user","user":$(this).parent().parent().attr("ref"),"box_action":"close"}); //close it in the array
+
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user","user":$(this).parent().parent().attr("ref"),"box_action":"close"},function(message22){
+set = "x";       
+}); 
+if(set == "x"){ $(this).parent().parent().empty().detach();      delete set;     }
+//close it in the array
 }
 
 
@@ -409,22 +423,20 @@ if($(this).attr("value") == "Complete Details"){       i = -1;
 s_layer = $(this).attr("id");   zeus = new Array();        
 $("."+s_layer).each(function(){ i++;//isn't that fun 
 zeus[i] = $(this).attr("name") + " : " + $(this).val();     
-});   i = 0;
-
-
-
-alert(zeus);    
+});   i = 0;   
 $.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"complete_details","data":zeus}).done(function(msg){ alert(msg); 
 if(msg == "<?php echo $nx['38']; ?>"){
-window.location.assign('<?php echo $_SERVER['HTTP_HOST'] . "/" . $_SERVER['PHP_SELF']; ?>/index.php?query=<?php echo $_MONITORED['login_q']; ?>');         
+window.location.assign("<?php echo $main_dir;?>profile_nuise/<?php echo isset($_SESSION['login_q']) ? $_SESSION['login_q'] : ''; ?>");         
 }
 });
 }
 
+if($(this).attr("href") == "find-classes" && $("#black_overlay").length < 1){
+school_id = $(this).attr("school_id");                
 
-
-
-
+$("body").prepend($black_layer[0] + $black_layer[1]);
+$(".contentbox[s_id="+school_id+"]").appendTo("#widthfix");
+}
 
 if($(this).attr("href") == "submit-edit"){  
 $.post("<?php echo $main_dir; ?>template/simcheck.php?action=css_edit",{"data":$("#jones").val(),"file":$("#jones").attr("title")},function(data){

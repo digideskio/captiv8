@@ -10,7 +10,7 @@ public function show(&$array_name){  global $reply_wrap,$logged_dt,$main_dir;
 //$array_name will be the array that's called from the for/while loop that'll be getting all the replies
 //you can find it at vars.php
 
-echo $reply_wrap[0]. "<h4><a href='/profile/".$array_name['bywhom']."'>".$array_name['bywhom']."</a></h4>".$reply_wrap[1].$array_name['content']. " ". $reply_wrap[2] ." <a href='".$main_dir."/thread/".$_GET['thread_view']."/comment/".$array_name['topic_hash'] ."'>". date(dflt_date_f, strtotime($array_name['stamptime'])) . $reply_wrap[3]; 
+echo $reply_wrap[0]. "<h4><a href='/profile/".$array_name['bywhom']."'>".$array_name['bywhom']."</a></h4>".$reply_wrap[1].$array_name['content']. " ". $reply_wrap[2] ." <a href='".$main_dir."thread/".$_GET['thread_view']."/comment/".$array_name['topic_hash'] ."'>". date(dflt_date_f, strtotime($array_name['stamptime'])) . $reply_wrap[3]; 
 
 if(isset($_SESSION['login_q']) && compare_dz($logged_dt['password'],$_SESSION['salt_q'])){
 echo $reply_wrap[4] . " alt='".$array_name['postid']."'>";
@@ -26,8 +26,7 @@ echo $reply_wrap[5];
 } echo $reply_wrap[6];
 }
 
-}
-     
+}     
 
 require_once("lib/simple_html_dom.php");
 
@@ -35,12 +34,21 @@ if(isset($_GET['error_reporting']) && $_GET['error_reporting'] == "false"){     
 error_reporting(~E_ALL);
 }
 
+function verify_var(&$array_in_question){
+//for the wikipedia data entries which have different field names for certain entries, like a location/coordinates,v
+//all arrays that you're going to put in reference here has to have an email sign before it to remove error notices
+foreach($array_in_question as $variable){
+if(isset($variable)){return $variable;  //first variable that exists will be the return value
+}
+}
+}
 
 function merge(&$array_to_merge_in,&$merge_object,$placement_method = "prepend",$override = true){
 
 if(isset($array_to_merge_in)){
 if($override = true || ($override = false && !isset($merge_object))){
 switch($placement_method){
+default:
 case "prepend":
 $array_to_merge_in = array_merge($merge_object,$array_to_merge_in);
 break;
@@ -91,6 +99,11 @@ $time = [
 
 
 ];
+
+
+function sql_filter($x){  global $db_main;
+return mysqli_real_escape_string($db_main,$x);
+}
  
 
 function compare_dz($a, $b) {   //Nanosecond timing attack prevention 
@@ -229,13 +242,15 @@ $logged_dt_c = ($logged_dt_c['tabbed_users'] !== "[]") ? json_decode($logged_dt_
 
 
 switch($status){
+
 case "open": 
 //update it
 if(count($logged_dt_c) < 5){       //check if it's empty and that there's less than 5 of it in
 $logged_dt_c = (is_array($logged_dt_c) && array_search($user,$logged_dt_c) === false) ? array_merge($logged_dt_c,[$user]) : [$user]; //the latter condition is there to prevent name duplicates
 }
 break;
-case "close": 
+
+case "close":  
 unset($logged_dt_c[array_search($user,$logged_dt_c)]);  //i'm very lazy
 break;
 }
