@@ -1,23 +1,15 @@
 <?php
-//time to start with polls
-//first create the polls DB
-//save it for later reference
-
-//i'm also gonna have to make a user's personal posts along with this
-//so personal user snowglobe posts will be cnttype = 1
-
-// mysqli_query($db_main, "CREATE TABLE polls(post_id_root INT NOT NULL,question varchar(100), num_values INT NOT NULL, a1 varchar(100), a2 varchar(100), a3 varchar(100), a4 varchar(100), a5 varchar(100), a6 varchar(100), a7 varchar(100), a8 varchar(100), a9 varchar(100), a10 varchar(100), a11 varchar(100), a12 varchar(100), a13 varchar(100), a14 varchar(100), a15 varchar(100), a16 varchar(100), a17 varchar(100), a18 varchar(100), a19 varchar(100), a20 varchar(100))");
-//this is the index template
-
-
+//data display mostly
+//profile view, thread view, snowglobe view, etc. belong here
 
 if(logged_in_check && index_page_check){   //make a new post panel(for threads)
- echo "<div id='content' class='contentbox hide'>".$nx['31']."</div>";
-echo "<form method='POST' action='index.php?direct=new_post' id='post_k'>
-<span id='input_save'></span>
-<div class='extra_opts'><a href='add-poll' class='prompt' id='attach_poll_q'>".$nx[30]."</a></div><div id='main_new_post' class='contentbox'>"; 
-echo "<div class='sect_1'><input type='text' maxlength='150' value='".$nx['17']."' class='flick largeform' name='tcha1' id='title_trigger'>
-<textarea name='tcha2' class='flick largeform'>".$nx['18']."</textarea></div>";  
+    //I want to make the format different from the snowglobe post panel because reasons
+    $fill_data->pt_post_opt($default_pts);
+    echo "<form method='POST' action='index.php?direct=new_post' id='post_k'>
+    <span id='input_save'></span>
+    <div class='extra_opts'><a href='add-poll' class='prompt' id='attach_poll_q'>".$nx[30]."</a></div><div id='main_new_post' class='contentbox'>"; 
+    echo "<div class='sect_1'><div class='pseudo_form'><table><td id='pt_opts'></td><td><input type='text' maxlength='150' value='".$nx['17']."' class='flick largeform' name='tcha1' id='title_trigger'></td></tr></table></div>
+    <textarea name='tcha2' class='flick largeform' id='post_content'>".$nx['18']."</textarea></div>";  
 //post as: formats
 
 //image uploads
@@ -34,15 +26,8 @@ echo "<div class='sect_2 button_row'>
 
 //check for all snowglobes they can make a thread in, of course being able to post in your own profile snowglobe is always your right, and it'll be called "1"
 echo "<input type='checkbox' checked='checked' name='sg_1' snowglobe='".$nx['20']."'></div></div></span>";
-//as for the rest...
-$passes = mysqli_query($db_main, "SELECT * FROM sg_permissions WHERE towhom='$_MONITORED[login_q]'");
-$stack = mysqli_fetch_assoc($passes);
 
-mysqli_free_result($passes);
-
-echo "
-
-<input type='submit' value='".$nx['21']."'></div>";
+echo "<input type='submit' value='".$nx['21']."'></div>";
 echo "</div></form>";  
 
 
@@ -65,8 +50,10 @@ echo "</div></form>";
 
 <?php endif;         }
 
-if(isset($_GET['snowglobe'])):   if(isset($_SESSION['last_postid'])){unset($_SESSION['last_postid']);}
-        //$sg_details['']
+if(isset($_GET['snowglobe'])): 
+    if(!(isset($_GET['get_more']) && $_GET['get_more'] == "special") && !isset($_GET['sg_lp_id'])):
+        unset($_SESSION['last_postid']);
+    endif;
 ?>
 <div class="header box" id="sg_header">
 <table><tr><td width="1%" class="sg_logo"></td><td class="header_etc">
@@ -76,14 +63,16 @@ if(isset($_GET['snowglobe'])):   if(isset($_SESSION['last_postid'])){unset($_SES
 
 
 
-<?php                       
+<?php      
+
+$fill_data->pt_post_opt($ptype_list);                 
       
- echo "<div id='content' class='contentbox'>".$nx['31']."</div>";            
+ echo "<div class='contentbox hide' id='content'>".$nx['31']."</div>";            
 echo "<form action='".$main_dir."index.php?direct=new_post' method='POST' id='post_k'>
 <span id='input_save'></span>
 <div class='extra_opts'><a href='add-poll' class='prompt' id='attach_poll_q'>".$nx[30]."</a></div><div id='main_new_post' class='contentbox'>"; 
-echo "<div class='sect_1'><input type='text' maxlength='150' value='".$nx['17']."' class='flick largeform' name='tcha1' id='title_trigger'>
-<textarea name='tcha2' class='flick largeform'>".$nx['18']."</textarea></div>";  
+echo "<div class='sect_1'><div class='pseudo_form'><table><td id='pt_opts'></td><td><input type='text' maxlength='150' value='".$nx['17']."' class='flick largeform' name='tcha1' id='title_trigger'></td></tr></table></div>
+<textarea name='tcha2' class='flick largeform' id='post_content'>".$nx['18']."</textarea></div>";  
 //post as: formats
 
 
@@ -95,116 +84,139 @@ echo "<div class='sect_2 button_row'>";
 echo "<input type='hidden' name='sg_".$sg_details['sg_url']."' value='on'>";
 //as for the rest...
 
-echo "
-
-<input type='submit' value='".$nx['21']."'></div>";
+echo "<input type='submit' value='".$nx['21']."'></div>";
 echo "</div></form>";  
+
 // view posts
 
 if(mysqli_num_rows($sg_data[1]) > 0){
+$y = 0;
+?>
 
+<div id="p_type_selector">
+    <span class="drop">
+        <div class="uplink cute_button" name="all" id="pt_drop" sg_id="<?php echo $sg_details['sg_id'];?>">
+            <span>Viewing:</span>
+        </div>
+        <div class="dropdown_content">
+            <div class="spacer">
+                <table class="z_type">
+                <tr>              
+                <td>                                         
+                <a href="select_of_p_type" class="prompt<?php if(!isset($_SESSION['saved_pt_views']) || !isset($_SESSION['saved_pt_views'][$sg_details['sg_id']])): ?> selected<?php endif;  ?> pt_toggle all_posts_q" id="0">All Posts</a>
+                <?php  
+                //$m is the row increment, $n is the first row conditional set to count all posts as one entry, 
+                //and if $o is recognized, then there's a new column
+                $n = true; 
+                foreach($ptype_list as $p_type): 
+                    $m = (!isset($m) || (isset($m) && $m == 4)) ? 0 : $m + 1 ;
+                    if(isset($o)) {
+                        echo "<td>\n";
+                    }    
+                    ?>          
+                    <a href="select_of_p_type" class="prompt<?php if(isset($_SESSION['saved_pt_views'][$sg_details['sg_id']][$p_type['pt_id']])): ?> selected<?php endif; ?> pt_toggle" id="<?php echo $p_type['pt_id'];?>"><span><?php echo $p_type['call_name']; ?></span>
+                    <p><?php echo $p_type['description']; ?></p>                                 
+                    </a>
+                    <?php 
+                    if(($m == 3 && isset($n)) || ($m == 4 && !isset($n)) ){  
+                        echo "\n</td>"; 
+                        $o = 0;  //set the ending </td>, or not
+                        if(isset($n)){ unset($n); } 
+                    }                         
+                endforeach; 
+                ?>
+                <?php if(!isset($o)): ?> </td> <?php else: unset($o); endif; ?> 
+                </tr>
+                </table>
+            </div>
+        </div>
+    </span>
+</div>
+
+<?php
+echo "<span id='nf_encapsulated'>";
 include("template/news_feed.php");
-
-}else{
+echo "</span>";
+}
+else{
 ?>
 <?php echo $nx['49']; ?>
 <?php
-} 
-?>
-
-
-
-
-
-<?php
-endif;   //end $_GET['snowglobe'] conditional
-
+} endif;   //end $_GET['snowglobe'] conditional
 
 if(isset($_GET['thread_view'])){
-
-
-
-//viewing threads
-//it'll be a combination of the topic's hash and it's thread nickname
-//should help with search engines
-//ergo
-
-if($view_thread && ($thread_data['cnttype'] == "1")){     
-                             
-
-echo "<div class='contentbox' id='thread_main'><h3>".$thread_data['title']." <small>by <a href='index.php?profile=".$thread_data['bywhom']."'>".$thread_data['bywhom']."</a> at <span class='white'>". date(dflt_date_f, strtotime($thread_data['stamptime']))."</span></small></h3>";      //".$thread_data['']."
-if(strlen($thread_data['content']) > 3){echo "<p>".$thread_data['content']."</p>";  }
-echo "</div>";
-//reply-action to thread
-if(isset($_SESSION['login_q'])){                  //solution to our session hash failing to verify :/
-//maybe if I alias the submission page then it won't fail to verify somehow
-
-//echo "<div id='thread_reply' class='contentbox'><form action='".$main_dir."index.php?direct=new_post&verify=".$_SESSION['temp_n']."' method='POST'>
-
-echo "<div id='thread_reply' class='contentbox'><form action='".$main_dir."index.php?direct=new_post&verify=".$_SESSION['temp_n']."' method='POST'>
-<input type='hidden' value='". $thread_data['postid'] ."' name='parent_comment'>
-<input type='hidden' value='".$thread_id."' name='thread_id'>
-<textarea name='tcha2' class='flick largeform'>Comment on this thread...</textarea>   <input type='submit' value='POST REPLY'>
-</form></div>";  }      //get main threads only
-$snipe8 = mysqli_query($db_main, "SELECT *
-FROM posts
-WHERE parent = '$thread_data[postid]'
-ORDER BY stamptime DESC
-LIMIT 0,100");
-$queue = mysqli_num_rows($snipe8); 
-if($queue == "0"){
-echo "<div class='contentbox notice_msg'>There are no replies in this topic yet.</div>";
-}else{
- 
-if(!isset($_GET['comment'])){while($comment_loop = mysqli_fetch_assoc($snipe8)){$sync_25 = mysqli_query($db_main, "SELECT * FROM posts WHERE parent='$comment_loop[parent]' AND thread_id='$thread_data[postid]' ORDER BY stamptime DESC LIMIT 0,25");
-
-
- reply_format::show($comment_loop);
-/*echo "<div class='contentbox comment_box arch_1'><table><tr>
-<td class='user_info'><h4><a href='index.php?profile=".$comment_loop['bywhom']."'>".$comment_loop['bywhom']."</a></h4></td><td><p class='post_text'>".$comment_loop['content']."
-<span class='side_info'>- Posted <a href='?thread_view=".$_GET['thread_view']."&comment=".$comment_loop['topic_hash'] ."'>". date(dflt_date_f, strtotime($comment_loop['stamptime'])) ."</a></span>
-</p>";                                                                                                              
-if(isset($_SESSION['login_q'])){echo "<div class='opts_block' alt='".$comment_loop['postid']."'>";echo "<a href='#' class='comment_opts rad comment_q-u' name='post_".$comment_loop['postid']."' id='post_".$comment_loop['postid']."'>Reply</a><a href='#' class='comment_opts rad edit' id='edit_".$comment_loop['postid']."'>Edit</a>";echo "</div>";}
-echo"</td></tr></table>";    echo "</div>";      */
-
-//second and third and fourth level of comments and so on
-
-
-
-if(mysqli_num_rows($sync_25) > 0){//function get_posts($pid_call,$tid_call = "1",$limit = "25",$chain = "5")
-get_posts($comment_loop['postid'],$thread_data['postid']);
-
-}
- 
-}
-
-    
-    }else{  
-     while($comment_loop = mysqli_fetch_assoc($specific)){     $sync_25 = mysqli_query($db_main, "SELECT * FROM posts WHERE parent='$comment_loop[parent]' AND thread_id='$thread_data[postid]' ORDER BY stamptime DESC LIMIT 0,25");
-     
-     if($comment_loop['parent'] == $thread_id){
-          echo "<div class='contentbox comment_box arch_1 selected'><table><tr>
-<td class='user_info'><h4><a href='index.php?profile=".$comment_loop['bywhom']."'>".$comment_loop['bywhom']."</a></h4></td><td><p class='post_text'>".$comment_loop['content']."
-<span class='side_info'>- Posted <a href='?thread_view=".$_GET['thread_view']."&comment=".$comment_loop['topic_hash'] ."'>". date(dflt_date_f, strtotime($comment_loop['stamptime'])) ."</a></span>
-</p>";
-if(isset($_SESSION['login_q'])){echo "<div class='opts_block' alt='".$comment_loop['postid']."'>";echo "<a href='#' class='comment_opts rad comment_q-u' name='post_".$comment_loop['postid']."' id='post_".$comment_loop['postid']."'>Reply</a><a href='#' id='edit_".$comment_loop['postid']."' class='comment_opts rad edit' name='edit_".$comment_loop['postid']."' >Edit</a>";echo "</div>";}
-echo "</td></tr></table>";
-//second and third and fourth level of comments and so on
-
-echo "</div>";      
-
-//this is soooooo tacky
-
-if(mysqli_num_rows($sync_25) > 0){//function get_posts($pid_call,$tid_call = "1",$limit = "25",$chain = "5")
-get_posts($comment_loop['postid'],$thread_data['postid']);
-
-}
- mysqli_free_result($sync_25);
-}else{
-//the devil
-//wow I got this done so much more quickly
-//I feel like celebrating   
-function show_parents($queue,$parent,$parent_comments = "5"){ global $db_main,$thread_data,$nay;
+    //viewing threads
+    //it'll be a combination of the topic's hash and it's thread nickname
+    //should help with search engines
+    //ergo
+    if($view_thread && ($thread_data['cnttype'] == "1")){     
+    echo "<div class='contentbox' id='thread_main'><h3>".$thread_data['title']." 
+    <small>by <a href='".$main_dir."index.php?profile=".$thread_data['bywhom']."'>".$thread_data['bywhom']."</a> at 
+    <span class='white'>". date(dflt_date_f, strtotime($thread_data['stamptime']))."</span></small></h3>";      //".$thread_data['']."
+    if(!preg_match("#^[ ]{0,}$#",$thread_data['content'])){echo "<p>".$thread_data['content']."</p>";  }
+        if($thread_data['image_embed'] !== "none"){
+        $get_image = mysqli_query($db_main, "SELECT type FROM images WHERE url_hash='$thread_data[image_embed]'");
+        $image_dt = mysqli_fetch_assoc($get_image);
+        $image_type = $image_dt['type'];
+        echo "<p><img src='".$main_dir."images/".$thread_data['image_embed'].".$image_type'></p>";
+    }
+    echo "</div>";
+    //reply-action to thread
+    if(isset($_SESSION['login_q'])){                  //solution to our session hash failing to verify :/
+        //maybe if I alias the submission page then it won't fail to verify somehow
+        //echo "<div id='thread_reply' class='contentbox'><form action='".$main_dir."index.php?direct=new_post&verify=".$_SESSION['temp_n']."' method='POST'>
+        echo "<div id='thread_reply' class='contentbox'><form action='".$main_dir."index.php?direct=new_post&verify=".$_SESSION['temp_n']."' method='POST'>
+        <input type='hidden' value='". $thread_data['postid'] ."' name='parent_comment'>
+        <input type='hidden' value='".$thread_id."' name='thread_id'>
+        <textarea name='tcha2' class='flick largeform'>Comment on this thread...</textarea>   <input type='submit' value='POST REPLY'>
+    </form></div>";  
+    }      //get main threads only
+    $snipe8 = mysqli_query($db_main, "SELECT * FROM posts WHERE parent = '$thread_data[postid]' ORDER BY stamptime DESC LIMIT 0,100");
+    $queue = mysqli_num_rows($snipe8); 
+    if($queue == "0"){
+        echo "<div class='contentbox notice_msg'>There are no replies in this topic yet.</div>";
+    }
+    else{
+    if(!isset($_GET['comment'])){
+        while($comment_loop = mysqli_fetch_assoc($snipe8)){
+            $sync_25 = mysqli_query($db_main, "SELECT * FROM posts WHERE parent='$comment_loop[parent]' 
+            AND thread_id='$thread_data[postid]' ORDER BY stamptime DESC LIMIT 0,25");
+            $fill_data->show_reply($comment_loop);
+            //second and third and fourth level of comments and so on
+            if(mysqli_num_rows($sync_25) > 0){//function get_posts($pid_call,$tid_call = "1",$limit = "25",$chain = "5")
+                get_posts($comment_loop['postid'],$thread_data['postid']);
+            }
+        }
+    }
+    else{  
+        while($comment_loop = mysqli_fetch_assoc($specific)){     
+            $sync_25 = mysqli_query($db_main, "SELECT * FROM posts WHERE parent='$comment_loop[parent]' 
+            AND thread_id='$thread_data[postid]' ORDER BY stamptime DESC LIMIT 0,25");
+            if($comment_loop['parent'] == $thread_id){
+                echo "<div class='contentbox comment_box arch_1 selected'><table><tr>
+                <td class='user_info'><h4><a href='index.php?profile=".$comment_loop['bywhom']."'>".$comment_loop['bywhom']."</a></h4></td>
+                <td><p class='post_text'>".$comment_loop['content']."
+                <span class='side_info'>- Posted <a href='".$main_dir."thread/".$_GET['thread_view']."/comment/".$comment_loop['topic_hash'] ."'>". date(dflt_date_f, strtotime($comment_loop['stamptime'])) ."</a></span>
+                </p>";
+                if(isset($_SESSION['login_q'])){
+                    echo "<div class='opts_block' alt='".$comment_loop['postid']."'>";
+                    echo "<a href='#' class='comment_opts rad comment_q-u' name='post_".$comment_loop['postid']."' id='post_".$comment_loop['postid']."'>Reply</a><a href='#' id='edit_".$comment_loop['postid']."' class='comment_opts rad edit' name='edit_".$comment_loop['postid']."' >Edit</a>";
+                    echo "</div>";
+                }
+                echo "</td></tr></table>";
+                //second and third and fourth level of comments and so on
+                echo "</div>";      
+                //this is soooooo tacky
+                if(mysqli_num_rows($sync_25) > 0){//function get_posts($pid_call,$tid_call = "1",$limit = "25",$chain = "5")
+                    get_posts($comment_loop['postid'],$thread_data['postid']);
+                }
+                mysqli_free_result($sync_25);
+            }
+            else{
+                //the devil
+                //wow I got this done so much more quickly
+                //I feel like celebrating   
+                function show_parents($queue,$parent,$parent_comments = "5"){ global $db_main,$thread_data,$nay,$fill_data;
 
 //the logic is, you will always need the margin unless it's the top ancestor generation     
 
@@ -223,14 +235,14 @@ show_parents($tell_2['postid'],$tell_2['parent'],$_SESSION['count'] - 1);       
 echo $margin_set;
 }
 
- reply_format::show($tell_2); 
+ $fill_data->show_reply($tell_2); 
 
 } 
 
          $margin_set = (is_array($tell_2)) ? "<div class='margin'>" : "";
 echo $margin_set;
 
- reply_format::show($tell_1); 
+ $fill_data->show_reply($tell_1); 
 
         
 mysqli_free_result($show_2);
@@ -244,7 +256,7 @@ show_parents($comment_loop['postid'],$comment_loop['parent'],$_SESSION['count'])
 
 
 //echo "</div>";      //this is soooooo tacky
-echo "<div class='margin'>";     reply_format::show($comment_loop); 
+echo "<div class='margin'>";     $fill_data->show_reply($comment_loop); 
 get_posts($comment_loop['postid'],$thread_data['postid']);       
 
 }
@@ -258,7 +270,7 @@ get_posts($comment_loop['postid'],$thread_data['postid']);
 }
 
 mysqli_free_result($snipe8);
-mysqli_free_result($view_thread); }else{redir_process("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
+mysqli_free_result($view_thread); }else{redir_process("Location:".$main_dir."index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 }else{
 if(isset($_GET['comment'])){
 $search_for_thread = mysqli_query($db_main, "SELECT * FROM posts WHERE topic_hash='$_FILTERED[comment]' ORDER BY stamptime DESC");
@@ -267,7 +279,7 @@ $post_data = mysqli_fetch_assoc($search_for_thread);
 $thread_query = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$post_data[thread_id]'");
 $thread_dt = mysqli_fetch_assoc($thread_query);
 redir_process("Location:thread/" . $thread_dt['thread_nick'] . "_" . $thread_dt['topic_hash'] . "/comment/" . $_GET['comment']);
-}else{redir_process("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
+}else{redir_process("Location:".$main_dir."index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 }
 }
 
@@ -289,18 +301,17 @@ if(mysqli_num_rows($query_2) < 1){
 echo "<h3 class='notice2'>". $nx['22'] ."</h3>";
 }else{  //has posts
 while($post_loop = mysqli_fetch_assoc($query_2)){
-if($post_loop['cnttype'] == "1"){         //threads
+if($post_loop['cnttype'] == 1){         //threads
 $post_type ="thread";
-$snipe7 = mysqli_query($db_main, "SELECT * FROM posts WHERE parent = '$post_loop[postid]' OR thread_id='$post_loop[postid]'");
-if(mysqli_num_rows($snipe7) == 1){    
-$msg_format = mysqli_num_rows($snipe7) . " REPLY TO THIS THREAD";   }
-if(mysqli_num_rows($snipe7) == 0){
-$msg_format =  "NO REPLIES";   }
-if(mysqli_num_rows($snipe7) > 1){
-$msg_format =  mysqli_num_rows($snipe7) . " REPLIES TO THIS THREAD";   }  
+if($post_loop['num_replies'] == 1){    
+$msg_format = $post_loop['num_replies'] . " REPLY TO THIS THREAD";   }
+if($post_loop['num_replies'] < 1){
+$msg_format = "NO REPLIES";   }
+if($post_loop['num_replies'] > 1){
+$msg_format =  $post_loop['num_replies'] . " REPLIES TO THIS THREAD";   }  
 
 echo "<div class='posts_t1 ".$post_type."_post'><h4>
-<a href='index.php?thread_view=".$post_loop['thread_nick']."_".$post_loop['topic_hash']."'>".$post_loop['title']."</a> 
+<a href='".$main_dir."thread/".$post_loop['thread_nick']."_".$post_loop['topic_hash']."'>".$post_loop['title']."</a> 
 <span>- Posted ".date(dflt_date_f, strtotime($post_loop['stamptime']))."</span>
 <span class='reply_notch rad'>".$msg_format."</span></h4><p>".$post_loop['content']."</p></div>";          //".$post_loop['']."
 
@@ -322,7 +333,7 @@ $post_tree_msg = ($snipe9['parent'] !== $post_loop['thread_id']) ? array("to thr
 //I really need to be more logistical about this
 
 echo "<div class='posts_t1 ".$post_type."_post'><h4>Replying ".$post_tree_msg[0]." 
-<a href='index.php?thread_view=".$post_tree_msg[2]."_".$post_tree_msg[1]."&comment=".$post_loop['topic_hash']."'>".$post_tree_msg[3]."</a> 
+<a href='".$main_dir."thread/".$post_tree_msg[2]."_".$post_tree_msg[1]."/comment/".$post_loop['topic_hash']."'>".$post_tree_msg[3]."</a> 
 <span>...Posted ".date(dflt_date_f, strtotime($post_loop['stamptime']))."</span></h4><p>".$post_loop['content']."</p></div>";         
 
 mysqli_free_result($snipe8);   mysqli_free_result($snipe10);   mysqli_free_result($snipe12);
@@ -354,7 +365,7 @@ echo "</table></div>";
 mysqli_free_result($query_2);
 if(isset($snipe_7)){mysqli_free_result($snipe7);    }
 
-}else{redir_process("Location:index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
+}else{redir_process("Location:".$main_dir."index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
 mysqli_free_result($profile_query);
 }
 

@@ -1,8 +1,4 @@
 <?php     
-
-
-
-
       
 echo "<span class='clear' id='nook'></span>
 
@@ -11,7 +7,7 @@ if(!isset($_SESSION['login_q'])){       //not logged in to a user account, essen
 
               
 
-echo "<form action='index.php?verify=". $_SESSION['temp_n'] ."&direct=login' id='login' method='post'><input type='text' value='".$nx[0]."' name='usernorm' class='flick'><input type='password' name='pwrdnorm' value='".$nx[1]."' class='flick'><input type='submit' value='".$nx[2]."' class='dt1space'>
+echo "<form action='".$main_dir."index.php?verify=". $_SESSION['temp_n'] ."&direct=login' id='login' method='post'><input type='text' value='".$nx[0]."' name='usernorm' class='flick'><input type='password' name='pwrdnorm' value='".$nx[1]."' class='flick'><input type='submit' value='".$nx[2]."' class='dt1space'>
 <a href='index.php?direct=signup' class='signup-a'>".$nx[3]."</a>";
 if(isset($_COOKIE['inc_ombination'])){
 echo '<div class="notice left glow">'.$_COOKIE["inc_ombination"].'</div>';
@@ -51,7 +47,7 @@ echo"
 // welcome note                                                                            
 if(isset($_SESSION['welcome'])){echo "<div class='welcome_note' id='first1'>".$nx[4]."</div>";} 
 
-echo "</div><table><tr><td id='left1'>" ; 
+echo "<table><tr><td id='left1'>" ; 
 
                  
 if(logged_in_check){
@@ -67,21 +63,9 @@ echo "<div id='left_menu'> <h3>Main Menu</h3>
        
 } 
 
-if(isset($_GET['snowglobe'])):  ?>
-<div id="sg_desc" class="box rad">  <h3><?php echo $sg_details['sg_name']; ?></h3>
-<?php if((!empty($sg_details['description']) || !preg_match("#^[ ]+$#",$sg_details['description'])) ){
- 
-echo (preg_match("#^ {0,}$#",$sg_details['description'])) ? $nx['50'] : $sg_details['description']; 
-
- } ?>
-
-
-
-
-</div>
-<?php 
-
-endif; 
+if(isset($_GET['snowglobe'])){
+    $fill_data->sg_sidebar($sg_details); 
+}
 
 if(logged_in_check){ if(index_page_check){  //promotion for our school lecture snowglobe feature
 //Originally I had planned to call it "lecture notes" but it seems kind of ambiguous at this point
@@ -117,38 +101,65 @@ if(mysqli_num_rows($find_followed_class_snowglobes) > 0){
 
 <?php } endif;                                             
 echo $nx['29'];    // posting tips
+
+
 $find_users_to_chat_with = mysqli_query($db_main, "SELECT a.towhom,a.granted_by FROM sg_permissions a, sg_permissions b WHERE a.towhom = b.granted_by AND a.granted_by = b.towhom AND a.access_type='friend snowglobe' AND b.access_type='friend snowglobe' AND a.towhom != a.granted_by AND b.granted_by !=b.towhom AND a.towhom = '$_MONITORED[login_q]' LIMIT 100");
-
-
 
 //get list of tabbed users                      
 
 foreach(json_decode($logged_dt['tabbed_users']) as $num => $value){  
 
-echo "<div class='box chat-b' ref='" . $value . "' preloaded='true'><h3>". $nx['40'] . $value . "</h3><div class='chat_box'><div class='loading_text'>Loading...</div></div><div class='chat_panel'><textarea></textarea></div><a class='prompt button_samp rad chat-buttons' href='submit-chat-msg'>SUBMIT</a><a class='prompt button_samp rad chat-buttons' href='close-chat'>Close</a></div></div>";
+echo "<div class='box chat-b' ref='" . $value . "' preloaded='true'>
+    <h3>". $nx['40'] . $value . "</h3>
+    <div class='chat_box'>
+        <div class='loading_text'>$nx[60]</div>
+    </div>
+    <div class='chat_panel'>
+        <textarea></textarea>
+    </div>
+    <a class='prompt button_samp rad chat-buttons' href='submit-chat-msg'>SUBMIT</a>   <a class='prompt button_samp rad chat-buttons' href='close-chat'>Close</a>
+</div>";
 
 }
 
 echo "<div class='box' id='chat_list'><h3>Online Users</h3><p>Users will show up here if you both follow each other. Of course you can send a message regardless, but it will be shown somewhere less exposed.</p>";
 
 if(mysqli_num_rows($find_users_to_chat_with) > 0){
-
-while($fetch_chat = mysqli_fetch_assoc($find_users_to_chat_with)){  //   $fetch_chat['granted_by'] has the user whom you could chat with
-?>  
-
-<a href="chat-with-user:<?php echo $fetch_chat['granted_by']; ?>" class="prompt chat-option"><?php echo $fetch_chat['granted_by']; ?></a>
-
-<?php
+    while($fetch_chat = mysqli_fetch_assoc($find_users_to_chat_with)){  //   $fetch_chat['granted_by'] has the user whom you could chat with
+        ?>  
+            <a href="chat-with-user:<?php echo $fetch_chat['granted_by']; ?>" class="prompt chat-option"><?php echo $fetch_chat['granted_by']; ?></a>
+        <?php
+    }
 }
-}
-
 echo '</div>';
+}
+else{
+    if(isset($_GET['thread_view']) && is_array($thread_data)){
+        $sidebar = ($thread_data['forwhom'] === "self") ? 
+        "SELECT * FROM users WHERE username='$thread_data[bywhom]'" :
+        "SELECT * FROM snowglobes WHERE sg_url='$thread_data[forwhom]'";
+        $sidebar = mysqli_query($db_main,$sidebar);
+        $sidebar_dt = mysqli_fetch_assoc($sidebar);
+        if($thread_data['forwhom'] === "self"){
+            ?>
+                <div class="box">
+                <h3>About the poster:</h3>
+                <p><a href="<?php echo $main_dir;?>profile/<?php echo $sidebar_dt['username'];?>">Profile Link</a><br>
+                Joined <?php echo time_rounds($sidebar_dt['joindate']); ?></p>
+                </div>
+            <?php
+        }
+        else{
+            $fill_data->sg_sidebar($sidebar_dt,true);
+        }
+    }
+} 
 
-} }
+}
 //if(preg_match()){}\
 
       echo "<div class='box space1'></div>";
-echo "</td><td width='99%' id='vc2'>";           
+echo "</td><td width='99%' id='vc2'>";        
 
 
 
@@ -159,7 +170,7 @@ if(count($_GET) == 1){
 $edu_find = mysqli_query($db_main, "SELECT * FROM education e, school s WHERE e.school_id = s.s_id AND e.forwhom='$_MONITORED[login_q]'");
 
 //editing your own profile
-echo "<form action='index.php?verify=". $_SESSION['temp_n'] ."&action=edit_profile' method='POST'>";
+echo "<form action='".$main_dir."index.php?verify=". $_SESSION['temp_n'] ."&action=edit_profile' method='POST'>";
 echo "<div class='contentbox' id='profile_edit'>";
 echo "<h3>" . $nx[32] ."</h3>";     
 
@@ -200,7 +211,9 @@ echo "</td></tr></table></div>";
 
 }else{ 
 echo '<div class="edu_listing">';
-while($edu_list = mysqli_fetch_assoc($edu_find)){   
+while($edu_list = mysqli_fetch_assoc($edu_find)){
+
+$nt = isset($nt) ? $nt . ", " .$edu_list['school_type'] : $edu_list['school_type'];   
 
 $class_sg_check = mysqli_query($db_main, "SELECT * FROM snowglobes WHERE special_settings='school' AND reference_num='$edu_list[s_id]'");
 ?>
@@ -211,14 +224,14 @@ $class_sg_check = mysqli_query($db_main, "SELECT * FROM snowglobes WHERE special
 <div id="new_snowglobe"> <table>
 <tr class="h4_row"><td>Classroom Snowglobe</td><td>Fill-in Form</td></tr>
 
-<tr class="message"><td width="50%" class="notice2">
+<tr class="message"><td width="50%" class="notice2<?php if(mysqli_num_rows($class_sg_check) > 0){ echo " top_off"; }?>">
 
 
 <?php if(mysqli_num_rows($class_sg_check) > 0){ 
 //has classes in school or none
 ?>
 
-<div class="load_classes"></div>  
+<div class="load_classes" school_id="<?php echo $edu_list['s_id'];?>"></div>  
 
 <?php } else { ?>
 
@@ -229,12 +242,14 @@ $class_sg_check = mysqli_query($db_main, "SELECT * FROM snowglobes WHERE special
 <td class="form_cobble" valign="top">
  
 <!-- <input type="text" value="" name="" class="flick largeform" validation="{new_sg:x}">  -->
-<input type="text" value="Name of class/subject, or teacher's name, or both." name="sg_name" class="flick largeform" validation="new_sg:name">
+<input type="text" value="Name of class/subject, or teacher's name, or both." name="sg_name" class="flick largeform">
+<input type="text" value="<?php echo $edu_list['name'];?>" name="sg_schoolforwhich" disabled class="largeform">
+<input type="hidden" name="sg_school_id" value="<?php echo $edu_list['s_id'];?>">
 <textarea name="sg_desc" class="flick largeform" validation="new_sg:desc">
 Describe the class, insert useful material, etc.
 </textarea>
 
-<input type="submit" value="Start classroom discussions!" class="right q_submit" heading="<?php echo $main_url;?>">
+<button class="right q_submit" submit="new_class_sg" submit_call="sg_">Start classroom discussions!</button>
 
 </td> </tr></table>    
 </div>
@@ -269,8 +284,34 @@ Describe the class, insert useful material, etc.
 </tr></table>
 </div> 
 
-<?php
-}     echo "</div>";
+<?php }
+
+if(count($nt) < 2){
+
+if(!preg_match("#College#",$nt)){
+
+echo "<div class='panel rad'><table><tr><td width='25%' class='left_side'>College</td><td>";
+     //le education fields           
+     echo "<input class='largeform flick school_search' value='College entered/currently entering...'>";
+
+echo "</td></tr></table></div>";
+
+}
+
+if(!preg_match("#High School#",$nt)){
+
+echo "<div class='panel rad'><table><tr><td width='25%' class='left_side'>High School</td><td>";
+     echo "<input class='largeform flick school_search' value='High school entered/currently entering...'>";
+echo "</td></tr></table></div>";
+
+}
+
+
+
+}
+
+
+  echo "</div>";
 
 }
 echo "</td></tr>";  
@@ -391,7 +432,9 @@ break;
 require_once("template/idx_1.php");
 
 if(index_page_check){
-require_once("template/news_feed.php");
+    echo "<span id='nf_encapsulated'>";
+    require_once("template/news_feed.php");
+    echo "</span>";
 }
 
   

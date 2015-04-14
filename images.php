@@ -1,6 +1,5 @@
 <?php
 
-$_SESSION = [];
 
 $db_main = mysqli_connect("localhost","root","","captiv8");      
 mysqli_set_charset($db_main,"ISO-8859-1");

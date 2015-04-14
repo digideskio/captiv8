@@ -46,8 +46,9 @@ echo "</body>";
 echo "</html>";     
 /*end actual content*/   
 clear_array($_SESSION, "error");
+  
 
-
+//session_destroy();
 
 if(isset($_SESSION['login_q']) && isset($_SESSION['salt_q'])){mysqli_free_result($logged_query);}  
 

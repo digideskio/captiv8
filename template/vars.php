@@ -1,11 +1,20 @@
 <?php
 
+
+
 $check_3['username'] = isset($check_3['username']) ? $check_3['username'] : "";
+
+$dir = "template/img/";  
+$server_mash = "http://" . $_SERVER['SERVER_NAME'] .$_SERVER['PHP_SELF'];
+
+$main_dir = preg_replace("#(index[.]php|template[/](.+)[.]php)[/]?#","",$server_mash) ;
+$image_dir = $main_dir . $dir;
+
 
 //text references
 //remember that they will show up as $nx[n] where n = its position in the sequence -1
 //This is so that I can change it for other translations easier in the future.
-$nx = array(  //english
+@$nx = array(  //english
 "username..." /*1 - username pre-click text*/,
 "password" /* 2- password pre-click text*/,
 "LOG IN" /*3 - log in button text*/,
@@ -110,7 +119,7 @@ Signing up is totally free and will take less than a minute at the most.</p><div
 , "Punchline goes here. Hopefully, it not only sounds funny in your head."
 , "<div class='box'>
 <h3>About to post? Here's a quick format guide:</h3>
-<p>Put the code <span class='code'>(One-liner) [Insert Joke Here]</span> in the beginning of the title and you can post your own one-liner joke! Hopefully the joke you made will be worth the cued laugh track in your mind. Whenever people see the post, the punchline is hidden in the spoilers. The second box will have the punchline. <strong><a href='one-liner' class='prompt'>Try it!</a> &middot; <a href='' id='close_button1'>(Close window)</a></strong></span></p>
+<p>Put the code <span class='code'>(One-liner) [Insert Joke Here]</span> in the beginning of the title and you can post your own one-liner joke! The punchline is in the content. Hopefully the joke you made will be worth the cued laugh track in your mind. Whenever people see the post, the punchline is hidden in the spoilers. The second box will have the punchline. <strong><a href='one-liner' class='prompt'>Try it!</a> &middot; <a href='' id='close_button1'>(Close window)</a></strong></p>
 
 </div>",
 "ATTACH A POLL",
@@ -137,14 +146,12 @@ Signing up is totally free and will take less than a minute at the most.</p><div
 <li>Studying material related to the class subject.</li>
 <li>Other students in the class regularly updating the site with homework advice, class results, and miscellaneous questions regarding lecture material, or merely the class as a whole.</li>
 
-</ol>',"<div class='box notice2' reference='future_classes'><h3>School Classes <a href='close_box' class='prompt' message=\"Don't show again\" dd_class='reg'>[x]</a></h3><p>Will you be taking classes in the near future? If so, then Captivate has features that will help you greatly in your studies.</p></div>"
+</ol>',
+"<div class='box notice2' reference='future_classes'><h3>School Classes <a href='close_box' class='prompt' message=\"Don't show again\" dd_class='reg'>[x]</a></h3><p>Will you be taking classes in the near future? If so, then Captivate has features that will help you greatly in your studies.</p><p><a href='".$main_dir."profile_nuise/".$_SESSION['login_q']."' class='button_samp rad'>Find out more!</a></p></div>",
+"Does this apply to any snowglobe in particular? Leave blank to make it default.","Description","There are no posts to display.","Loading...","Post a new..."
 );
 
- $dir = "template/img/";  
-$server_mash = "http://" . $_SERVER['SERVER_NAME'] .$_SERVER['PHP_SELF'];
 
-$main_dir = preg_replace("#(index[.]php|template[/](.+)[.]php)[/]?#","",$server_mash) ;
-$image_dir = $main_dir . $dir;
 
 
 $dobordate = "<select name='day2' class='largeform'><option value='0'>--</option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option><option value='11'>11</option><option value='12'>12</option><option value='13'>13</option><option value='14'>14</option><option value='15'>15</option><option value='16'>16</option><option value='17'>17</option><option value='18'>18</option><option value='19'>19</option><option value='20'>20</option><option value='21'>21</option><option value='22'>22</option><option value='23'>23</option><option value='24'>24</option><option value='25'>25</option><option value='26'>26</option><option value='27'>27</option><option value='28'>28</option><option value='29'>29</option><option value='30'>30</option><option value='31'>31</option></select> 
@@ -161,5 +168,73 @@ $reply_wrap = ["<div class='contentbox comment_box'><table><tr> <td class='user_
 ,  "</div>"
 , "</td></tr></table></div>"];
 function chat_box($user){return '<div class="box" ref="'.$user.'"><h3>Chatting with '.$user.'</h3><div class="message_box"></div></div>';}
+
+class fill_data { //first time doing classes
+public function show_reply(&$array_name){  global $reply_wrap,$logged_dt,$main_dir;
+//get the reply template
+
+//going to load the reply template from vars.php
+//$array_name will be the array that's called from the for/while loop that'll be getting all the replies
+//you can find it at vars.php
+
+echo $reply_wrap[0]. "<h4><a href='/profile/".$array_name['bywhom']."'>".$array_name['bywhom']."</a></h4>".$reply_wrap[1].$array_name['content']. " ". $reply_wrap[2] ." <a href='".$main_dir."thread/".$_GET['thread_view']."/comment/".$array_name['topic_hash'] ."'>". date(dflt_date_f, strtotime($array_name['stamptime'])) . $reply_wrap[3]; 
+
+if(isset($_SESSION['login_q']) && compare_dz($logged_dt['salt'],$_SESSION['salt_q'])){
+echo $reply_wrap[4] . " alt='".$array_name['postid']."'>";
+
+echo "<a href='#' class='comment_opts rad comment_q-u' id='post_".$array_name['postid']."' name='post_".$array_name['postid']."'>Reply</a>";
+//admin rights, mod rights, and then user's rights to their own posts
+if($logged_dt['userid'] == 1){
+echo "<a href='#' class='comment_opts rad edit' id='edit_".$array_name['postid']."'>Edit</a>";
+}
+
+echo $reply_wrap[5];
+
+} echo $reply_wrap[6];
+}
+
+public function sg_sidebar(&$sg_details,$thread_view = false){
+    global $nx,$main_dir;
+    echo '<div id="sg_desc" class="box rad"><h3>'.$sg_details["sg_name"].'</h3>';
+    if((!empty($sg_details['description']) || !preg_match("#^[ ]+$#",$sg_details['description']))){ 
+        echo (preg_match("#^ {0,}$#",$sg_details['description'])) ? $nx['50'] : $sg_details['description']; 
+    }
+    if($thread_view){                                                   
+        echo "<a href='".$main_dir."sg/".$sg_details['sg_url']."' class='go_back_msg rad'>Back to thread listing</a>";
+    }
+    echo "</div>";
+}
+
+public function pt_post_opt(&$sql_que_in_q){
+    global $nx;
+    echo "<div id='content' class='contentbox hide'>".$nx['31']."</div>";
+    echo 
+    "
+    <div id='pt_post_op' class='hide'>
+        <span class='drop'>
+            <div class='uplink rad'>$nx[61]</div>
+            <div class='dropdown_content'>
+                <ul>";
+    echo "                    <li class='rad' pt_id='0'>No special formatting (Default)</li>";
+    if(is_array($sql_que_in_q)){
+        foreach($sql_que_in_q as $post_type){
+            echo "                    <li class='rad pt_opt_in' pt_id='$post_type[pt_id]'>$post_type[call_name]</li>";                
+        }
+    }
+    else{
+        while($post_type = mysqli_fetch_assoc($sql_que_in_q)){
+            echo "                    <li class='rad pt_opt_in' pt_id='$post_type[pt_id]' desc='$post_type[description]'>$post_type[call_name]</li>";                
+        }
+    }
+    echo
+    "
+                </ul>
+            </div>
+        </span>
+    </div>";   //on second thought, indenting HTML seems a bit much lol
+} 
+
+}
+$fill_data = new fill_data();   
 
 ?>                                                                              

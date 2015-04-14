@@ -52,10 +52,28 @@ var unixtime_ms = new Date().getTime();
 }
 
 $("head").ready(function(){   //gets executed faster than $(document).ready()
-//get current timezone of user
+
+$(document).on('scroll',function(){
+
+scroll_point = (/Chrome/g.test(navigator.userAgent)) ? $("body").prop("scrollTop") : $("html").prop("scrollTop");  //damn it Chrome    
+                                          
+if(scroll_point > screen.availHeight*.5 + 200){
+
+$("#scroll_button").css({"z-index":20,"opacity":1});
+}else{
+$("#scroll_button").attr("style","");
+}
+
+});
+
+
+$("#scroll_button").on('click',function(){
+
+$("html,body").scrollTop("0");
+
+});
 
 //no background image on last child
-
 $(".quick_links a:last-child").css("background-image","none");
 
 
@@ -93,6 +111,8 @@ $("title").html(zen3);
 }
 });
 
+
+
 $("*[message]").each(function(){
 
 class_inserts = (typeof $(this).attr("dd_class") !== "undefined") ? " "+ $(this).attr("dd_class") : "";
@@ -104,20 +124,45 @@ $(this).wrap("<span class='drop"+ class_inserts +"'><span class='uplink'></span>
 $("#user_menu .left,#user_menu .right,#user_menu .dropdown_content,#left1 div.box").wrapInner("<div class='spacer' />");
 
 
+$("#post_content").hide();
 
-$("#title_trigger").next("textarea").hide().end().on(
-'focus',function(){
-if($(this).next("textarea").css("display") == "none"){
-$(this).next("textarea").toggle("400", function(){
-$(this).attr("style","display:block");
-});     }
-}).next("textarea").on('blur',function(){
-if($(this).val() == $(this).prop("defaultValue") || $(this).val().length == "0"){
-$(this).toggle("400");
-}
+$("#title_trigger").on('focus',function(){
+    if($("#pt_post_op #pt_opts").length < 1 && /^[\091][^\093]+[\093][ ]{0,}[\040].+[\041][ ]{0,}$/.test($(this).val()) == false){
+        $("#pt_post_op").appendTo("#pt_opts");
+        pto_w = $("#pt_post_op .drop .uplink").outerWidth();
+        $("#pt_opts").css("width",pto_w + "px").addClass("pads");
+    }   
+    if($("#post_content").css("display") == "none"){
+        $("#post_content").toggle("400", function(){
+            $(this).attr("style","display:block");
+        }); 
+    }
+}).on("blur",function(){
+    if(($(this).val() == $(this).prop("defaultValue") || $(this).val().length == 0) 
+    && /^[\091][^\093]+[\093][ ]{0,}[\040].+[\041][ ]{0,}$/.test($(this).val()) == false){
+    //    $("#pt_post_op").insertBefore("#post_k");
+    //    $("#pt_opts").removeAttr("style class");          
+    }
 });
 
+$(".pt_opt_in").each(function(){
 
+    $(this).on("click",function(){ 
+        z = $(this).html();
+        a = $(this).attr("desc");
+        if($(this).attr("pt_id") != "0"){   
+            $("#title_trigger").val("["+z+"] (Insert Your " + z + " Here)");
+            $("#post_content").val(a + " Describe your " + z + " here. If it's the one-liner, the punchline is written here.").removeClass("flick");
+        }
+        else{
+            $("#pt_post_op").insertBefore("#post_k");
+            $("#pt_opts").removeAttr("style class");
+        }
+    });
+    
+});
+
+                                  
 //a whitespace, just for design's sake
 $("#user_menu .left,#user_menu .right").each(function(){
 if($(this).is(".left:first")){ //left will probably always be the first div but still
@@ -126,9 +171,6 @@ if($(this).next("div").is(":not('.left')") || $(this).is(":only-child")){
 $(this).after("<div class='left boxxy'>&nbsp;</div>");
 $(this).next("div.left").css("border-left","1px solid #38475D");
 }  
-/* if($(this).is(:first)){
-$(this).css()
-}  */
 }
 if($(this).is(".right:last")){
 $(this).css("border-left","1px solid #38475D");
@@ -150,8 +192,6 @@ $(this).parent().prev().find(".boxxy").detach();
                                       
 
 }); 
-
-
 
 $("body").on("change",".upload",function(){
 
@@ -184,7 +224,59 @@ set_limbo_images = "";
 alert("You have already uploaded an image for this post you are about to make.");
 }
 //$.get("<?php echo $main_dir;?>template/simcheck.php",{"action":"file_test","file_src":$(this).val()},function(messages){ alert(messages);  });
-});                                       
+});  
+
+//$("*[submit]").each(function(){   });
+//might have to use it later
+
+$("body").on('click','*[submit]',function(event){  
+    //quick documentation for our little angular-esque framework
+    //maybe angular-esque framework isn't the most appropriate name but nevertheless it's a way to more quickly 
+    //also, wow I never thought formatting would look this good
+
+    //necessary parameters-- 
+    //submit: for the submission path
+    //submit_call: takes all the form data of the input with names matched with the pattern defined at submit_call to be added as formdata  
+    //OR (well i'll program this later)
+    //form_id: as the name suggests, the ID wherein all form data will be taken for submission
+    //form_id has priority
+    //needs a workaround for all mobile browsers since they don't work there(and lol IE)
+    //still curious as to how I would get image upload data without it...
+
+
+    event.preventDefault();
+
+    if(typeof $(this).attr("submit_call") != "undefined"){
+        debug_test = (typeof $(this).attr("testing") === "undefined") ? "json" : "html";     
+        form_dt = {};       
+        $("input[name^='"+$(this).attr('submit_call')+"'],textarea[name^='"+$(this).attr('submit_call')+"']").each(function(){
+            prop_n = $(this).attr('name');
+            form_dt[prop_n] = $(this).val();
+        });
+        y = typeof $(this).attr("testing");        
+        $.ajax({                                                     
+            url: "<?php echo $main_dir;?>template/simcheck.php?action=submit_dt&dt=" + $(this).attr("submit"),
+            type: "POST",
+            data: form_dt,
+            success: function(json){ 
+                if(y != "undefined"){
+                    alert(json);
+                }
+                else{
+                    alert(json.message);
+                    if(json.redir != "none"){
+                         window.location.replace = json.redir;
+                    }
+                }         
+            },
+            dataType: debug_test 
+        });
+    }    
+    else{
+        alert("Need to set a submit_call on button to recognize all data to include!");
+    }
+    //$("input[name^='"+$(this).attr('submit_call')+"']")
+});                       
                                             
 $("body").on('focus','.flick',function(){
 if($(this).val()==$(this).prop("defaultValue")){
@@ -196,12 +288,11 @@ if($(this).val().length == 0){
 $(this).val($(this).prop("defaultValue")); //had to change it to this for textareas
 }}).on('keyup','.flick',function(event){
              
-<?php if(isset($_SESSION['login_q']) && compare_dz($logged_dt['password'],$_SESSION['salt_q'])): ?>  
-<?php if(count($_GET) == 1): ?>
+<?php if(isset($_SESSION['login_q']) && compare_dz($logged_dt['salt'],$_SESSION['salt_q'])): ?>  
+
+<?php if(count($_GET) == 1 && isset($_GET['query'])): ?>
 
 if($(this).hasClass("school_search")){    
-
-
 //I need to make the wait a certain amount of time after a person is done typing before displaying results
 //In this case i'll set it to 3/4 of a second
 //seems like there's already a jquery function for this but im not sure                
@@ -221,9 +312,11 @@ $(this).after("<div></div>");    }
 
 //uploaderrrrrrrr durr
 
-
 //image upload placeholder, but maybe I could set it up for other CSS hacks in the future
 //I have to use setinterval because apparently the positioning of the placeholder might be changed
+
+//I have to switch the position and have placeholder be the one on front instead of the one in the back, and on a click trigger the placeholder's respective input to open the file upload thing 
+//On Chrome the cursor isn't consistent for the whole area.
 
 $(".placeholder").each(function(){$(this).prev().toggle();});
 
@@ -335,11 +428,20 @@ delete zing;
 
 <?php require_once($main_dir. "template/autorelays.js");endif; ?> 
 
-
+                                         
 <?php if(preg_match("#profile[=](.+)$#",extraurl())){require_once($main_dir. "template/profile_sync.js");} ?> 
 
              var $black_layer = ["<div id='black_overlay'><div id='widthfix'>","</div></div>"];  
+             
 
+$("#admin_panel").on('drag',function(event){
+positions = [$("#admin_panel").offset().top,$("#admin_panel").offset().left];
+
+$(this).css("bottom","inherit");
+
+
+         
+}).on('dragstop',function(){$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"drag_box","offsets":[positions[1],positions[0]]});  });
  
  
 $("body").on('change', "select.largeform:has(.current)", function(){
@@ -349,26 +451,37 @@ $(this).next().removeAttr("disabled");
 $(this).next().attr("disabled","disabled").val("").trigger("change");
 }
 });     
+
+$(".pt_toggle:last-child").filter(function(){
+    if($(this).index() !== 0){return true;}
+    else{return false;}
+}
+).addClass("no_ass");
       
+<?php if(isset($_GET['snowglobe']) && (mysqli_num_rows($sg_data[1]) > 0)): ?>
+
+original_pt_c = $("#pt_drop").html();  
+$(".pt_toggle.selected").each(function(){    
+    selected_pt_text = (typeof selected_pt_text === "string") ? selected_pt_text + ", " : ""; 
+            selected_pt_text = ($(this).find("span").length === 0) ? selected_pt_text + "" + $(this).text() : selected_pt_text + "" + $(this).find("span").text();
+});                                     
+$("#pt_drop").html(original_pt_c + " " +selected_pt_text);
+<?php endif; ?>
                   
 $("body").on('click',".prompt",function(event){event.preventDefault();       //dynamic server interaction with a click
 
-
-
-<?php if(isset($_SESSION['login_q'])): ?>    //IT'S HERE
+<?php if(isset($_SESSION['login_q'])): ?>    //IT'S HERE   
 
 
 if($(this).attr("href") == "sg_scha"){
 
-if($(this).attr("sg").length){
+if(typeof $(this).attr("sg") === "string"){
 $.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"sg_scha","sg":$(this).attr("sg")}).done(function(message){
-
 alert(message);
 });
 }
 
 }
-
 
 
 if(/^chat-with-user[:]/.test($(this).attr("href"))){
@@ -429,14 +542,24 @@ if(msg == "<?php echo $nx['38']; ?>"){
 window.location.assign("<?php echo $main_dir;?>profile_nuise/<?php echo isset($_SESSION['login_q']) ? $_SESSION['login_q'] : ''; ?>");         
 }
 });
-}
+}       
+<?php if(isset($_GET['query']) && $_GET['query'] == $_SESSION['login_q']):?>
 
 if($(this).attr("href") == "find-classes" && $("#black_overlay").length < 1){
 school_id = $(this).attr("school_id");                
 
 $("body").prepend($black_layer[0] + $black_layer[1]);
 $(".contentbox[s_id="+school_id+"]").appendTo("#widthfix");
+$.get("<?php echo $main_dir;?>template/simcheck.php",{"fetch":"class_sg","school_id":school_id},function(list_disp){
+$(".load_classes[school_id='"+school_id+"']").html(list_disp);
+});
+
+
 }
+
+<?php endif; ?>
+
+
 
 if($(this).attr("href") == "submit-edit"){  
 $.post("<?php echo $main_dir; ?>template/simcheck.php?action=css_edit",{"data":$("#jones").val(),"file":$("#jones").attr("title")},function(data){
@@ -484,7 +607,96 @@ $("#select4").after(msg);
 });
 }
 
-<?php if(compare_dz($logged_zen['password'],$_SESSION['salt_q']) && $logged_dt['userid'] == 1): ?>   //admin panel stuff
+switch($(this).attr("href")){
+    <?php if(isset($_GET['snowglobe'])):?>
+    case "select_of_p_type":
+        sexy_conditional = (($(this).attr("id") == "0" && $(this).hasClass("selected") != true) || $(this).attr("id") != "0");
+        if(sexy_conditional){
+            //can't unselect the default option that way
+            $.get("<?php echo $main_dir; ?>template/simcheck.php",
+            {
+                "action":"sg_view_save",
+                "pt_id": parseInt($(this).attr("id"),0),
+                "sg_id": parseInt($("#pt_drop").attr("sg_id"),0)
+            });
+        }
+        $(this).toggleClass("selected");
+        //parsing here turns out to be useless as PHP interprets them as strings anyway
+        if($(this).attr("id") == "0"){
+            $(".pt_toggle:not('.all_posts_q')").each(function(){
+                $(this).removeClass("selected");
+            });
+        }else{
+            $(".all_posts_q").removeClass("selected");
+        }
+        delete selected_pt_text; //reset the text
+        $(".pt_toggle.selected").each(function(){
+            selected_pt_text = (typeof selected_pt_text === "string") ? selected_pt_text+ ", " : "";   
+            //append the post type titles
+            selected_pt_text = ($(this).find("span").length === 0) ? selected_pt_text + "" + $(this).text() :
+            selected_pt_text + "" + $(this).find("span").text();
+        });
+        if(sexy_conditional){
+            $.get("<?php echo $main_dir; ?>template/news_feed.php",
+            {"get_more":"special","sg_id": parseInt($("#pt_drop").attr("sg_id"),0)},
+            function(feed){
+                $("#nf_encapsulated").html(feed);        
+            }); 
+        }                                    
+        $("#pt_drop").html(original_pt_c + " " +selected_pt_text);        
+    break;
+    <?php endif; ?>
+}
+
+
+
+<?php if(compare_dz($logged_dt['salt'],$_SESSION['salt_q']) && $logged_dt['userid'] == 1): ?>   //admin panel stuff
+
+if(/^opts[:]/.test($(this).attr("href"))){
+
+opt = $(this).attr("href").replace(/^opts:(.+)$/,"$1");   
+
+$(this).attr("id",opt);
+
+switch(opt){
+    case "minimize":
+        if(typeof $("#admin_panel").attr("minimized") === "string") {    
+            $("#admin_panel").removeAttr("minimized");
+            $("#"+opt).html("Minimize Panel");
+            $(".open").hide();
+            true_width = $("#panels").outerWidth() -10;
+            $(".open").attr('style',"width:"+true_width+"px");
+        }
+        else {
+            $("#admin_panel").attr("minimized","a");
+            $("#"+opt).html("Maximize Panel");
+        }
+        $.get("<?php echo $main_dir;?>template/simcheck.php",{"action":"admin_opts","req":opt});
+    break;
+
+case "drag":
+
+toggle = (typeof toggle === "undefined" || toggle == "1") ?  0 : 1;
+
+
+if(toggle == 0){$("#admin_panel").draggable("enable"); $("#admin_panel").addClass("draggy");
+$(this).addClass("selected_plink");
+}
+else{$("#admin_panel").draggable("disable");$("#admin_panel").removeClass("draggy"); 
+$(this).removeClass("selected_plink");
+}
+
+
+z = $(this).html();
+$(this).html(function(){  return_value = (z == "Enable Drag") ? "Disable Drag" : "Enable Drag";
+
+return return_value});
+
+break;
+
+}
+
+}
 
 if(/^edit[:]/g.test($(this).attr("href"))){    //murder murder murder murrdurrrrrrrrrrrrrrrrr murrrrrrdurrrrrrrrr
 //FINALLY. holy shit mother of god tweaking batman
@@ -503,17 +715,11 @@ $.get($zen_1).done(function(css){
          
      }
 if($("#jones").length === 0){  
-$("a[href='"+$zen_0+"']").addClass("selected2").after("<a href='submit-edit' class='link_view link_view2 rad prompt'>Finish editing</a><textarea id='jones' title='"+$zen_1+"' style='height:500px;margin-top:5px'></textarea>");
+$("a[href='"+$zen_0+"']").addClass("selected2").after("<a href='submit-edit' class='link_view link_view2 rad prompt finish_button'>Finish editing</a><textarea id='jones' title='"+$zen_1+"' style='height:500px;margin-top:5px'></textarea>");
 
 //hmm...     
 
 $("#jones").val($("style[title='"+$zen_1+"']").html());              
-               
-if($("style[title='"+$zen_1+"']").length === 0){  
-
-   
-   
-}
 }else{
 }
      
@@ -523,7 +729,7 @@ if($("style[title='"+$zen_1+"']").length === 0){
 }
 
 
-switch($(this).attr("href")){
+switch($(this).attr("href")){  //i'll do all the others later
 
 case "submit_sql":  
 $.post("<?php echo $main_dir; ?>template/simcheck.php?action=sql_q",{"sql_q":$("#" + $(this).attr('refer')).val()},function(message){
@@ -535,30 +741,25 @@ break;
 
 
 if(/^v[\137]/g.test($(this).attr("href"))){
+if($(".selected_link").attr("href") != $(this).attr("href")){
 
-if($(this).attr("href") == "v_css" || $(this).attr("href") == "v_sql" ){
-$("#session_list").css({"width":"650px"});
-}else{$("#session_list").removeAttr("style");}
-
-
-if($(this).attr("href") == "v_sql"){
-$("#session_list").draggable("disable");
-}else{
-$("#session_list").draggable("enable");
-}
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"change_panels","view":$(this).attr("href")});
 
 
+$(".selected_link").removeClass("selected_link");  
 
-
-if($(".selected_link").attr("href") == $(this).attr("href")){
-
-}else{$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"change_panels","view":$(this).attr("href")});
-
-
-$(".selected_link").removeClass("selected_link");  $(".open").removeClass("open");
+$(".open").removeClass("open");
 
 $(this).addClass("selected_link");
-$("div#" + $(this).attr("href")).addClass("open");
+
+$("#admin_panel").attr("currently_open",$(this).attr("href")); 
+//adjust the width for each different panel
+//the pains of making a draggable admin panel: Captivate(TM)
+//yay math calculations that can't be inline because intended concatenation will be confused for a math operator
+
+$("div#" + $(this).attr("href")).addClass("open not_yet");
+diff = $("#panels").outerWidth() - 10;  
+$(".open").attr("style","width:"+ diff +"px").removeClass("not_yet");
 
 }
 }
@@ -569,7 +770,10 @@ $("div#" + $(this).attr("href")).addClass("open");
 
 
 if($(this).attr("href") == "one-liner"){
-$("#post_k input[name=tcha1]").val("<?php echo $nx['27'] ?>");$("#post_k textarea[name=tcha2]").toggle("200",function(){$(this).attr("style","display:block;box-shadow:0 0 6px #556378")}).removeClass("flick").val("<?php echo $nx['28'] ?>").end();  
+    $("#post_k input[name=tcha1]").val("<?php echo $nx['27'] ?>");
+    $("#post_k textarea[name=tcha2]").toggle("200",function(){$(this).attr("style","display:block;box-shadow:0 0 6px #556378")})
+    .removeClass("flick").val("<?php echo $nx['28'] ?>").end();  
+    $("#pt_post_op").appendTo("#pt_opts");
 }
 if($(this).attr("href") == "add-more-choices"){
 if($("input[name=poll_choice]").length < 21 && $("input[name=poll_choice]").eq(-1).val() !== "Add a choice here"){
@@ -580,12 +784,10 @@ $(this).before("<input type='text' class='largeform flick' value='Add a choice h
 if($(this).attr("href") == "add-friend"){  
 
 $(this).addClass("greened");
-$.get("<?php echo $main_dir; ?>template/simcheck.php",{"friend_status[]":[$("#check_friend_status").attr("ref1"),$("#check_friend_status").attr("ref2")],"action":"sg_req"}).done(function(data){
+$.get("<?php echo $main_dir; ?>template/simcheck.php",{"friend_status[]":[$("#check_friend_status").attr("ref1"),$("#check_friend_status").attr("ref2")],"action":"sg_req"},function(data){
 $("#check_friend_status").html(data);
 });   
 
-
- 
 }
 
 if($(this).attr("href") == "finished-poll-q"){

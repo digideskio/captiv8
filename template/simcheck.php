@@ -4,7 +4,7 @@
 
 //made that comment months ago, I just gotta say: what an obscure metaphor.
 
-
+//I should get appropriate headers here to prevent DDOS's later.
 
 session_start();      
 
@@ -16,7 +16,6 @@ require_once("vars.php");
 
 require_once("auxiliary.php");
 
-  
 
 if(isset($_GET['availability'])){
 $filter = hack_free($_GET['availability']);
@@ -25,25 +24,16 @@ if(mysqli_num_rows($mns) > 0 ){echo "taken";}
 mysqli_free_result($mns);
 }
 
-
-
-
-
-
-
 if(isset($_SESSION['login_q'])){  //Inside this conditional are all the server requests from a page that requires a user to be logged in
 
-$salt_check = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_SESSION[login_q]'");
-$salt = mysqli_fetch_assoc($salt_check);
-
-if(compare_dz($salt['password'],$_SESSION['salt_q'])){      //extra measures
+if(compare_dz($logged_dt['salt'],$_SESSION['salt_q'])){      //extra measures
+//probably unnecessary, but maybe not
 
 if(isset($_GET['action'])){
 
 switch($_GET['action']){
 
 case "sync_all":
-
 
 $sync_in = 
 [
@@ -71,45 +61,72 @@ break;
 case "sg_scha":
 
 if(isset($_GET['sg'])){
-
-$sg_call_and_pass = [mysqli_query($db_main,"SELECT * FROM snowglobes WHERE sg_name='$_FILTERED[sg]'"),mysqli_query($db_main,"SELECT * FROM sg_permissions WHERE granted_by='$_FILTERED[sg]' AND towhom='$_MONITORED[login_q]'")];
-
-if($sg_call_and_pass[0] && $sg_call_and_pass[1] && mysqli_num_rows($sg_call_and_pass[0]) > 0){
-//if a user's banned from posting, then he'll have "none" on his posting rights
-//if a user unsubscribes and he has no posting rights, we're not going to delete that data field, but rather just have it as "unsubscribed"
-
-if(mysqli_num_rows($sg_call_and_pass[1]) > 0){  //you've done something in this snowglobe before, or got banned from it somehow lol
-$sgp_data_parse = mysqli_fetch_assoc($sg_call_and_pass[1]);
-
-if($sgp_data_parse['access_type'] !== "blocked"){
-
-if($sgp_data_parse['posting_rights'] == "none"){ //check if they're banned
-//then check if they're subscribed or unsubscribed
-if($sgp_data_parse['access_type'] !== "snowglobe follow"){ $update_sg = [mysqli_query($db_main, "UPDATE sg_permissions SET access_type='snowglobe follow' WHERE granted_by='$_FILTERED[sg]' AND towhom='$_MONITORED[login_q]'"),"follow and banned"]; }else{
-
- $update_sg = [mysqli_query($db_main, "UPDATE sg_permissions SET access_type='unfollowed but banned' WHERE granted_by='$_FILTERED[sg]' AND towhom='$_MONITORED[login_q]'"),"unfollowed and banned"]; 
-
+    $sg_call_and_pass = [mysqli_query($db_main,"SELECT * FROM snowglobes WHERE sg_name='$_FILTERED[sg]'"),
+    mysqli_query($db_main,"SELECT * FROM sg_permissions WHERE granted_by='$_FILTERED[sg]' AND towhom='$_MONITORED[login_q]'")];
+    
+    if($sg_call_and_pass[0] && $sg_call_and_pass[1] && mysqli_num_rows($sg_call_and_pass[0]) > 0){
+    //if a user's banned from posting, then he'll have "none" on his posting rights
+    //if a user unsubscribes and he has no posting rights, we're not going to delete that data field, but rather just have it as "unsubscribed"
+        if(mysqli_num_rows($sg_call_and_pass[1]) > 0){  
+            //you've done something in this snowglobe before, or got banned from it somehow lol
+            $sgp_data_parse = mysqli_fetch_assoc($sg_call_and_pass[1]);
+            if($sgp_data_parse['access_type'] !== "blocked"){
+                if($sgp_data_parse['posting_rights'] == "none"){ //check if they're banned
+                //then check if they're subscribed or unsubscribed
+                    if($sgp_data_parse['access_type'] !== "snowglobe follow"){ 
+                        $update_sg = [mysqli_query($db_main, "UPDATE sg_permissions SET access_type='snowglobe follow' 
+                        WHERE granted_by='$_FILTERED[sg]' AND towhom='$_MONITORED[login_q]'"),"followed and banned"]; 
+                    }
+                    else{
+                        $update_sg = [mysqli_query($db_main, "UPDATE sg_permissions SET access_type='unfollowed but banned' 
+                        WHERE granted_by='$_FILTERED[sg]' AND towhom='$_MONITORED[login_q]'"),"unfollowed and banned"]; 
+                    }
+                }
+                else{
+                    $update_sg = [mysqli_query($db_main, "DELETE * FROM sg_permissions WHERE granted_by='$_FILTERED[sg]' 
+                    AND towhom='$_MONITORED[login_q]'"),"unfollowed normally"]; 
+                }
+            }             
+        }
+        else{ //first time following/subcribing/etc
+            $update_sg = [mysqli_query($db_main, "INSERT INTO sg_permissions(access_type,towhom,date_g,granted_by,posting_rights) 
+            VALUES('snowglobe follow','$_MONITORED[login_q]',now(),'$_FILTERED[sg]','both')"),"newly subscribed"]; 
+        }
+        if(!$update_sg[0]){  //SQL error somehow
+            echo mysqli_error($db_main);
+        }
+        switch($update_sg[1]){
+            case "followed and banned":
+                echo "Followed! Unfortunately, you have no posting rights.";
+            break;
+            case "unfollowed and banned":
+            case "unfollowed normally":
+                echo "Unfollowed.";
+            break;
+            case "newly subscribed":
+                echo "Successfully followed.";
+            break;
+        }
+    }
 }
-
-}else{
-
- $update_sg = [mysqli_query($db_main, "DELETE * FROM sg_permissions WHERE granted_by='$_FILTERED[sg]' AND towhom='$_MONITORED[login_q]'"),"unfollowed normally"]; 
-
-}      }             }
-else{ //first time following/subcribing/etc
-
-$update_sg = [mysqli_query($db_main, "INSERT INTO sg_permissions(access_type,towhom,date_g,granted_by,posting_rights) VALUES('snowglobe follow','$_MONITORED[login_q]',now(),'$_FILTERED[sg]','both')"),"newly subscribed"]; 
-
-}
-
-if(!$update_sg[0]){  //SQL error somehow
-echo mysqli_error($db_main);
-}
-
- }}
-
 break;
-
+//  {"action":"sg_view_save","pt_id":$(this).attr("id"),"number_type":$(this).parent().parent().attr("id")},
+//   <a href="select_of_p_type" class="promptif(isset($_SESSION['saved_pt_views'][$sg_details['sg_id']][$p_type['pt_id']])):  pt_toggle" id=" echo $p_type['pt_id'];"><span>echo $p_type['call_name']; </span>
+case "sg_view_save":    
+    $_GET['sg_id'] = intval($_GET['sg_id']);   
+    $_GET['pt_id'] = intval($_GET['pt_id']);                           
+    if(!isset($_SESSION['saved_pt_views'][$_GET['sg_id']][$_GET['pt_id']]) && $_GET['pt_id'] !== 0){
+        $_SESSION['saved_pt_views'][$_GET['sg_id']][$_GET['pt_id']] = true;   echo "in!";
+    }
+    else{
+        if($_GET['pt_id'] !== 0){
+            unset($_SESSION['saved_pt_views'][$_GET['sg_id']][$_GET['pt_id']]);     echo "out!";
+        }
+        else{
+            unset($_SESSION['saved_pt_views'][$_GET['sg_id']]);  echo "back to default!";
+        }
+    } 
+break;
 
 case "get_sg_follow_status":
 //make a new column under sg_permissions, and it'll define posting rights. It's going to be none, topics, posts, or both with default being both and none for people who are banned from posting.
@@ -139,13 +156,13 @@ case "sql_q":   //first, test to check if it has a delete or drop statement
 echo "<br>";
 if(!preg_match("#[;]?[ ]{0,}(DELETE|DROP|delete|drop) #",$_POST['sql_q'])){
 
-if(preg_match("#[;]?[ ]{0,}SELECT#",$_POST['sql_q'])){
+if(preg_match("#^[ ]{0,}(SELECT|select)#",$_POST['sql_q'])){
 
 $_POST['sql_q'] = (preg_match("#LIMIT[ ]+[0-9]+([,][ ]{0,}[0-9]+)?[ ]{0,}[;]?[ ]{0,}$#",$_POST['sql_q'])) ? $_POST['sql_q'] : preg_replace("#^(.+)([;]?)[ ]{0,}$#","$1 LIMIT 0,100$2",$_POST['sql_q']) ;
 $type = "row fetch";
 }
 
-$test_query = mysqli_query($db_main, $_POST['sql_q']);
+@$test_query = mysqli_query($db_main, $_POST['sql_q']);
 if($test_query){  //successful SQL query?          
 if(!preg_match("#^[ ]{0,}SELECT #",$_POST['sql_q'])){
 echo "The query \"" . $_SPIN['sql_q'] . "\" was successful.";    }else{ //display rows!
@@ -186,7 +203,7 @@ mysqli_free_result($test_query);
 }
 }
 }else{
-echo "<div class='admin_notice'><strong>SQL error:</strong> ". mysqli_error($db_main) ." </div>";
+echo !preg_match("#^[ ]{0,}$#",$_POST['sql_q']) ? "<div class='admin_notice'><strong>SQL error:</strong> ". mysqli_error($db_main) ." </div>" : "You left the SQL query empty. Please input something.";
 }
 
 }
@@ -217,30 +234,50 @@ if($z){echo json_encode(array("notice" => "success","bash" => "two"),JSON_UNESCA
 }
 break;
 
+//admin panel stuff
+
 case "drag_box":   
 if(isset($_GET['screen_max'])){
-if(isset($_SESSION['xpos'])){
-if((intval($_GET['screen_max'][0]) - $_GET['screen_max'][2] < $_SESSION['xpos']) || (intval($_GET['screen_max'][1]) - $_GET['screen_max'][3] < $_SESSION['ypos'])){unset($_SESSION['xpos'],$_SESSION['ypos']);}
+if(isset($_SESSION['admin_panel']['xpos'])){
+if((intval($_GET['screen_max'][0]) - $_GET['screen_max'][2] < $_SESSION['admin_panel']['xpos']) || (intval($_GET['screen_max'][1]) - $_GET['screen_max'][3] < $_SESSION['admin_panel']['ypos'])){unset($_SESSION['admin_panel']['xpos'],$_SESSION['admin_panel']['ypos']);}
 }
 }
 if(isset($_GET['offsets'])){ 
-$_SESSION['xpos'] = intval($_GET['offsets'][0]);
-$_SESSION['ypos'] = intval($_GET['offsets'][1]);
+$_SESSION['admin_panel']['xpos'] = intval($_GET['offsets'][0]);
+$_SESSION['admin_panel']['ypos'] = intval($_GET['offsets'][1]);
 }
 
 
 break;
 
 case "change_panels":
+unset($_SESSION['admin_panel']['current_view']);
 
-if(isset($_SESSION['current_view'])){
-if($_GET['view'] == isset($_SESSION['current_view'])){unset($_SESSION['current_view']);}else{
-$_SESSION['current_view'] = $_GET['view'];
-}
-}else{
-if($_GET['view'] == "v_sess"){}else{$_SESSION['current_view'] = $_GET['view'];}
+if($_GET['view'] !== "v_sess"){$_SESSION['admin_panel']['current_view'] = $_GET['view'];}
+
+//no idea why I had so much code there previously
+
+break;
+
+case "admin_opts":
+if(isset($_GET['req'])){
+switch($_GET['req']){
+case "minimize":    
+//unsetting and setting sessions with ternary operators... kinda tacky?
+//lol doesn't work
+if(isset($_SESSION['admin_panel']['minimized'])){
+
+unset($_SESSION['admin_panel']['minimized']);
+
+}else{ 
+  
+$_SESSION['admin_panel']['minimized'] = "set";
+
 }
 
+break;
+}
+}
 break;
 
 //$.post("template/simcheck.php",{"action":"submit-chat-msg","towhom":$(this).parent().parent().attr("ref"),"message":$(this).parent().find(".chat_panel textarea").val()},function(message){
@@ -257,7 +294,7 @@ break;
 
 case "school_search":   
 
-$select_school = mysqli_query($db_main,"SELECT * FROM school WHERE name LIKE '%$_FILTERED[search_q]%' ORDER BY name ASC LIMIT 0,5");
+$select_school = mysqli_query($db_main,"SELECT * FROM school WHERE name LIKE '%$_FILTERED[search_q]%' AND school_type = '$_FILTERED[criteria]' ORDER BY name ASC LIMIT 0,5");
 
 if($select_school && mysqli_num_rows($select_school) > 0){    echo "<div id='school_search'>";
 
@@ -292,6 +329,131 @@ echo "<a href='".$main_dir."profile_nuise/".$_MONITORED['login_q']."/find/new_sc
 
 
 
+break;
+case "submit_dt":  //quick AJAX POST request submissions
+
+if(isset($_GET['dt'])){
+
+$initial_validation_message = "Please correct the following information:";
+$initial_search_test = "SELECT * FROM users WHERE username='$_MONITORED[login_q]'"; //if there's no initial data checks needed. What a tacky loophole right      
+$successful_entry_msg = "";
+$redir = "none";
+
+
+
+//check for the a certain data field's availability
+
+
+
+    /*     
+    quick documentation for this. eugh
+    necessary parameters:
+    $table_name: table name to search
+    $data_fields: data fields for submission to the DB
+    $field_values: respective field values for data fields
+    $message and $type (on success): to differentiate on JSON output
+
+    optional parameters:
+    $checks: each array value will be a sub-array containing the following field values based on index--created this
+    for string comparisons/regex tests
+         1st: regular expression test for data name
+         2nd: message output on JSON if regex test fails
+         3rd: field name of checked input
+         4th (optional): if set, will compare with string input and if equivalent, will either 
+         set it to the 5th value or set data on 3rd to be an empty string     
+         5th (optional): if 4th is true, then it will be set to this value instead of blank.
+    $misc_sql_queries = SQL queries to be processed.
+         structure:
+             if it's just a string, then it'll be processed after the first SQL query is processed and succeeded. Being processed after the first SQL query's succes is default.
+             if it's an array, then all strings inside it will be recognized and processed with the default method.
+                 all the sub-arrays' first string(which would be the SQL query) will be processed depending on the second string value 
+                 depending on which one they are below
+                     "before": will be processed before the first SQL query
+                     "before data checks": will be processed before data checks
+                     "after data checks": ...and after
+                     "after": default method
+    */ 
+    
+    //maybe later I should remove all these nasty--er, numerous variables with the properties/data and have it all be inputted into one class function, with constants from that same class returning the values to be processed
+     
+
+   require_once("dt_list.php");   
+
+
+
+//begin data submission process
+
+if(isset($misc_sql_queries)){ 
+    $misc_query_list = is_array($misc_sql_queries) ? 
+    [
+        filter_sql_queries($misc_sql_queries,"before"),
+        filter_sql_queries($misc_sql_queries,"after")
+    ] :
+    $misc_sql_queries;
+    if(is_array($misc_sql_queries)){
+        foreach($misc_query_list[0] as $query){
+            $misc_q_exec = mysqli_query($db_main, $query);
+            if(!$misc_q_exec){
+                $message .= "\n(SQL error: " . mysqli_error($db_main) . ")";
+            }
+        }    
+    }
+} //return a string if it's not an array, otherwise separate them into their orders
+
+$valid_search = mysqli_query($db_main, $initial_search_test);
+if(mysqli_num_rows($valid_search) < 1){
+    if(isset($checks)){
+        foreach($checks as $testing_values){ if($testing_values[0] === 0){ $error_d = "c"; } 
+            //convert it to empty string or if a 4th string in the array is set, then switch to that value if it was left untouched 
+            //with placeholder as value back in client-side
+            if(isset($testing_values[3]) && ($testing_values[3] == $_DATA[$testing_values[2]])){
+                $_DATA[$testing_values[2]] = isset($testing_values[4]) ? $testing_values[4] : "";
+            }
+        }
+    }
+    //check for data validity
+    if(!isset($error_d)){
+        $insert_in = mysqli_query($db_main, "INSERT INTO ".$table_name."($data_fields) VALUES($field_values)");
+        if($insert_in){
+            if(isset($misc_sql_queries)){
+                //default place of miscellaneous SQL queries, therefore has strings if it's only one
+                if(is_array($misc_sql_queries) && $misc_sql_queries[1]){
+                    foreach($misc_sql_queries[1] as $query){
+                        $misc_q_exec = mysqli_query($db_main, $misc_sql_queries);
+                        if(!$misc_q_exec){
+                            $message .= "\n(SQL error: " . mysqli_error($db_main) . ")";
+                        }
+                    }
+                }
+                else{
+                    $misc_q_exec = mysqli_query($db_main, $misc_sql_queries);
+                    if(!$misc_q_exec){
+                            $message .= "\n(SQL error: " . mysqli_error($db_main) . ")";
+                    }       
+                }    
+            }
+            $message = $successful_entry_msg;
+            $type = "success";
+        }
+        else{
+            $message = "SQL query failed--" . mysqli_error($db_main);
+            $type = "fail";
+        }
+    }
+    else{
+        $message = $initial_validation_message;
+        foreach($checks as $validations){   
+            if($validations[0] !== 1){ 
+                $x = isset($x) ? $x + 1 : 1;
+                $message .= "\n".$x.". ". $validations[1];
+            }
+        }
+        unset($x,$error_d);
+    }
+}
+
+echo @json_encode(["type" => $type, "message" => $message,"redir" => $redir],JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+}
 break;
 case "chat_with_user":  
   //find whether they're able to actually chat with the user whom they're trying to engage with
@@ -373,7 +535,6 @@ $strings = json_decode($_GET['data'],true); //rawwwwww
 
 //check to see if the school's already in the database
 
-
 $check_in_sys = mysqli_query($db_main, "SELECT * FROM school WHERE name ='".hack_free($strings['name'])."'");
 
 if(mysqli_num_rows($check_in_sys) < 1){
@@ -401,7 +562,7 @@ foreach($recheck->find("tr") as $data_set){
 
  }
  else{$value = $sheet->plaintext;
- //i'm lazy so i'll do all the modifying for this later
+ //i'm lazy so i'll do all the modifying for this later                      E
  }     
  
  if(isset($name)){$properties[$name] = isset($value) ? preg_replace("#([\133](.+)[\135][ ]+)$#","",$value) : "";  }
@@ -481,9 +642,10 @@ if(isset($fill_details) && !isset($_SESSION[$znip])):
 $ed_level = isset($properties['school_type']) ? $properties['school_type'] : $properties['ed_level'];
 
  $znip = preg_replace("#[^A-Za-z]#","",strtolower($ed_level));
-$_SESSION[$znip] = "yes";     //start form
 
 ?>
+
+<?php if(!isset($_SESSION[$znip])): ?>    
 <form class="zenith">
     <br>
 <div class="contentbox fill_details"> <h3>Fill details</h3>        
@@ -491,7 +653,8 @@ $_SESSION[$znip] = "yes";     //start form
 <table><tr><th class="marginals" style="width:200px">School Name</th><td>
 <input type="text" name="school" value="<?php echo $strings['name'] ?>" class="largeform <?php echo 'a' . $z; ?>" disabled="disabled" name="school_name" style="opacity:.5">          </td>
 </tr>
-
+<?php if($properties['school_type'] == "College"): ?>
+<tr><th>Degrees:</th><td><input type="text" name="degree_s" class="largeform flick <?php echo 'a' . $z; ?>" value="Degrees/Majors pursued (separate with a comma if it's more than one)"></td></tr> <?php endif; ?>
 <tr><th>Started:</th><td><input type="text" name="year_s" class="largeform flick <?php echo 'a' . $z; ?>" value="Input the year that you started going to this school."></td></tr>
 <tr><th>Finished:</th><td>
 <select class="largeform <?php echo 'a' . $z; ?>"  name="current_status"><option class="current <?php echo 'a' . $z; ?>" value="current" selected="selected">Currently Attending</option>
@@ -500,33 +663,18 @@ $_SESSION[$znip] = "yes";     //start form
  <input type="hidden" name="edu_type" class="a1" value="<?php echo $ed_level; ?>"> 
 <input type="submit" value="Complete Details" class="prompt" id="<?php echo 'a' . $z; ?>">
 </td></tr>
-<?php if(isset($school_level)){ switch($school_level){ case "1": ?> 
-                                                                              
-<tr><th>Degree/Major</th><td><input type="text" class="largeform flick <?php echo 'a' . $z; ?>" value="Separate by comma if more than one..." name="degrees"></td></tr>
-
-<?php break; case "2": ?>
-
-
-
-<?php break; ?>
-
-
-
-
-
-
-
-<?php } ?>
 </table>
 </div>
-</form>
+</form>  
+
+<?php  $_SESSION[$znip] = "yes";   
+
+endif; ?>
 
 
-
-
-<?php   }   
-endif;   //end submission form
-unset($properties);     unset($fill_details);   unset($_SESSION[$znip]);          unset($znip);
+<?php      
+endif;   //end submission form                    
+unset($properties);     unset($fill_details);           unset($znip);
 
 break; //end case "confirm_school"              
 //for now let's set the maximum image size to 3 MB. I know kind of large, but i'll find a way to compress it somehow in the future
@@ -647,6 +795,98 @@ break;  //end case "complete_details"
 }//end $_GET['action'] switch loose comparison             
 
 }//end $_GET['action'] conditional
+
+
+if(isset($_GET['fetch'])){ //display data
+
+if(isset($_SESSION['login_q'])){
+
+$get_admin_status = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_MONITORED[login_q]' AND userid='1'");
+//really need to make a way to classify an account as being "admin"
+if(mysqli_num_rows($get_admin_status) == 1){  
+
+switch($_GET['fetch']){
+
+case "class_sg":
+    if(isset($_GET['school_id'])):
+        $search_all_sg = mysqli_query($db_main, "SELECT * FROM snowglobes WHERE special_settings='school' 
+        AND reference_num='$_FILTERED[school_id]' LIMIT 0,25");
+        if(mysqli_num_rows($search_all_sg) > 0):
+            while($c_sg_dt = mysqli_fetch_assoc($search_all_sg)):
+?>
+                <!--  <?php echo $c_sg_dt['']; ?>   -->
+                <div class="sgc">
+                <h4><a href="<?php echo $main_dir; ?>sg/<?php echo $c_sg_dt['sg_url']; ?>"><?php echo $c_sg_dt['sg_name']; ?></a></h4>
+                <div class="sg_desc"><?php echo $c_sg_dt['description']; ?></div> 
+                <p>Created <?php echo time_rounds($c_sg_dt['creation_date']); ?></p> 
+                </div>
+<?php
+            endwhile;
+        endif;
+    endif;
+break;
+
+case "post_type_panel":
+
+$get_post_types = mysqli_query($db_main, "SELECT * FROM post_types ORDER BY pt_id DESC");
+?>
+
+<tr class="pt_dt"><th>Default Listing</th><td>
+
+<?php if(mysqli_num_rows($get_post_types) > 0): ?>
+<div class="auto-bound">
+<?php
+while($pt_dt = mysqli_fetch_assoc($get_post_types)):
+if($pt_dt['for_which_sg'] == 0){
+$pt_dt['for_which_sg'] = "All Snowglobes";
+}else{
+if($pt_dt['for_which_sg'] == 1){
+$pt_dt['for_which_sg'] = "School Snowglobes";
+}else{
+$pt_dt['for_which_sg'] = "<a href='".$main_dir."sg/".$pt_dt['for_which_sg']."'>A Snowglobe</a>";
+}
+
+}
+?>
+
+<table class="pah"><tr>
+<th colspan="2"><?php echo $pt_dt['call_name']; ?></th>
+</tr>
+<tr>
+<th>Description</th><td><?php echo $pt_dt['description']; ?></td> </tr><tr>
+<th>Applies to</th><td><?php echo $pt_dt['for_which_sg']; ?></td>
+</tr>
+</table><br>
+
+<?php  endwhile;
+      else: ?>
+
+There are currently no post_types. Feel free to make one in the fill-in form below!   
+
+</div>   
+      
+<?php endif; ?>
+
+</td></tr>
+<tr class="fill_in">
+<th>Fill-In Form</th>
+<td><input type="text" class="flick largeform" value="Name" name="pt_name">
+<textarea name="pt_desc" class="flick largeform"><?php echo $nx['58'];?></textarea>       
+
+<input type="text" class="flick largeform" value="<?php echo $nx['57'];?>" name="pt_sg_apply">
+<button submit="new_thread_type" submit_call="pt_">Add New Post Type!</button>
+</td>
+</tr>
+
+<?php
+
+break;
+
+}
+
+}   
+
+}}
                                                  
 
 if(isset($_GET['nm_time'])){              
@@ -737,20 +977,19 @@ if(isset($_GET['friend_status'])){
 //who should we look up first
 //oh right
 //well it doesn't really matter
-
 //all the friends actions
-
-
-$check_2 = mysqli_query($db_main, "SELECT * FROM users WHERE username='".$_FILTERED['friend_status'][0]."'");
+$check_2 = mysqli_query($db_main, "SELECT * FROM users WHERE username='".$_FILTERED['friend_status'][1]."'");
 $check_3 = mysqli_fetch_assoc($check_2);
 //first check for null, then check for values
-if($salt['userid'] !== $check_3['userid']){    //not the same account, duh
+if($logged_dt['userid'] !== $check_3['userid']){    //not the same account, duh
 //check for snowglobe permissions
 $sea_rchin = mysqli_query($db_main,"SELECT * FROM sg_permissions WHERE access_type='friend snowglobe' AND towhom='$_MONITORED[login_q]' AND granted_by='$check_3[username]'");
 if(mysqli_num_rows($sea_rchin) < 1){
 if(!isset($_GET['action'])){ 
 echo "<a href='add-friend' class='prompt button_samp rad'>Follow ".$check_3['username']."'s snowglobe</a>";
-}else{         //not friends, and decided to give a friend request, and requestee's snowglobe is private
+}else{         
+
+//not friends, and decided to give a friend request, and requestee's snowglobe is private
 //this seems too much like facebook. eugh
 //I want to change it to something else
 //More like a twitter/IG kinda thing. Technically i'm still copying, but still
@@ -880,7 +1119,6 @@ mysqli_free_result($vote_q);  mysqli_free_result($post_check);
 }
 
 }    }
-mysqli_free_result($salt_check);
 }
 
 
@@ -928,25 +1166,6 @@ echo "Successfully registered your full name. &#10004";
 }    else {echo "We just need a first and a last name."; }
 }     }
 
-     /*                              if($_GET['id'] == "1"){ //username search
 
-$db_main2 = mysqli_query($db_main, "SELECT * FROM users WHERE username REGEXP '^" . $f_name [1]. "$'");
-if(mysqli_num_rows($db_main2) < 1){  //no users signed up. Wasn't necessary to code for but i'm training
-if(preg_match("/^[A-Za-z0-9-_]{4,16}$/", $f_name['1'])){echo "This username is available.";}
-
-else{       echo "Remember, letters, numbers, a hyphen and an underscore only and must be between 4-16 characters";
-
-}
-
-}else{echo "asda";}
-}
-
-if($_GET['id'] == "2"){ 
-echo "Time will be shown as " . date($_REQUEST['search_2'], $_SERVER['REQUEST_TIME']);
-}
-  */  
-  
-
-  
       exit();                  
 ?>

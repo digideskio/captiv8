@@ -21,7 +21,7 @@ unset($_SESSION[$nkey]);
   }else{
   
 
-  redir_process("Location:index.php?phase=2");
+  redir_process("Location:".$main_dir."index.php?phase=2");
   } }
   
   }
@@ -74,13 +74,13 @@ if(!$update_image){$_SESSION['changing_error'] = mysqli_error($db_main);}
   if(!$notif_add){$_SESSION['sql_error'] = mysqli_error($db_main);} 
   }
   mysqli_query($db_main,"INSERT INTO votes_q(bywhom,timeof,which_post,vote) VALUES('$_MONITORED[login_q]',CURRENT_TIMESTAMP,'$actual[postid]',1)");
-  if($actual['cnttype'] == "1"){  $url = "Location:thread/". $actual['thread_nick'] . "_" . $actual['topic_hash'];  mysqli_free_result($parent_clasp);
+  if($actual['cnttype'] == "1"){  $url = "Location:".$main_dir."thread/". $actual['thread_nick'] . "_" . $actual['topic_hash'];  mysqli_free_result($parent_clasp);
   mysqli_free_result($latest);   echo "in! (2)<br>";
 redir_process($url);
   }
   
   if($actual['cnttype'] == "2"){         
-   $url ="Location:index.php?comment=".$actual['topic_hash'];
+   $url ="Location:".$main_dir."index.php?comment=".$actual['topic_hash'];
     mysqli_free_result($parent_clasp);
   mysqli_free_result($latest); 
 
@@ -93,5 +93,5 @@ redir_process($url);
   unset($_SESSION['db_query']);
 
   }  
-  }else{$_SESSION['error' .rand(56,1515)] = extraurl() . " - failed cookie"; redir_process("Location:index.php"); }       }
+  }else{$_SESSION['error' .rand(56,1515)] = extraurl() . " - failed cookie"; redir_process("Location:".$main_dir."index.php"); }       }
 ?>

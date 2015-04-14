@@ -85,4 +85,8 @@ $("textarea[name=sg_desc]").val("");
 $("#snowglobe_opts input[type=checkbox]").each(function(){$(this).wrap("<div class='optionbox' />").after("<span class='text'>"+ $(this).attr('snowglobe') +"</span>")});
 $("#snowglobe_opts .optionbox:last").css("background-image","none");                 
 
-</script>                              
+</script>           
+
+<div id="scroll_button">
+&uarr; Scroll Back Up
+</div>                   

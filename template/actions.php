@@ -70,7 +70,7 @@ if(preg_match("#^[-_A-Za-z0-9]{4,30}$#",$_POST['sg_url']) && preg_match("#^.{0,2
 $submit_sg = mysqli_query($db_main, "INSERT INTO snowglobes(sg_name,description,root_admin_id,sg_url,sg_privacy,motto) VALUES('$_SPIN[sg_name]','$_SPIN[sg_desc]','$logged_dt[userid]','$_SPIN[sg_url]','$_SPIN[sg_privacy]','$_SPIN[sg_motto]')");
 $submit_sg_permission = mysqli_query($db_main, "INSERT INTO sg_permissions(access_type,towhom,granted_by) VALUES('root admin','$_MONITORED[login_q]','$_SPIN[sg_url]')");
 if($submit_sg && $submit_sg_permission){   $_SESSION['db_query'] = "new_snowglobe";  
-redir_process("Location:index.php?phase=2");}else{
+redir_process("Location:".$main_dir."index.php?phase=2");}else{
 echo mysqli_error($db_main);
 }
 
@@ -79,125 +79,137 @@ echo mysqli_error($db_main);
 }
 
 }else{
-redir_process("Location:index.php"); $_SESSION['error'] = "Failed issets" . time();
+redir_process("Location:".$main_dir."index.php"); $_SESSION['error'] = "Failed issets" . time();
 }
 
 break;   //end snowglobes_submit
 case "new_post":
 
-if(count($_SPIN) > 30){ 
-redir_process("Location:index.php");}   //counter against ddos's
-foreach($_SPIN as $key => $value){             //check for all the snowglobes they want to post in
-if(preg_match("#^sg[_]#",$key) && $_SPIN[$key] == "on"){  $matched[$key] = preg_replace("#^sg_(.+)$#","$1",$key);                                              
-if(!isset($snowglobes)){$snowglobes = $matched[$key];}else{$snowglobes = $snowglobes . "," . $matched[$key];}}         }
-//snowglobe settings are by default for each individual snowglobe's setting, snowglobe permissions are custom and set by its admin or moderators.
-//has to be a valid post. At least one snowglobe, and not match the default text or be empty. If it's a reply, i'll set it accordingly
-//access_type under snowglobe permissions will be matched with id under snowglobe settings 
-if(isset($snowglobes) || isset($_SPIN['parent_comment'])){  //check to see if it's either a new thread or a comment
-// $pass_check = mysqli_query($db_main, "SELECT * FROM ")
+var_dump($_DATA);
+    if(count($_SPIN) > 30){ 
+        redir_process("Location:".$main_dir."index.php");
+    } //limit for DDOS's?
+    foreach($_SPIN as $key => $value){
+        //check for all the snowglobes they want to post in
+        if(preg_match("#^sg[_]#",$key) && $_SPIN[$key] == "on"){  
+            $matched[$key] = preg_replace("#^sg_(.+)$#","$1",$key);                                              
+            if(!isset($snowglobes)){$snowglobes = $matched[$key];}
+            else{$snowglobes = $snowglobes . "," . $matched[$key];}
+        }         
+    }
+    //snowglobe settings are by default for each individual snowglobe's setting, snowglobe permissions are custom and set by its admin or moderators.
+    //has to be a valid post. At least one snowglobe, and not match the default text or be empty. If it's a reply, i'll set it accordingly
+    //access_type under snowglobe permissions will be matched with id under snowglobe settings 
+    if(isset($snowglobes) || isset($_SPIN['parent_comment'])){  //check to see if it's either a new thread or a comment
+        // $pass_check = mysqli_query($db_main, "SELECT * FROM ")
+        echo "2";  //10/10 method of testing would use again
+        $_SPIN['tcha1'] = isset($_SPIN['tcha1']) ? $_SPIN['tcha1'] : " ";
+        $thread_nick = mysqli_real_escape_string($db_main,strtolower(substr(preg_replace("#[^_A-Za-z 0-9-]+#","",
+        preg_replace("#[ ]#","_",$_SPIN['tcha1'])), 0, 50)));
+        $topic_hash = mysqli_real_escape_string($db_main,substr(sha1(microtime()),0,10));
+        $_SESSION['db_query'] = "posted content-anything";
+        setcookie("limbooo[0]", "k", time()+1);  
+        if(isset($snowglobes)){//if posting a new thread
+            //check sg_settings first
+            //for each one
+            //by default, posts will be to yourself
+            $sg_id = "self"; 
+            foreach($matched as $key => $value){
+                $ze = [preg_match("#^[-_A-Za-z0-9]{4,50}$#",$value),preg_match("#^[-_A-Za-z0-9]{4,25}[\050]s[\051]$#",$value)];
+                if($ze[0] === 1){ 
+                    //check where it's posting 
+                    //snowglobe posts are referenced in the database via their snowglobe_url, self-posts are 1, 
+                    //and posts to other profiles are referenced via their username and an (s) suffix
+                    $snowglobe_search = mysqli_query($db_main,"SELECT * FROM snowglobes WHERE sg_url='".hack_free($value)."'"); 
+                    if(mysqli_num_rows($snowglobe_search) > 0){
+                        $sg_details = mysqli_fetch_assoc($snowglobe_search);
+                        if($sg_details['sg_privacy'] == "private"){  //cross-reference to a snowglobe permission
+                            $sg_perm_check = mysqli_query($db_main, "SELECT * FROM sg_permissions WHERE granted_by='".hack_free($value)."' 
+                            AND towhom='$_MONITORED[login_q]' AND (access_type = 'root admin' OR access_type = 'normal snowglobe' 
+                            OR access_type = 'moderator')");
+                        if(mysqli_num_rows($sg_perm_check) == 0){redir_process("Location:".$main_dir."index.php");}
+                        } 
+                        //successful snowglobe permissions
+                        $sg_id = $value;    
+                    }
+                    else{redir_process("Location:".$main_dir."index.php");}
+                }
+                //users posting into their own snowglobe
+                if((preg_match("#^(.){3,150}$#", $_SPIN['tcha1']) === 0) || strlen($_SPIN['tcha2']) > 65335 || 
+                ($_POST['tcha1'] == $nx['17']) || $_POST['tcha2'] == $nx['18']){ 
+                    $_SESSION['error' .rand(56,1515)] = extraurl();/*  */ 
+                    redir_process("Location:".$main_dir."index.php"); /*  */  
+                }
+                $image_hash = isset($_DATA['image_data']) ? $_DATA['image_data'] : "none";
+                if(preg_match("#^[ ]?[\040][^\041]+[\041][ ]+[\091].+[\092][ ]{0,}$#",$_DATA['tcha1'])){
+                    $clone_title = $_DATA['tcha1'];
+                    $pt_rec_split = 
+                    [
+                        preg_replace("#^[ ]?[\040]([^\041]+)[\041][ ]+[\091](.)+[\092][ ]{0,}$#","$1",$clone_title),
+                        preg_replace("#^[ ]?[\040]([^\041]+)[\041][ ]+[\091](.)+[\092][ ]{0,}$#","$2",$clone_title),
+                    ];
+                    //alter the settings to make its post type identifiable
+                    $check_type = mysqli_query($db_main, "SELECT * FROM post_types WHERE call_name='$pt_rec_split[0]'");
+                    $get_pt = mysqli_fetch_assoc($check_type);
+                    $setings = $get_pt['pt_id'];
+                }else{
+                    $settings = 0;
+                }
+                $post_submission = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,parent,
+                stamptime,bywhom,title,thread_nick,topic_hash,image_embed,ip_address,level) VALUES('$_DATA[tcha2]','1','$sg_id','0'
+                ,CURRENT_TIMESTAMP,'$_MONITORED[login_q]','$_DATA[tcha1]','$thread_nick','$topic_hash','$image_hash','$_SERVER[REMOTE_ADDR]','$settings')"); 
+                     
+                if($post_submission){                                          
+                    if(isset($_SPIN['poll_question'],$_SPIN['choice_addition'],$_SPIN['choice_selection'])){    //check if a poll was set
+                        $topic_search = mysqli_query($db_main, "SELECT * FROM posts WHERE bywhom='$_MONITORED[login_q]' 
+                        ORDER BY stamptime DESC LIMIT 0,2");
+                        
+                        $search_dt = mysqli_fetch_assoc($topic_search);
+                        mysqli_query($db_main, "INSERT INTO polls(post_id_root,value,define_set) 
+                        VALUES($search_dt[postid],'$_DATA[poll_question]','question')");
+                        
+                        mysqli_query($db_main, "INSERT into polls(post_id_root,value,define_set) 
+                        VALUES($search_dt[postid],'$_DATA[choice_selection]','choice_selection');");
 
-echo "2";
-$_SPIN['tcha1'] = isset($_SPIN['tcha1']) ? $_SPIN['tcha1'] : " ";
-$thread_nick = mysqli_real_escape_string($db_main,strtolower(substr(preg_replace("#[^_A-Za-z 0-9-]#","",preg_replace("# #","_",$_SPIN['tcha1'])), 0, 50)));
-$topic_hash = mysqli_real_escape_string($db_main,substr(sha1(microtime()),0,10));
-$_SESSION['db_query'] = "posted content-anything";
- setcookie("limbooo[0]", "k", time()+1);  
-if(isset($snowglobes)){//if posting a new thread
-//check sg_settings first
-//for each one
-
-//by default, posts will be to yourself
-
-$sg_id = "self"; 
-
-foreach($matched as $key => $value){
-
-  $ze = [preg_match("#^[-_A-Za-z0-9]{4,50}$#",$value),preg_match("#^[-_A-Za-z0-9]{4,25}[\050]s[\051]$#",$value)];
-
-  var_dump($ze); var_dump($_POST);
-
-//I sure am misusing a lot of terminology
-
-if($ze[0] === 1){ //check where it's posting //snowglobe posts are referenced in the database via their snowglobe_url, self-posts are 1, and posts to other profiles are referenced via their username and an (s) suffix
-
-echo "3";
-
-var_dump($matched);       
-$snowglobe_search = mysqli_query($db_main,"SELECT * FROM snowglobes WHERE sg_url='".hack_free($value)."'"); 
-if(mysqli_num_rows($snowglobe_search) > 0){$sg_details = mysqli_fetch_assoc($snowglobe_search);
-
-if($sg_details['sg_privacy'] == "private"){  //cross-reference to a snowglobe permission
-$sg_perm_check = mysqli_query($db_main, "SELECT * FROM sg_permissions WHERE granted_by='".hack_free($value)."' AND towhom='$_MONITORED[login_q]' AND (access_type = 'root admin' OR access_type = 'normal snowglobe' OR access_type = 'moderator')");
-if(mysqli_num_rows($sg_perm_check) == 0){redir_process("Location:index.php");}
-
-} 
-//successful snowglobe permissions
-
-$sg_id = $value;    
-
-}else{redir_process("Location:index.php");}
-}
-
-  
-  
- //users posting into their own snowglobe
-
-if((preg_match("#^(.){3,150}$#", $_SPIN['tcha1']) === 0) || strlen($_SPIN['tcha2']) > 65335 || ($_POST['tcha1'] == $nx['17']) || $_POST['tcha2'] == $nx['18']){ $_SESSION['error' .rand(56,1515)] = extraurl();/*  */ redir_process("Location:index.php"); /*  */  }
-
-$image_hash = isset($_DATA['image_data']) ? $_DATA['image_data'] : "none";
-  
-$post_submission = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,parent,stamptime,bywhom,title,thread_nick,topic_hash,image_embed) VALUES('$_DATA[tcha2]','1','$sg_id','0',CURRENT_TIMESTAMP,'$_MONITORED[login_q]','$_DATA[tcha1]','$thread_nick','$topic_hash','$image_hash')");      if($post_submission){
-
-
-if(isset($_SPIN['poll_question'],$_SPIN['choice_addition'],$_SPIN['choice_selection'])){    //check if a poll was set
-$topic_search = mysqli_query($db_main, "SELECT * FROM posts WHERE bywhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,2");
-$search_dt = mysqli_fetch_assoc($topic_search);
-mysqli_query($db_main, "INSERT INTO polls(post_id_root,value,define_set) VALUES($search_dt[postid],'$_DATA[poll_question]','question')");
-
-mysqli_query($db_main, "INSERT into polls(post_id_root,value,define_set) VALUES($search_dt[postid],'$_DATA[choice_selection]','choice_selection');");
-
-mysqli_query($db_main, "INSERT into polls(post_id_root,value,define_set) VALUES($search_dt[postid],'$_DATA[choice_addition]','choice_addition');");
-
-foreach($_DATA as $key => $value){
-if(preg_match("#^poll_choice([0-9]+)#",$key)){
-mysqli_query($db_main,"INSERT INTO polls(post_id_root,value,define_set) VALUES($search_dt[postid],'$value','poll_choice')");
-}}
-
-}                   
-
-       
-         }else{    echo mysqli_error($db_main);  }     
-
-
-}  
-
-}      
-
-if(isset($_SPIN['parent_comment'])){
-$tree_roots = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$_SPIN[parent_comment]'");
-$piece = mysqli_fetch_assoc($tree_roots);      //get parent of post. Just to recheck, ya know. That's right! For the settings! My goodness I work like a turtle.
-if($piece['settings'] > 4){  $_SESSION['error' .rand(56,1515)] = extraurl();mysqli_free_result($tree_roots);/*  */ redir_process("Location:index.php"); /*  */ }
-
-$post_async = mysqli_query($db_main, "SELECT * FROM posts WHERE bywhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,10");
-$async_dt = mysqli_fetch_assoc($post_async); //get latest post for whatever reference you must.
-
-
-$post_nip = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,parent,postid,stamptime,bywhom,title,thread_nick,topic_hash,thread_id) 
-VALUES('$_SPIN[tcha2]','2','n-a','$piece[postid]','0',CURRENT_TIMESTAMP,'$_MONITORED[login_q]','$_SPIN[tcha1]','$thread_nick','$topic_hash','$_DATA[thread_id]');");
-if($post_nip){mysqli_free_result($tree_roots);redir_process("Location:index.php?phase=2"); /*  */ 
-
-
-}else{
-
-echo mysqli_error($db_main); 
-
-}
-} 
- /*  */ redir_process("Location:index.php?phase=2"); /*  */  
-}else{                                 $_SESSION['error' .rand(56,1515)] = "Failed to recognize snowglobe/reply parent at ". extraurl();
- /*  */ redir_process("Location:index.php"); /*  */ 
-}
-
+                        mysqli_query($db_main, "INSERT into polls(post_id_root,value,define_set) 
+                        VALUES($search_dt[postid],'$_DATA[choice_addition]','choice_addition');");
+                        foreach($_DATA as $key => $value){
+                            if(preg_match("#^poll_choice([0-9]+)#",$key)){
+                            mysqli_query($db_main,"INSERT INTO polls(post_id_root,value,define_set) 
+                            VALUES($search_dt[postid],'$value','poll_choice')");
+                            }
+                        }
+                    }                
+                }
+                else{ echo mysqli_error($db_main); }     
+            }  
+        }      
+        if(isset($_POST['parent_comment'])){
+            $tree_roots = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$_DATA[parent_comment]'");
+            $piece = mysqli_fetch_assoc($tree_roots);      
+            //get parent of post. Just to recheck, ya know. That's right! For the settings! My goodness I work like a turtle.
+            if($piece['settings'] > 4){  
+                $_SESSION['error' .rand(56,1515)] = extraurl();
+                mysqli_free_result($tree_roots);
+                redir_process("Location:".$main_dir."index.php");
+            }
+            $post_async = mysqli_query($db_main, "SELECT * FROM posts WHERE bywhom='$_MONITORED[login_q]' ORDER BY stamptime DESC LIMIT 0,10");
+            $async_dt = mysqli_fetch_assoc($post_async); //get latest post for whatever reference you must.
+            $post_nip = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,parent,postid,stamptime,
+            bywhom,title,thread_nick,topic_hash,thread_id,ip_address) VALUES('$_SPIN[tcha2]','2','n-a','$piece[postid]','0',CURRENT_TIMESTAMP
+            ,'$_MONITORED[login_q]','$_SPIN[tcha1]','$thread_nick','$topic_hash','$_DATA[thread_id]','$_SERVER[REMOTE_ADDR]');");
+            if($post_nip){
+                mysqli_free_result($tree_roots);
+                redir_process("Location:".$main_dir."index.php?phase=2"); /*  */ 
+            }
+            else{ echo mysqli_error($db_main); }
+        } 
+        redir_process("Location:".$main_dir."index.php?phase=2"); /*  */  
+    }
+    else{                                 
+        $_SESSION['error' .rand(56,1515)] = "Failed to recognize snowglobe/reply parent at ". extraurl();
+        redir_process("Location:".$main_dir."index.php"); /*  */ 
+    }
 break; //end post submissions
 } // end switch conditional for non-CSRF-token-required actions
 
@@ -246,9 +258,9 @@ mysqli_query($db_main, "UPDATE users SET login_attempts='$dialdown' WHERE userna
 if($mas2['login_attempts'] < 5){   
 if(compare_dz($gravy,$mn['password'])){ //successful log in    
 
-echo "in?";
 $_SESSION['login_q'] = $_SPIN['usernorm'];
-$_SESSION['salt_q'] = $mn['password'];
+$_SESSION['salt_q'] = $mn['salt'];  //changed it to the salt instead of the whole password hash so it'll be useless if potentially leaked
+//...I think
 $_SESSION['db_query'] = "user login";
 setcookie("limbooo[0]", "k", time()+1);
 /*  */ redir_process("Location: index.php"); /*  */ 
@@ -286,7 +298,7 @@ break; //end login
 
 }else{if(isset($_GET['verify']) && $_GET['verify'] !== $_SESSION['temp_n']
 ){  $_SESSION['error' .rand(56,1515)] = "Failed session hash at ".extraurl(); 
- /*  */ redir_process("Location:index.php"); /*  */  
+ /*  */ redir_process("Location:".$main_dir."index.php"); /*  */  
 }
 echo "not in?";
 }                               }
