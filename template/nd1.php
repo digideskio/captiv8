@@ -54,7 +54,10 @@ break;
 }
 }
 
-echo "</title>";      /*html end*/    include("js.php");
+echo "</title>";  
+echo '<meta charset="UTF-8">';
+
+    /*html end*/    include("js.php");
 
 /*function effic($snipe,$variable,$test_value,$functionar){//for annoying isset checks
 if(!isset($snipe)){return false;  //won't show PHP errors, I think
@@ -65,6 +68,6 @@ else{return false;}
 }
 else{$functionar();}
 }       poor substitution for isset() checks, but i'll keep it for later reference anyway */
- ?>   <meta charset="UTF-8">
+ ?> 
 
 

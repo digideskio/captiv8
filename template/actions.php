@@ -141,7 +141,10 @@ var_dump($_DATA);
                     redir_process("Location:".$main_dir."index.php"); /*  */  
                 }
                 $image_hash = isset($_DATA['image_data']) ? $_DATA['image_data'] : "none";
-                if(preg_match("#^[ ]?[\040][^\041]+[\041][ ]+[\091].+[\092][ ]{0,}$#",$_DATA['tcha1'])){
+                if(preg_match(preg_quote("#^[ ]{0,}[\040][^\041]+[\041][ ]+[\091].+[\092][ ]{0,}$#"),$_DATA['tcha1'])){
+                    
+                    //the regex quote was giving a fucking null byte error for some reason lol
+                    //...or am I missing something blatantly obvious from said regex quote that makes it give a null byte error?
                     $clone_title = $_DATA['tcha1'];
                     $pt_rec_split = 
                     [
@@ -156,9 +159,9 @@ var_dump($_DATA);
                     $settings = 0;
                 }
                 $post_submission = mysqli_query($db_main, "INSERT INTO posts(content,cnttype,forwhom,parent,
-                stamptime,bywhom,title,thread_nick,topic_hash,image_embed,ip_address,level) VALUES('$_DATA[tcha2]','1','$sg_id','0'
-                ,CURRENT_TIMESTAMP,'$_MONITORED[login_q]','$_DATA[tcha1]','$thread_nick','$topic_hash','$image_hash','$_SERVER[REMOTE_ADDR]','$settings')"); 
-                     
+                stamptime,bywhom,title,thread_nick,topic_hash,image_embed,ip_address,settings,num_replies) VALUES('$_DATA[tcha2]','1','$sg_id','0'
+                ,CURRENT_TIMESTAMP,'$_MONITORED[login_q]','$_DATA[tcha1]','$thread_nick','$topic_hash',
+                '$image_hash','$_SERVER[REMOTE_ADDR]','$settings','0')");                 
                 if($post_submission){                                          
                     if(isset($_SPIN['poll_question'],$_SPIN['choice_addition'],$_SPIN['choice_selection'])){    //check if a poll was set
                         $topic_search = mysqli_query($db_main, "SELECT * FROM posts WHERE bywhom='$_MONITORED[login_q]' 
@@ -199,6 +202,8 @@ var_dump($_DATA);
             bywhom,title,thread_nick,topic_hash,thread_id,ip_address) VALUES('$_SPIN[tcha2]','2','n-a','$piece[postid]','0',CURRENT_TIMESTAMP
             ,'$_MONITORED[login_q]','$_SPIN[tcha1]','$thread_nick','$topic_hash','$_DATA[thread_id]','$_SERVER[REMOTE_ADDR]');");
             if($post_nip){
+                //update reply count for thread
+                mysqli_query($db_main, "UPDATE posts SET num_replies = num_replies + 1 WHERE postid='$_DATA[thread_id]'");
                 mysqli_free_result($tree_roots);
                 redir_process("Location:".$main_dir."index.php?phase=2"); /*  */ 
             }
@@ -296,11 +301,12 @@ break; //end login
 
        
 
-}else{if(isset($_GET['verify']) && $_GET['verify'] !== $_SESSION['temp_n']
-){  $_SESSION['error' .rand(56,1515)] = "Failed session hash at ".extraurl(); 
- /*  */ redir_process("Location:".$main_dir."index.php"); /*  */  
-}
+}else{if(isset($_GET['verify']) && $_GET['verify'] !== $_SESSION['temp_n']){
+  $_SESSION['error' .rand(56,1515)] = "Failed session hash at ".extraurl(); 
+ /*  */ redir_process("Location:".$main_dir."index.php"); /*  */   
 echo "not in?";
+}
+
 }                               }
     
                                                                                                                 ?>

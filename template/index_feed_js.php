@@ -1,10 +1,6 @@
 var sync;
 
-<?php  $dir = "template/img/";  
-$server_mash = "http://" . $_SERVER['SERVER_NAME'] .$_SERVER['PHP_SELF'];
-
-$main_dir = preg_replace("#(index[.]php|template[/](.+)[.]php)[/]?#","",$server_mash) ;
-$image_dir = $main_dir . $dir; ?>
+<?php require_once("server_info_privilege_checks.php"); ?>
 
 $("body").on("click",".index_post .votes a",function(event){ event.preventDefault();
 

@@ -1,15 +1,6 @@
-<?php
-
-
-
+<?php     
 $check_3['username'] = isset($check_3['username']) ? $check_3['username'] : "";
-
-$dir = "template/img/";  
-$server_mash = "http://" . $_SERVER['SERVER_NAME'] .$_SERVER['PHP_SELF'];
-
-$main_dir = preg_replace("#(index[.]php|template[/](.+)[.]php)[/]?#","",$server_mash) ;
-$image_dir = $main_dir . $dir;
-
+require_once(__DIR__."/server_info_privilege_checks.php");
 
 //text references
 //remember that they will show up as $nx[n] where n = its position in the sequence -1
@@ -128,7 +119,7 @@ Signing up is totally free and will take less than a minute at the most.</p><div
 //additional poll questions
 //let's make it up to 20 questions maximum
 
-"<h3>Poll maker</h3><input type='text' class='largeform flick pollquestion' value='Insert poll question here...' name='poll_question'><h3>Poll choices<span> - You must have at least two</span></h3><input type='text' class='largeform flick' value='Add a choice here' name='poll_choice'><input type='text' class='largeform flick' value='Add a choice here' name='poll_choice'><a href='add-more-choices' class='prompt button_samp rad'>Add more choices...</a><h3>Poll options</h3><div class='optionbox'><input type='checkbox' name='choice_addition'><span>Make anyone able to add poll choices</span></div><div class='optionbox'><input type='checkbox' name='choice_selection'><span>Only one poll choice allowed for each user</span></div><a href='finished-poll-q' class='greened prompt button_samp rad'>Finish poll questions</a>"
+"<h3>Poll maker</h3><input type='text' class='largeform flick pollquestion' value='Insert poll question here...' name='poll_question'><h3>Poll choices<span> - You must have at least two</span></h3><input type='text' class='largeform flick' value='Add a choice here' name='poll_choice'><input type='text' class='largeform flick' value='Add a choice here' name='poll_choice'><a href='add-more-choices' class='prompt button_samp rad'>Add more choices...</a><h3>Poll options</h3><div class='optionbox'><input type='checkbox' name='choice_addition'><span>Make anyone able to add poll choices</span></div><div class='optionbox'><input type='checkbox' name='choice_selection'><span>Only one poll choice allowed for each user</span></div><a href='finished-poll-q' class='greened prompt button_samp rad'>Finish poll questions</a><a href='close-window' return_to='#vc2' class='redded prompt button_samp rad'>Discard Poll</a>"
 ,"Editing your profile"   , 
 "Unfortunately, the school you typed down is currently not in the directory. Click here to add your school into the current directory."
 , "Add your school","Your search query is going to be referenced with all Wikipedia school entries. If your school is not listed in Wikipedia, you will have to type in details for yourself."
@@ -148,93 +139,131 @@ Signing up is totally free and will take less than a minute at the most.</p><div
 
 </ol>',
 "<div class='box notice2' reference='future_classes'><h3>School Classes <a href='close_box' class='prompt' message=\"Don't show again\" dd_class='reg'>[x]</a></h3><p>Will you be taking classes in the near future? If so, then Captivate has features that will help you greatly in your studies.</p><p><a href='".$main_dir."profile_nuise/".$_SESSION['login_q']."' class='button_samp rad'>Find out more!</a></p></div>",
-"Does this apply to any snowglobe in particular? Leave blank to make it default.","Description","There are no posts to display.","Loading...","Post a new..."
+"Does this apply to any snowglobe in particular? Leave blank to make it default.","Description","There are no posts to display.","Loading...","Post a new...",
+'Describe your " + z + " here.',
+'Insert Your " + z + " Here',
+" (More replies in this comment chain.)",
+" <strong>(Selected Post)</strong>",
+"Users will show up here if you both follow each other. Of course you can send a message regardless, but it will be shown somewhere less exposed.",
+"Successfully edited!",
+"Click Again to Confirm Delete","Successfully Deleted!",
+"[Post Deleted]","Classroom Snowglobe","Fill-in Form",
+"Didn't find the class you were looking for? Feel free to add the class you're in yourself! Other people in your school will be notified that a new Class Snowglobe once you have submitted the form below.","Narrow down your search by name here...",'No Class Snowglobes found.',"Click here..."," Comments","There are no comments here. Be the first to reply!",
+
+"<textarea class='largeform flick'>Insert Comment Here</textarea><a href='submit-comment-quick' class='prompt button_samp rad greened'>Submit</a>","Most Recent Replies"
 );
 
-
-
-
-$dobordate = "<select name='day2' class='largeform'><option value='0'>--</option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option><option value='11'>11</option><option value='12'>12</option><option value='13'>13</option><option value='14'>14</option><option value='15'>15</option><option value='16'>16</option><option value='17'>17</option><option value='18'>18</option><option value='19'>19</option><option value='20'>20</option><option value='21'>21</option><option value='22'>22</option><option value='23'>23</option><option value='24'>24</option><option value='25'>25</option><option value='26'>26</option><option value='27'>27</option><option value='28'>28</option><option value='29'>29</option><option value='30'>30</option><option value='31'>31</option></select> 
-  <select name='month2' class='largeform'><option value='0'>--</option><option value='1'>January</option><option value='2'>February</option><option value='3'>March</option><option value='4'>April</option><option value='5'>May</option><option value='6'>June</option><option value='7'>July</option><option value='8'>August</option><option value='9'>September</option><option value='10'>October</option><option value='11'>November</option><option value='12'>December</option></select> 
-  <select name='year2' class='largeform'><option value='0'>--</option><option value='2013'>2013</option><option value='2012'>2012</option><option value='2011'>2011</option><option value='2010'>2010</option><option value='2009'>2009</option><option value='2008'>2008</option><option value='2007'>2007</option><option value='2006'>2006</option><option value='2005'>2005</option><option value='2004'>2004</option><option value='2003'>2003</option><option value='2002'>2002</option><option value='2001'>2001</option><option value='2000'>2000</option><option value='1999'>1999</option><option value='1998'>1998</option><option value='1997'>1997</option><option value='1996'>1996</option><option value='1995'>1995</option><option value='1994'>1994</option><option value='1993'>1993</option><option value='1992'>1992</option><option value='1991'>1991</option><option value='1990'>1990</option><option value='1989'>1989</option><option value='1988'>1988</option><option value='1987'>1987</option><option value='1986'>1986</option><option value='1985'>1985</option><option value='1984'>1984</option><option value='1983'>1983</option><option value='1982'>1982</option><option value='1981'>1981</option><option value='1980'>1980</option><option value='1979'>1979</option><option value='1978'>1978</option><option value='1977'>1977</option><option value='1976'>1976</option><option value='1975'>1975</option><option value='1974'>1974</option><option value='1973'>1973</option><option value='1972'>1972</option><option value='1971'>1971</option><option value='1970'>1970</option><option value='1969'>1969</option><option value='1968'>1968</option><option value='1967'>1967</option><option value='1966'>1966</option><option value='1965'>1965</option><option value='1964'>1964</option><option value='1963'>1963</option><option value='1962'>1962</option><option value='1961'>1961</option><option value='1960'>1960</option><option value='1959'>1959</option><option value='1958'>1958</option><option value='1957'>1957</option><option value='1956'>1956</option><option value='1955'>1955</option><option value='1954'>1954</option><option value='1953'>1953</option><option value='1952'>1952</option><option value='1951'>1951</option><option value='1950'>1950</option><option value='1949'>1949</option><option value='1948'>1948</option><option value='1947'>1947</option><option value='1946'>1946</option><option value='1945'>1945</option><option value='1944'>1944</option><option value='1943'>1943</option><option value='1942'>1942</option><option value='1941'>1941</option><option value='1940'>1940</option><option value='1939'>1939</option><option value='1938'>1938</option><option value='1937'>1937</option><option value='1936'>1936</option><option value='1935'>1935</option><option value='1934'>1934</option><option value='1933'>1933</option><option value='1932'>1932</option><option value='1931'>1931</option><option value='1930'>1930</option><option value='1929'>1929</option><option value='1928'>1928</option><option value='1927'>1927</option><option value='1926'>1926</option><option value='1925'>1925</option><option value='1924'>1924</option><option value='1923'>1923</option><option value='1922'>1922</option><option value='1921'>1921</option><option value='1920'>1920</option><option value='1919'>1919</option><option value='1918'>1918</option><option value='1917'>1917</option><option value='1916'>1916</option><option value='1915'>1915</option><option value='1914'>1914</option><option value='1913'>1913</option><option value='1912'>1912</option><option value='1911'>1911</option><option value='1910'>1910</option><option value='1909'>1909</option><option value='1908'>1908</option><option value='1907'>1907</option><option value='1906'>1906</option><option value='1905'>1905</option><option value='1904'>1904</option><option value='1903'>1903</option><option value='1902'>1902</option><option value='1901'>1901</option><option value='1900'>1900</option></select>
-  "
-
-  ;
-$reply_wrap = ["<div class='contentbox comment_box'><table><tr> <td class='user_info'>"
-,"</td><td><p class='post_text'> "
-,"<span class='side_info'>- Posted" 
-, "</a></span> </p>"
-, "<div class='opts_block'" 
-,  "</div>"
-, "</td></tr></table></div>"];
-function chat_box($user){return '<div class="box" ref="'.$user.'"><h3>Chatting with '.$user.'</h3><div class="message_box"></div></div>';}
-
-class fill_data { //first time doing classes
-public function show_reply(&$array_name){  global $reply_wrap,$logged_dt,$main_dir;
-//get the reply template
-
-//going to load the reply template from vars.php
-//$array_name will be the array that's called from the for/while loop that'll be getting all the replies
-//you can find it at vars.php
-
-echo $reply_wrap[0]. "<h4><a href='/profile/".$array_name['bywhom']."'>".$array_name['bywhom']."</a></h4>".$reply_wrap[1].$array_name['content']. " ". $reply_wrap[2] ." <a href='".$main_dir."thread/".$_GET['thread_view']."/comment/".$array_name['topic_hash'] ."'>". date(dflt_date_f, strtotime($array_name['stamptime'])) . $reply_wrap[3]; 
-
-if(isset($_SESSION['login_q']) && compare_dz($logged_dt['salt'],$_SESSION['salt_q'])){
-echo $reply_wrap[4] . " alt='".$array_name['postid']."'>";
-
-echo "<a href='#' class='comment_opts rad comment_q-u' id='post_".$array_name['postid']."' name='post_".$array_name['postid']."'>Reply</a>";
-//admin rights, mod rights, and then user's rights to their own posts
-if($logged_dt['userid'] == 1){
-echo "<a href='#' class='comment_opts rad edit' id='edit_".$array_name['postid']."'>Edit</a>";
-}
-
-echo $reply_wrap[5];
-
-} echo $reply_wrap[6];
-}
-
-public function sg_sidebar(&$sg_details,$thread_view = false){
-    global $nx,$main_dir;
-    echo '<div id="sg_desc" class="box rad"><h3>'.$sg_details["sg_name"].'</h3>';
-    if((!empty($sg_details['description']) || !preg_match("#^[ ]+$#",$sg_details['description']))){ 
-        echo (preg_match("#^ {0,}$#",$sg_details['description'])) ? $nx['50'] : $sg_details['description']; 
+//i'm gonna loop all these date-times
+function loop_date_fields($limit,$startofloop,$values = null){  
+    $x = $startofloop;
+    $return_val = "";
+    if(isset($values)){
+        $values = (preg_match("#,#",$values) === 1) ? preg_split("#,#",$values) : [$x => $values];
     }
-    if($thread_view){                                                   
-        echo "<a href='".$main_dir."sg/".$sg_details['sg_url']."' class='go_back_msg rad'>Back to thread listing</a>";
-    }
-    echo "</div>";
+    do {
+        $option_display = isset($values[$x - $startofloop]) ? $values[$x - $startofloop] : $x;
+        $return_val .= "<option value='$x'>$option_display</span>";
+    } while($limit > $x && $x++);
+    return $return_val;
 }
+$dobordate = "<select name='day2' class='largeform'>".loop_date_fields(31,1)."</select> 
+  <select name='month2' class='largeform'>
+  ".loop_date_fields(12,1,'January,February,March,April,May,June,July,August,September,October,November,December')."
+  </select> 
+  <select name='year2' class='largeform'>".loop_date_fields(2015,1900)."</select>";
 
-public function pt_post_opt(&$sql_que_in_q){
-    global $nx;
-    echo "<div id='content' class='contentbox hide'>".$nx['31']."</div>";
-    echo 
-    "
-    <div id='pt_post_op' class='hide'>
-        <span class='drop'>
-            <div class='uplink rad'>$nx[61]</div>
-            <div class='dropdown_content'>
-                <ul>";
-    echo "                    <li class='rad' pt_id='0'>No special formatting (Default)</li>";
-    if(is_array($sql_que_in_q)){
-        foreach($sql_que_in_q as $post_type){
-            echo "                    <li class='rad pt_opt_in' pt_id='$post_type[pt_id]'>$post_type[call_name]</li>";                
+class fill_data_aux {
+    public function pt_disp(&$array_queued){
+        $post_help_info = strlen($array_queued['post_help']) > 0 ? " post_help='".$array_queued['post_help']."'" : "";
+        return "                    <li class='rad pt_opt_in' pt_id='$array_queued[pt_id]'$post_help_info desc='$array_queued[description]'>$array_queued[call_name]</li>\n";  
+    }
+    public function js_parsed($var){ global $main_dir,$nx;
+        switch($var){
+            case "edit_button":
+                echo "<a href='finish-edit' class='comment_opts rad edit_q finish-edit_q'>Finish Editing</a>";
+            break;
+            case "reply_form":
+                echo"<form action='".$main_dir."index.php?direct=new_post' method='POST'><input type='hidden' value='\"+thread_id+\"' name='thread_id'><input type='hidden' value='Comments' name='tcha1'><input value='\"+ attribution_id +\"' name='parent_comment' type='hidden'><textarea name='tcha2' class='largeform flick'>$nx[24]</textarea><input type='submit' value='$nx[25]' class='comment_opts'></form>";
+            break;
         }
-    }
-    else{
-        while($post_type = mysqli_fetch_assoc($sql_que_in_q)){
-            echo "                    <li class='rad pt_opt_in' pt_id='$post_type[pt_id]' desc='$post_type[description]'>$post_type[call_name]</li>";                
-        }
-    }
-    echo
-    "
-                </ul>
-            </div>
-        </span>
-    </div>";   //on second thought, indenting HTML seems a bit much lol
-} 
+    } 
+}
 
+class fill_data extends fill_data_aux { //first time doing classes
+    public function chat_box($user){
+        return '<div class="box" ref="'.$user.'"><h3>Chatting with '.$user.'</h3><div class="message_box"></div></div>';
+    }
+    public function show_reply(&$array_name,$is_selected_comment = null){  global $logged_dt,$main_dir,$nx,$db_checks;
+        //get the reply template
+
+        //going to load the reply template from vars.php
+        //$array_name will be the array that's called from the for/while loop that'll be getting all the replies
+        //you can find it at vars.php
+                                                                                   
+        //I have no clue why the hell I did those wrappers. wtf was I thinking      
+        $selected_class_add = isset($is_selected_comment) ? [" selected",$nx['65']] : ["",""];
+        $more_replies_notice = isset($array_name['more_replies_notice']) ? $nx['64'] : "";
+        echo "<div class='contentbox comment_box$selected_class_add[0]'><table><tr> <td class='user_info'><h4><a href='/profile/".$array_name['bywhom']."'>".$array_name['bywhom']."</a></h4></td><td>
+        <p class='post_text'> ".$array_name['content']. "<span class='side_info'> - Posted <a href='".$main_dir."thread/".$_GET['thread_view']."/comment/".$array_name['topic_hash'] ."'>". date(dflt_date_f, strtotime($array_name['stamptime'])) ."</a> $selected_class_add[1] $more_replies_notice</span> </p>";
+        if(isset($_SESSION['login_q']) && compare_dz($logged_dt['salt'],$_SESSION['salt_q'])){
+            echo "<div class='opts_block reply_m' alt='".$array_name['postid']."'>";
+            echo "<a href='comment_q-u' class='comment_opts comment_q-u rad' id='post_".$array_name['postid']."'
+            name='post_".$array_name['postid']."'>Reply</a>";
+            //admin rights, mod rights, and then user's rights to their own posts
+            if($db_checks->check_perms_of_post("altering_posts",$array_name['postid'])){
+                echo "<a href='edit' class='comment_opts rad edit edit_q' id='edit_".$array_name['postid']."'>Edit</a>";
+                echo "<a href='delete' class='comment_opts rad delete' id='delete_".$array_name['postid']."'>Delete</a>";
+            }
+            echo "</div>";
+        } 
+        echo "</td></tr></table></div>";
+    }
+    public function sg_sidebar(&$sg_details,$thread_view = false){
+        global $nx,$main_dir;
+        echo '<div id="sg_desc" class="box rad"><h3>'.$sg_details["sg_name"].'</h3>';
+        if((!empty($sg_details['description']) || !preg_match("#^[ ]+$#",$sg_details['description']))){ 
+            echo (preg_match("#^ {0,}$#",$sg_details['description'])) ? $nx['50'] : $sg_details['description']; 
+        }
+        if($thread_view){                                                   
+            echo "<a href='".$main_dir."sg/".$sg_details['sg_url']."' class='go_back_msg rad'>Back to thread listing</a>";
+        }
+        echo "</div>";
+    }   
+    public function about_poster_sidebar(&$sidebar_dt){   global $main_dir;
+        echo '<div class="box">
+            <h3>About the poster:</h3>
+            <p><a href="'.$main_dir.'profile/'.$sidebar_dt["username"].'">Profile Link</a><br>
+            </div>';       
+    }
+    public function pt_post_opt(&$sql_que_in_q){
+        global $nx;
+        echo "<div id='content' class='contentbox hide'>".$nx['31']."</div>";
+        echo 
+        "
+        <div id='pt_post_op' class='hide'>
+            <span class='drop'>
+                <div class='uplink rad'>$nx[61]</div>
+                <div class='dropdown_content'>
+                    <ul>";
+        echo "                    <li class='rad pt_opt_in' pt_id='0'>No special formatting (Default)</li>";
+        if(is_array($sql_que_in_q)){ //sql query in question in case the reference wasn't clear
+            foreach($sql_que_in_q as $post_type){
+                echo $this->pt_disp($post_type);                
+            }
+        }
+        else{
+            while($post_type = mysqli_fetch_assoc($sql_que_in_q)){
+                echo $this->pt_disp($post_type);              
+            }
+        }
+        echo
+        "
+                    </ul>
+                </div>
+            </span>
+        </div>";   //on second thought, indenting HTML seems a bit much lol
+    }       
 }
 $fill_data = new fill_data();   
 
-?>                                                                              
+?>

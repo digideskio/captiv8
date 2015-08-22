@@ -34,7 +34,7 @@ a.link_view2:hover{padding:4px 9px;border:1px dashed #808080;background:#f0f0f0;
 #t_wrap table#results td,#t_wrap table#results th{padding:4px 6px;max-width:300px;}
 #t_wrap table#results th{background:#000;color:#fff;}
 td.a12,td.a21{background:#e8e8e8;}
-td.a22{background:#e0e0e0}
+td.a22{background:#d8d8d8}
 #panels{padding:5px}
 #admin_panel[currently_open=v_sess]{width:450px}
 #admin_panel[currently_open=v_css],#admin_panel[currently_open=v_sql]{width:650px;}
@@ -59,7 +59,7 @@ a.finish_button{display:inline-block;margin-bottom:0}
 #admin_panel th[colspan]{font-size:14px;text-align:left;padding-right:6px}        
 .pt_dt th{width:25%;}           
 .pah{border:2px solid #000;}
-.pah th{color:#fff;background:#000;padding:3px}
+.pah th{color:#fff;background:#000;padding:3px;text-align:center;}
 .pah td{padding:3px}     
 #admin_panel button{margin:3px 0;cursor:pointer;padding:4px 7px;font-family:"Tahoma","Sans-Serif";font-weight:bold}
 #admin_panel button:focus,a.link_view2:focus,#panel_opts .selected_plink,#panel_opts a.selected_plink:hover{background:#79A8C8 url('<?php echo $main_dir; ?>template/img/white.png') repeat-x;color:#fff;border:1px solid #658EAE;box-shadow: 0 0;text-shadow:0 1px 0 #658EAE}
@@ -76,6 +76,7 @@ a.finish_button{display:inline-block;margin-bottom:0}
 .pah td{border-bottom:1px dashed #c0c0c0}
 .pah th{border-bottom:1px dashed #fff}
 .pah th[colspan]{border:0}
+.sql_q{font:12px monospace}
 </style>
 
 

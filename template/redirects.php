@@ -43,7 +43,7 @@ unset($_SESSION[$nkey]);
   
   $clasp_tip = ($actual['parent'] !== 0) ? $actual['parent'] : $actual['postid'];   //check to see if it's a thread to refer for a notification
   
-  $parent_clasp = mysqli_query($db_main, "SELECT * FROM posts WHERE postid=$clasp_tip ORDER BY stamptime DESC") or die(mysqli_error($db_main)); $_SESSION['abc'] = mysqli_num_rows($parent_clasp); 
+  $parent_clasp = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$clasp_tip' ORDER BY stamptime DESC") or die(mysqli_error($db_main)); $_SESSION['abc'] = mysqli_num_rows($parent_clasp); 
    $parent_call = mysqli_fetch_assoc($parent_clasp);
    
    if($actual['cnttype'] == 1 && !preg_match("#^none$#",$actual['image_embed'])){//for images
@@ -60,7 +60,7 @@ if(!$update_image){$_SESSION['changing_error'] = mysqli_error($db_main);}
   
 
   
-  
+ 
   
   $parent_check = ($actual['bywhom'] == $parent_call['bywhom']) ? "no" : "yes";
   $no_notif = ($actual['cnttype'] == 2) ? $parent_check : "yes";
@@ -88,7 +88,7 @@ redir_process($url);
  redir_process($url);
 
   }
-     echo $url;
+
   }
   unset($_SESSION['db_query']);
 

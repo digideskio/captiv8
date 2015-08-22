@@ -2,7 +2,7 @@
 $db_main = mysqli_connect("localhost","root","","captiv8");      
 mysqli_set_charset($db_main,"ISO-8859-1");
 date_default_timezone_set('America/Chicago');         
-$allow_redirs = false;
+$allow_redirs = true;
 
 if(isset($_GET['get_more'])){ //news_feed.php needs it
     require_once("auxiliary.php");
@@ -20,6 +20,7 @@ define('dflt_date_f',"F j, Y, g:i A");
 define('index_page_check',(preg_match("#index.php([\072]([0-9]){0,15})*$#", extraurl()) && !isset($_SERVER['REDIRECT_URL'])));
 define('news_feed_check',(index_page_check || isset($_GET['snowglobe']) || isset($_GET['get_more'])));
 define('logged_in_check',isset($_SESSION['login_q']));
+
 if(!isset($_GET['get_more'])){
     if(count($_GET) > 0){
         key_associations("thread_view,comment"); 
@@ -42,8 +43,14 @@ if(!isset($_GET['get_more'])){
             switch($sg_details['special_settings']){  
                 case "school": $p_type_extra = 1;  break;
             }
-            $save = $p_type_extra;
-            $p_type_extra = isset($p_type_extra) ? " OR for_which_sg='".$p_type_extra."'" : "";
+            if(isset($p_type_extra)){
+                $save = $p_type_extra;
+                $p_type_extra = " OR for_which_sg='".$p_type_extra."'";
+            }
+            else{
+                $p_type_extra = "";
+                $save = "1"; //2lazy2sortthisout
+            }
             $get_post_types = mysqli_query($db_main, "SELECT * FROM post_types WHERE 
             (
             for_which_sg = '0' 
@@ -56,17 +63,22 @@ if(!isset($_GET['get_more'])){
             call_name ASC");
             while($p_types = mysqli_fetch_assoc($get_post_types)){
                 $ptype_list[] = $p_types;
-            } //default post types are included first, then post types for your snowglobe category, then post types for your snowglobe
-              //the later mentioned, the more priority it has
-              //then it's ordered by call name in ascending order
+            } 
+            //default post types are included first, then post types for your snowglobe category, then post types for your snowglobe
+            //the later mentioned, the more priority it has
+            //then it's ordered by call name in ascending order
         }
+    }
+    if(isset($_GET['query'])){
+        $edu_find = mysqli_query($db_main, "SELECT * FROM education e, school s WHERE e.school_id = s.s_id AND e.forwhom='$_FILTERED[query]'");
     }                                                                                          
     if(isset($_GET['profile'])){
         $username = $_FILTERED['profile'];
         $profile_query = mysqli_query($db_main, "SELECT * FROM users WHERE username='$username'"); $matched = mysqli_fetch_assoc($profile_query);
-        if(!$profile_query){
+        if(!$profile_query || ($profile_query && mysqli_num_rows($profile_query) == 0)){
             redir_process("Location:".$main_dir."index.php"); 
             $_SESSION['error' .rand(56,1515)] = extraurl();
+            setcookie("limbooo[0]","profile_error");
         }
     }
     $full_url = [$_SERVER['PHP_SELF'],preg_replace("#(.+)[/][^/]+$#","$1",$_SERVER['PHP_SELF'])];   
@@ -75,12 +87,46 @@ if(!isset($_GET['get_more'])){
             if(preg_match("#^(free[_]sess[_])#", $nkey)){ unset($_SESSION[$nkey]); }
         }
     }  
-    if(logged_in_check){
+    if(logged_in_check){                   
+        //check for admin/mod privileges on first login
+        if(!isset($_SESSION['admin_privy'])){
+            $admin_search = mysqli_query($db_main, "SELECT * FROM admin_rights WHERE username = '$_MONITORED[login_q]'");   
+            if(mysqli_num_rows($admin_search) === 1){
+                $admin_search = mysqli_fetch_assoc($admin_search);
+                //update admin rights on the database
+                $_SESSION['admin_privy']['hash'] = hash('sha512',md5($_MONITORED['login_q'] . $_MONITORED['salt_q']) . hash('sha256',$logged_dt['salt'] . $logged_dt['login_att_last']));
+                $_SESSION['admin_privy']['when'] = microtime(true);
+                //that's as "wacky" as I can make them, heh
+                //now to update the DB
+                $_SESSION['admin_privy']['type'] = $admin_search['misc_info'];
+                
+                $update_db = mysqli_query($db_main, "UPDATE admin_rights SET ar_hash = '".$_SESSION['admin_privy']['hash']."',when_logged = '".$_SESSION['admin_privy']['when']."' WHERE username = '$_MONITORED[login_q]'");
+                
+            }
+            else{
+                $_SESSION['admin_privy']['type'] = "none";
+            }       
+        }
+        else {
+            if($_SESSION['admin_privy']['type'] !== "none"){      
+                switch($db_checks->admin_rights($_SESSION['login_q'])){
+                    case "Fully Confirmed":
+                        //nothing. maybe something later lol
+                    break;
+                    case "Password Needed":
+                        //Make some mechanism for the currently logged user to fill the password  
+                    break;
+                }
+            }
+        }
         //anything (data needed to be received, data needed to be updated, etc.) when a user's logged in
         mysqli_query($db_main, "UPDATE users SET last_active_at=now() WHERE username='$_MONITORED[login_q]'");    
         $logged_user_data = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_MONITORED[login_q]'");
         $logged_zen = mysqli_fetch_assoc($logged_user_data);
         if($logged_zen['image_in_limbo'] !== 0 && (microtime(true) - $logged_zen['image_in_limbo'] >= 3600*24)){
+            //I'm gonna have all the uploaded images' blobs be serialized json to be interpreted as an image in another faux file
+            //because this way is lame                    
+            
             //delete all images that were uploaded but didn't have a post to be embedded into after 24 hours being posted
             mysqli_query($db_main, "DELETE FROM images WHERE under_post='0' AND uploaded_by='$_MONITORED[login_q]'"); 
         }
@@ -89,6 +135,7 @@ if(!isset($_GET['get_more'])){
             $default_pts = mysqli_query($db_main, "SELECT * FROM post_types WHERE for_which_sg='0'") ;
         }
         clear_array($_SESSION,"highschool|college"); //school, etc fillout clear on refresh
+      //  if(!isset($_SESSION['admin_hash']))
     }
     if(isset($_GET['thread_view'])){
         $_TRIM = hack_free($_GET['thread_view']);
@@ -100,13 +147,26 @@ if(!isset($_GET['get_more'])){
         $thread_data = mysqli_fetch_assoc($view_thread) ?: "";
         //topic_hash doesn't necessarily make it a topic
         if(isset($_GET['comment'])){
-            $specific = mysqli_query($db_main, "SELECT * FROM posts WHERE topic_hash='". hack_free($_GET['comment']) ."' AND (parent='$thread_data[postid]' OR thread_id='$thread_data[postid]')");
+            $specific = mysqli_query($db_main, "SELECT * FROM posts WHERE topic_hash='". hack_free($_GET['comment']) ."' 
+            AND (parent='$thread_data[postid]' OR thread_id='$thread_data[postid]')");
         }
     }   
-    if(isset($_COOKIE['limbooo'][1])){
-        for($bm = 0;$bm <= count($_COOKIE['limbooo'])-1;$bm++){
-            setcookie("limbooo[".$bm."]","a",time()-1);
+}
+if(isset($_GET['snowglobe'],$_SESSION['saved_pt_views']) || (isset($_GET['get_more']) && $_GET['get_more'] == "special")){
+    foreach($_SESSION['saved_pt_views'] as $sg_id => $useless_value){
+        if(count($_SESSION['saved_pt_views'][$sg_id]) == 0){
+            unset($_SESSION['saved_pt_views'][$sg_id]);
         }
     }
 }
-?>                                                               
+//SELECT * FROM information_schema.INNODB_SYS_INDEXES WHERE (NAME NOT LIKE 'PRIMARY' AND NAME NOT LIKE '%_IND' AND NAME NOT LIKE '%_SPACE' AND NAME NOT LIKE '%INDEX')
+//to get all created indexes
+
+if(preg_match("#index.php([\072]([0-9]){0,15})?$#",extraurl()) && !isset($_SESSION["login_q"])) $_SESSION['welcome']="a";
+if(!preg_match("#index.php((([\072])+([0-9]){0,15})*)$#",extraurl()) || isset($_SESSION["login_q"])){
+    if(isset($_SESSION['welcome'])){
+        unset($_SESSION['welcome']);
+    }
+}
+unset($_SESSION['confirm_delete'],$_SESSION['reply_sync']['count'],$_SESSION['reply_sync']['incr']);
+?>                                                                                    

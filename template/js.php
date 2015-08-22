@@ -5,37 +5,52 @@
 
 <script src="<?php echo $main_dir; ?>template/jquery-ui.js" type="text/javascript"></script>
 
-<script>(function ( $ ) {   
+<script>
     //this is soooo tacky      
 
 
-$.fn.loadingtext = function(text = "LOADING",dot_nums = 3){
-  
-
-//this.html("LOADING");
-
-var agent = this;
-return this.each(function(){
- $this = $(this);
-dots($this);
-
-});  
-function dots($this){       x = 0;    dots = "";
-setInterval(function(){      for(i = 0;i <=x; i++){
-dots = (x > 3) ? "." : "." + dots;  
-};    if(dots.length > dot_nums){dots = "";}
-$this.html(text + dots);
-},200);
+$.fn.loadingtext = function(text,dot_nums,add_class){
+    settings = $.extend({
+        add_class: (typeof add_class === "string") ? add_class : "loading_text",
+        text: (typeof text === "string") ? text : "Loading",
+        dot_nums: (typeof dot_nums === "number") ? dot_nums : 6    
+    });
+    function dots($this){   
+         switch(typeof $this){                                                   
+             case "object":                    
+                 mn = settings.dot_nums +1;    
+                 textchop = setInterval(function(){      
+                     dotsx = (typeof dotsx === "undefined") ? "" : dotsx;    
+                     dotsx = "." + dotsx;
+                     dotsx = (dotsx.length === mn) ? "" : dotsx;
+                     $this.html(settings.text + dotsx)
+                 },200);
+                 delete dotsx; //for other uses of dots
+             break;
+             case "string":  //no object inheritance land oooh
+                 if($this === "clear"){
+                     clearInterval(textchop);
+                 }
+             break;
+         }
+    }
+    if(arguments.length === 1 && settings.text == "[clear]"){  
+        dots("clear");
+        this.removeClass(settings.add_class);   
+        return this.each(function(){
+        $(this).html("");
+        });   
+    }
+    else{   
+        var agent = this;
+        return this.each(function(){ 
+            var chap = $(this);   
+            chap.addClass(settings.add_class).html(settings.text);
+            dots(chap);
+        });            
+    }
 } 
-
-} 
- $.ltrim = function( str ) {
-return str.replace( /^\s+/, "" );
-};
-$.rtrim = function( str ) {
-return str.replace( /\s+$/, "" );
-};
-}( jQuery ));     //my first jquery function
+    //my first jquery function
 
 
 
@@ -149,12 +164,15 @@ $(".pt_opt_in").each(function(){
 
     $(this).on("click",function(){ 
         z = $(this).html();
-        a = $(this).attr("desc");
+        a = (typeof $(this).attr("desc") != "string") ? "" : $(this).attr("desc");
         if($(this).attr("pt_id") != "0"){   
-            $("#title_trigger").val("["+z+"] (Insert Your " + z + " Here)");
-            $("#post_content").val(a + " Describe your " + z + " here. If it's the one-liner, the punchline is written here.").removeClass("flick");
+            y = (typeof $(this).attr("post_help") === "string") ? $(this).attr("post_help") : "<?php echo $nx['62'];?>";
+            $("#title_trigger").val("["+z+"] (<?php echo $nx['63']; ?>)");
+            $("#post_content").val(a + " " + y).removeClass("flick");
         }
-        else{
+        else{     
+            $("#title_trigger").val($("#title_trigger").prop("defaultValue"));
+            $("#post_content").val($("#post_content").prop("defaultValue"));
             $("#pt_post_op").insertBefore("#post_k");
             $("#pt_opts").removeAttr("style class");
         }
@@ -290,7 +308,12 @@ $(this).val($(this).prop("defaultValue")); //had to change it to this for textar
              
 <?php if(isset($_SESSION['login_q']) && compare_dz($logged_dt['salt'],$_SESSION['salt_q'])): ?>  
 
-<?php if(count($_GET) == 1 && isset($_GET['query'])): ?>
+<?php if(count($_GET) == 1 && isset($_GET['query'])): ?> 
+
+if($(this).hasClass("chop")){  
+    search_val = $(this).val();      
+    $(this).parent().next().load("<?php echo $main_dir; ?>template/simcheck.php?fetch=class_sg&school_id="+ $(this).parent().next().attr('school_id') +"&extra_name=" + encodeURIComponent(search_val))
+}
 
 if($(this).hasClass("school_search")){    
 //I need to make the wait a certain amount of time after a person is done typing before displaying results
@@ -343,22 +366,84 @@ $(this).parents("td#left1 div").detach();});
 
 $("span.signup input[type=text]").each(function(){
 $(this).attr("title", " ");
-});
-  
+});  
+<?php if(logged_in_check && isset($_GET['thread_view'])): ?>
 $("body").on('click',"a.comment_opts",function(event){
-event.preventDefault();
-if($(this).parent().has("form").length){ $(this).parent().find("form").eq(0).detach();}else{
-$("a#"+this.name).parent().append("<form action='<?php echo $main_dir; ?>index.php?direct=new_post' method='POST'><input type='hidden' value='<?php $thread_id = isset($thread_data['postid']) ? $thread_data['postid'] : '08676'; echo $thread_id; ?>' name='thread_id'><input type='hidden' value='Comments' name='tcha1'><input value='"+ $(this).parent('.opts_block').attr('alt') +"' name='parent_comment' type='hidden'><textarea name='tcha2' class='largeform flick'><?php echo $nx['24'] ?></textarea><input type='submit' value='<?php echo $nx['25'] ?>' class='comment_opts'>");
-}
-
-
-
-}
-); 
+    event.preventDefault();
+    attribution_id = $(this).parent('.opts_block').attr('alt'); 
+    $cane =  $("div[alt='"+attribution_id+"']");
+    switch($(this).attr("href")){
+        case "delete":
+            $(this).attr("id","k_"+attribution_id);
+            $.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"alter_post","typeof_alter":"delete","postid":attribution_id},
+                function(notif){
+                    if(notif == "<?php echo $nx['68']; ?>"){
+                        $("#k_"+attribution_id).html(notif);
+                    }
+                    if(notif == "<?php echo $nx['69']; ?>"){  //DELETED
+                        $cane.parent().find(".post_text").html("<?php echo $nx['70']; ?>");
+                        $cane.parent().parent().prev().html("<h4>-------</h4>");
+                        $cane.remove();
+                    }    
+                }
+            );
+        break;
+        case "comment_q-u":
+            if($(this).parent().has("form").length){
+                $(this).parent().find("form").eq(0).detach();
+            }
+            else{
+                $(this).parent().append("<?php $fill_data->js_parsed('reply_form');?>");
+            }
+        break;
+        case "edit":
+            parent_check = ($(this).parent().is(".reply_m")) ? true : false;      
+            $("div[alt='"+attribution_id+"']").find(".edit").wrap("<p id='d_"+attribution_id+"' />");
+            $cane.prev().find(".side_info").wrap("<p id='f_"+attribution_id+"' />");   
+            $cane.data("save_4_later", {
+                edit_button : $("#d_"+attribution_id).html(),  
+                posted_date_html : $("#f_"+attribution_id).html(),
+                original_post : $("#f_"+attribution_id).parent().html()   
+            });
+            $("#d_" + attribution_id +",#f_" + attribution_id).detach();
+            $.get("<?php echo $main_dir; ?>template/simcheck.php",{"fetch":"postedit_q","postid":attribution_id},function(returned){                                      
+                c_msg = "<?php echo $fill_data->js_parsed('edit_button'); ?>";
+                j_html = "<textarea class='largeform' id='e_"+attribution_id+"'>"+returned+"</textarea>";
+                if(parent_check && $("#e_" + attribution_id).length === 0){                                                
+                    $cane.parent().find(".post_text").html(j_html).addClass("relaxed");                
+                    $cane.find(".edit").detach();
+                    $cane.find(".comment_q-u").after(function(){return ($(this).parent().find(".finish-edit_q").length < 1) ? c_msg : false});    
+                }
+                else{
+                    $("div[alt='"+attribution_id+"']").parent().parent().find("p").html(j_html);
+                }          
+            });
+        break;
+        case "finish-edit":
+            edit_button = $cane.data("save_4_later").edit_button;
+            posted_date_html = $cane.data("save_4_later").posted_date_html;
+            original_post = $cane.data("save_4_later").original_post;
+            $(this).parent().prev().attr("id","h_" +attribution_id).removeClass("relaxed");
+            $(this).after(edit_button).detach();  
+            $.post("<?php echo $main_dir; ?>template/simcheck.php?action=alter_post&typeof_alter=edit&postid=" + attribution_id,
+            {"dt": $("#e_" + attribution_id).val()},
+            function(returned){
+                if(returned.status == "success"){
+                    $("#h_" + attribution_id).html(returned.html + posted_date_html);      
+                }
+                else{
+                    alert(returned.message);
+                    $("#h_" + attribution_id).html(original_post);
+                }
+                $("#h_" + attribution_id).removeAttr("id");               
+            },"json");
+        break;
+    }
+});
+<?php endif; ?> 
 
 $("input[type=checkbox]").each(function(){
-$(this).before("<button class='dc'>").addClass("clear");
-
+    $(this).before("<button class='dc'>").addClass("clear");
 });  
 
 $("button.dc").each(function(){     //better-looking checkboxes
@@ -429,7 +514,7 @@ delete zing;
 <?php require_once($main_dir. "template/autorelays.js");endif; ?> 
 
                                          
-<?php if(preg_match("#profile[=](.+)$#",extraurl())){require_once($main_dir. "template/profile_sync.js");} ?> 
+<?php if(preg_match("#profile[=](.+)$#",extraurl())): include($main_dir. "template/profile_sync.js"); endif;    ?>
 
              var $black_layer = ["<div id='black_overlay'><div id='widthfix'>","</div></div>"];  
              
@@ -468,20 +553,9 @@ $(".pt_toggle.selected").each(function(){
 $("#pt_drop").html(original_pt_c + " " +selected_pt_text);
 <?php endif; ?>
                   
-$("body").on('click',".prompt",function(event){event.preventDefault();       //dynamic server interaction with a click
+$("body").on('click',".prompt",function(event){event.preventDefault();       //dynamic client/client+server interaction with a click
 
 <?php if(isset($_SESSION['login_q'])): ?>    //IT'S HERE   
-
-
-if($(this).attr("href") == "sg_scha"){
-
-if(typeof $(this).attr("sg") === "string"){
-$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"sg_scha","sg":$(this).attr("sg")}).done(function(message){
-alert(message);
-});
-}
-
-}
 
 
 if(/^chat-with-user[:]/.test($(this).attr("href"))){
@@ -504,14 +578,6 @@ delete zing;
 }
 
 
-if($(this).attr("href") == "submit-chat-msg"){ //submit a chat message
-
-$.post("<?php echo $main_dir; ?>template/simcheck.php?action=submit-chat-msg",{"towhom":$(this).parent().parent().attr("ref"),"message":$(this).parent().find(".chat_panel textarea").val()});
-$(this).parent().find(".chat_panel textarea").val("");
-load_replies($(this).parent().parent().attr("ref"),"reload");
-}
-
-
 if($(this).attr("value") == "SEARCH SCHOOL"){  
 $values = [[$(this).prev("input").prop("defaultValue"),$(this).prev("input").val()],[$(this).prev().prev("input").prop("defaultValue"),$(this).prev().prev("input").val()]]; 
 $zenx = [($values[0][0] == $values[0][1]) ? " " : $values[0][1],($values[1][0] == $values[1][1]) ? " " : $values[1][1]];
@@ -521,16 +587,6 @@ $.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"wikipedia_searc
 $(".prompt[value='SEARCH SCHOOL']").next("div").removeClass("contentbox").html(data);
 });
 }
-
-if($(this).attr("href") == "close-chat"){
-
-$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"chat_with_user","user":$(this).parent().parent().attr("ref"),"box_action":"close"},function(message22){
-set = "x";       
-}); 
-if(set == "x"){ $(this).parent().parent().empty().detach();      delete set;     }
-//close it in the array
-}
-
 
 if($(this).attr("value") == "Complete Details"){       i = -1;
 s_layer = $(this).attr("id");   zeus = new Array();        
@@ -543,87 +599,190 @@ window.location.assign("<?php echo $main_dir;?>profile_nuise/<?php echo isset($_
 }
 });
 }       
-<?php if(isset($_GET['query']) && $_GET['query'] == $_SESSION['login_q']):?>
-
-if($(this).attr("href") == "find-classes" && $("#black_overlay").length < 1){
-school_id = $(this).attr("school_id");                
-
-$("body").prepend($black_layer[0] + $black_layer[1]);
-$(".contentbox[s_id="+school_id+"]").appendTo("#widthfix");
-$.get("<?php echo $main_dir;?>template/simcheck.php",{"fetch":"class_sg","school_id":school_id},function(list_disp){
-$(".load_classes[school_id='"+school_id+"']").html(list_disp);
-});
-
-
-}
-
-<?php endif; ?>
-
-
-
-if($(this).attr("href") == "submit-edit"){  
-$.post("<?php echo $main_dir; ?>template/simcheck.php?action=css_edit",{"data":$("#jones").val(),"file":$("#jones").attr("title")},function(data){
-if(data.notice == "success"){alert("Successfully edited file!");}                                                                       
-},"json");     
-}
-
-if($(this).attr("href") == "load-more"){
-$(this).attr("Loading...");
-
-$.get("<?php echo $main_dir; ?>template/news_feed.php",{"get_more":"true"<?php if(isset($_GET['snowglobe'])): ?>, "load_option": <?php echo '"sg_'.$_FILTERED['snowglobe'].'"'; endif;?>},function(older_msgs){
-$("#news_feed").append(older_msgs);
-});
-
-$(this).remove();
-}
-
-
-if($(this).attr("href") == "select-school"){     $("#select4").removeAttr("id");
-$(this).attr("id","select4");
-
-if($(this).attr("datamine").length){
-
-$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"confirm_school","data":$(this).attr("datamine")}).done(function(msg){
-
-$("#select4").parent().append(msg);
-
-});
-}else{
-
-$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"confirm_school"}).done(function(msg){
-
-$("#select4").after(msg);
-
-});
-
-}
-}
-if($(this).attr("href") == "confirm_school"){ $("#select4").removeAttr("id");
-$(this).attr("id","select4");
-$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"confirm_school","name":$(this).attr("name")}).done(function(msg){
-
-$("#select4").after(msg);
-
-});
-}
 
 switch($(this).attr("href")){
+    case "show-comments":   
+        t_id = $(this).attr("postid");
+        if($(this).hasClass("opened_pandora")){
+            $("#r_" + t_id).empty().detach();
+        }
+        else{
+            $(this).parentsUntil(".content").addClass("ch_"+t_id);
+            $(".ch_"+t_id).removeClass(function(){return ($(this).is("table")) ? false : "ch_"+t_id});  
+            $table_rec = $(".ch_"+t_id).parent().parent();
+            fixed_span = $table_rec.children("td").length - 2;
+            colspan_toggle = (fixed_span > 1) ? " colspan='"+fixed_span+"'" : "";    
+            $table_rec.find(".left_side,.right_side").attr("rowspan","2");
+            $table_rec.after("<tr id='r_"+t_id+"'><td class='comments'"+colspan_toggle+"><div class='c_box noselect' t_id='"+t_id+"'>Loading...</div></td></tr>");
+        }
+        $(this).toggleClass("opened_pandora").html(function(){
+            t_val = $(this).html(); 
+            t_val = !(/[\133]Close[\135]$/.test($(this).html())) ? t_val + " [Close]" : t_val.replace(/ [\133]Close[\135]$/,"");      
+            return t_val;
+        });
+        $(".c_box[t_id="+t_id+"]").loadingtext();   //for dramatic pause
+        setTimeout(function(){ 
+            $(".c_box[t_id="+t_id+"]").loadingtext("[clear]").removeClass("noselect"); 
+            $.get("<?php echo $main_dir;?>template/simcheck.php",{fetch:"comments",postid:t_id},function(htmlx){
+                $(".c_box[t_id="+t_id+"]").html(htmlx).end();
+                $(".c_box[t_id="+t_id+"]").addClass("indent");
+            });    
+        },1000);  
+                 
+    break;
+    case "close-window":
+        if($("#black_overlay").length > 0 && $(this).attr("return_to").length > 0){
+            $("#widthfix .hide").prependTo($(this).attr("return_to"));
+            $("#black_overlay").remove();
+        }
+    break;
+    <?php if(isset($_GET['query']) && $_GET['query'] === $_SESSION['login_q']):?>
+    case "find-classes":
+        if($("#black_overlay").length < 1){
+            school_id = $(this).attr("school_id");                
+            $("body").prepend($black_layer[0] + $black_layer[1]);
+            $(".contentbox[s_id="+school_id+"]").appendTo("#widthfix");
+            $.get("<?php echo $main_dir;?>template/simcheck.php",{"fetch":"class_sg","school_id":school_id},function(list_disp){
+                $(".load_classes[school_id='"+school_id+"']").html(list_disp);
+            });
+        }
+    break;
+    <?php endif; ?>
+    case "sg_scha":
+    if(typeof $(this).attr("sg") === "string"){
+        $.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"sg_scha","sg":$(this).attr("sg")}).done(function(message){
+                alert(message);
+            });
+        }
+    break;
+    case "submit-chat-msg":
+        //submit a chat message
+        $.post("<?php echo $main_dir; ?>template/simcheck.php?action=submit-chat-msg",
+        {"towhom":$(this).parent().parent().attr("ref"),"message":$(this).parent().find(".chat_panel textarea").val()});
+        $(this).parent().find(".chat_panel textarea").val("");
+        load_replies($(this).parent().parent().attr("ref"),"reload");
+    break;
+    case "close-chat":
+        $.get("<?php echo $main_dir; ?>template/simcheck.php",
+        {"action":"chat_with_user","user":$(this).parent().parent().attr("ref"),"box_action":"close"},
+        function(message22){
+            set = "x";       
+        }); 
+        if(set == "x"){ $(this).parent().parent().empty().detach();      delete set;     }
+        //close it in the array
+    break;
+    case "load-more":
+        $.get("<?php echo $main_dir; ?>template/news_feed.php",
+        {"get_more":"true"<?php if(isset($_GET['snowglobe'])): ?>, "load_option": <?php echo '"sg_'.$_FILTERED['snowglobe'].'"'; endif;?>},
+        function(older_msgs){
+            $("#news_feed").append(older_msgs);
+        });
+        $(this).remove();
+    break;
+    case "select-school":
+        $("#select4").removeAttr("id");
+        $(this).attr("id","select4");
+        if($(this).attr("datamine").length){
+            $.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"confirm_school","data":$(this).attr("datamine")}).done(function(msg){
+                $("#select4").parent().append(msg);
+            });
+        }
+        else{
+            $.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"confirm_school"}).done(function(msg){
+                $("#select4").after(msg);
+            });
+        }
+    break;
+    case "confirm_school":
+        $("#select4").removeAttr("id");
+        $(this).attr("id","select4");
+        $.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"confirm_school","name":$(this).attr("name")}).done(function(msg){
+            $("#select4").after(msg);
+        });
+    break;
+    case "one-liner":
+        $("#post_k input[name=tcha1]").val("<?php echo $nx['27'] ?>");
+        $("#post_k textarea[name=tcha2]").toggle("200",function(){$(this).attr("style","display:block;box-shadow:0 0 6px #556378")})
+        .removeClass("flick").val("<?php echo $nx['28'] ?>").end();  
+        $("#pt_post_op").appendTo("#pt_opts");
+    break;
+    case "add-more-choices":
+        if($("input[name=poll_choice]").length < 21 && $("input[name=poll_choice]").eq(-1).val() !== "Add a choice here"){
+            $(this).before("<input type='text' class='largeform flick' value='Add a choice here' name='poll_choice'>");
+        }
+    break;
+    case "add-friend":  
+        $(this).addClass("greened");
+        $.get("<?php echo $main_dir; ?>template/simcheck.php",
+        {"friend_status[]":[$("#check_friend_status").attr("ref1"),$("#check_friend_status").attr("ref2")],"action":"sg_req"},
+        function(data){
+            $("#check_friend_status").html(data);
+        });   
+    break;
+    case "finished-poll-q":
+        refs = "pass";
+        for(i=0;i<=$("input[name=poll_choice]").length;i++){
+            if(/^[ ]+$/.test($("input[name=poll_choice]").eq(i).val()) || $("input[name=poll_choice]").eq(i).val() == "Add a choice here"){
+                refs = "fail";
+            }
+        }
+        if(refs == "fail"){
+            alert("One or more of the poll choices were left blank. Please correct them.");
+        }
+        else{
+            //convert all form inputs to hidden type
+            //append to post_k
+            //close form
+            //then i'm gonna have to do put it back here in case they decide to add/delete some stuff
+            $("#content").insertBefore("form#post_k");
+            if($("#input_save").html().length > 0){
+                $("#input_save").empty();
+            }
+            $("#content input[type=text],#content input[type=checkbox]").each(function(){
+                if($(this).attr("type") == "text"){
+                    var order = ($(this).attr('name') == "poll_choice") ? $(this).attr('name') + ($(this).index()-2) : $(this).attr('name');
+                    $("#input_save").prepend("<input type='hidden' name='"+ order +"' value='"+$(this).val()+"'>");
+                }
+                if($(this).attr("type") == "checkbox"){
+                    $("#input_save").prepend("<input type='hidden' name='"+$(this).attr('name')+"' value='"+ $(this).prop('checked') +"'>");
+                }
+            });
+            $("#black_overlay").empty().detach();
+            $("#attach_poll_q").html("MANAGE ATTACHED POLL");
+        }
+    break;
+    case "toggle":
+        if($(this).parent().next().is(".spoiler")){$(this).parent().next(".spoiler").toggle();}
+        if($(this).parent().parent().is("#first1")){
+            $("#first1").toggle(); 
+        }
+    break;
+    case "add-poll":
+        $("body").prepend($black_layer[0] + $black_layer[1]);
+        $("#content").appendTo("#widthfix");  
+    break;
     <?php if(isset($_GET['snowglobe'])):?>
     case "select_of_p_type":
         sexy_conditional = (($(this).attr("id") == "0" && $(this).hasClass("selected") != true) || $(this).attr("id") != "0");
         if(sexy_conditional){
             //can't unselect the default option that way
+            $(this).toggleClass("selected");
+            //if a person unselects any post type toggle that's not "All Posts" and there's no other post type selected, 
+            //revert it back to the default display
+            set_values = {
+                "pt_id": ($(this).attr("id") != "0" && $(".pt_toggle.selected").length == 0) ? "0" : parseInt($(this).attr("id"),0),
+                "sg_id": parseInt($("#pt_drop").attr("sg_id"),0)
+            };
             $.get("<?php echo $main_dir; ?>template/simcheck.php",
             {
                 "action":"sg_view_save",
-                "pt_id": parseInt($(this).attr("id"),0),
-                "sg_id": parseInt($("#pt_drop").attr("sg_id"),0)
+                "pt_id": set_values.pt_id,
+                "sg_id": set_values.sg_id
             });
         }
-        $(this).toggleClass("selected");
         //parsing here turns out to be useless as PHP interprets them as strings anyway
-        if($(this).attr("id") == "0"){
-            $(".pt_toggle:not('.all_posts_q')").each(function(){
+        if($(this).attr("id") == "0" || ($(this).attr("id") != "0" && $(".pt_toggle.selected").length == 0)){
+            $(".pt_toggle:not(.all_posts_q)").each(function(){
                 $(this).removeClass("selected");
             });
         }else{
@@ -636,7 +795,7 @@ switch($(this).attr("href")){
             selected_pt_text = ($(this).find("span").length === 0) ? selected_pt_text + "" + $(this).text() :
             selected_pt_text + "" + $(this).find("span").text();
         });
-        if(sexy_conditional){
+        if(sexy_conditional){   //return results
             $.get("<?php echo $main_dir; ?>template/news_feed.php",
             {"get_more":"special","sg_id": parseInt($("#pt_drop").attr("sg_id"),0)},
             function(feed){
@@ -646,99 +805,81 @@ switch($(this).attr("href")){
         $("#pt_drop").html(original_pt_c + " " +selected_pt_text);        
     break;
     <?php endif; ?>
+    
 }
-
-
-
 <?php if(compare_dz($logged_dt['salt'],$_SESSION['salt_q']) && $logged_dt['userid'] == 1): ?>   //admin panel stuff
-
-if(/^opts[:]/.test($(this).attr("href"))){
-
-opt = $(this).attr("href").replace(/^opts:(.+)$/,"$1");   
-
-$(this).attr("id",opt);
-
-switch(opt){
-    case "minimize":
-        if(typeof $("#admin_panel").attr("minimized") === "string") {    
-            $("#admin_panel").removeAttr("minimized");
-            $("#"+opt).html("Minimize Panel");
-            $(".open").hide();
-            true_width = $("#panels").outerWidth() -10;
-            $(".open").attr('style',"width:"+true_width+"px");
+    if(/^opts[:]/.test($(this).attr("href"))){
+        opt = $(this).attr("href").replace(/^opts:(.+)$/,"$1");   
+        $(this).attr("id",opt);
+        switch(opt){
+            case "minimize":
+                if(typeof $("#admin_panel").attr("minimized") === "string") {    
+                    $("#admin_panel").removeAttr("minimized");
+                    $("#"+opt).html("Minimize Panel");
+                    $(".open").hide();
+                    true_width = $("#panels").outerWidth() -10;
+                    $(".open").attr('style',"width:"+true_width+"px");
+                }
+                else {
+                    $("#admin_panel").attr("minimized","a");
+                    $("#"+opt).html("Maximize Panel");
+                }
+                $.get("<?php echo $main_dir;?>template/simcheck.php",{"action":"admin_opts","req":opt});
+            break;
+            case "drag":
+                toggle = (typeof toggle === "undefined" || toggle == "1") ?  0 : 1;
+                if(toggle == 0){
+                    $("#admin_panel").draggable("enable"); $("#admin_panel").addClass("draggy");
+                    $(this).addClass("selected_plink");
+                }
+                else{$("#admin_panel").draggable("disable");$("#admin_panel").removeClass("draggy"); 
+                    $(this).removeClass("selected_plink");
+                }
+                z = $(this).html();
+                $(this).html(function(){  
+                    return_value = (z == "Enable Drag") ? "Disable Drag" : "Enable Drag";
+                    return return_value;
+                });
+            break;
         }
-        else {
-            $("#admin_panel").attr("minimized","a");
-            $("#"+opt).html("Maximize Panel");
-        }
-        $.get("<?php echo $main_dir;?>template/simcheck.php",{"action":"admin_opts","req":opt});
+    }
+    if(/^edit[:]/g.test($(this).attr("href"))){    //murder murder murder murrdurrrrrrrrrrrrrrrrr murrrrrrdurrrrrrrrr
+        //FINALLY. holy shit mother of god tweaking batman
+        $zen_0 = $(this).attr('href');     
+        $zen_1 = $(this).attr('href');                
+        $zen_1 = $zen_1.replace(/^edit[:](.+)$/,"$1");
+        $.get($zen_1).done(function(css){
+            $("link[href='" +$zen_1+"']").remove();
+            //modify directory file at url('')'s
+            $snick = css;
+            if($("head style[title='"+$zen_1+"']").length === 0){     
+                $("head").append("<style title='"+$zen_1+"'>"+ $snick +"</style>");  
+            }
+            if($("#jones").length === 0){  
+            $("a[href='"+$zen_0+"']").addClass("selected2")
+            .after("<a href='submit-edit' class='link_view link_view2 rad prompt finish_button'>Finish editing</a><textarea id='jones' title='"+$zen_1+"' style='height:500px;margin-top:5px'></textarea>");
+            //hmm...     
+            $("#jones").val($("style[title='"+$zen_1+"']").html());              
+            }
+        }); 
+    }
+switch($(this).attr("href")){
+    case "submit-edit":
+        $.post("<?php echo $main_dir; ?>template/simcheck.php?action=css_edit",
+        {"data":$("#jones").val(),"file":$("#jones").attr("title")},
+        function(data){
+            if(data.notice == "success"){alert("Successfully edited file!");}                                                                       
+        },
+        "json");     
     break;
-
-case "drag":
-
-toggle = (typeof toggle === "undefined" || toggle == "1") ?  0 : 1;
-
-
-if(toggle == 0){$("#admin_panel").draggable("enable"); $("#admin_panel").addClass("draggy");
-$(this).addClass("selected_plink");
+    case "submit_sql":  
+        $.post("<?php echo $main_dir; ?>template/simcheck.php?action=sql_q",
+        {"sql_q":$("#" + $(this).attr('refer')).val()},
+        function(message){
+            $("#t_wrap").html(message);
+        });
+    break;
 }
-else{$("#admin_panel").draggable("disable");$("#admin_panel").removeClass("draggy"); 
-$(this).removeClass("selected_plink");
-}
-
-
-z = $(this).html();
-$(this).html(function(){  return_value = (z == "Enable Drag") ? "Disable Drag" : "Enable Drag";
-
-return return_value});
-
-break;
-
-}
-
-}
-
-if(/^edit[:]/g.test($(this).attr("href"))){    //murder murder murder murrdurrrrrrrrrrrrrrrrr murrrrrrdurrrrrrrrr
-//FINALLY. holy shit mother of god tweaking batman
-$zen_0 = $(this).attr('href');     
-
-$zen_1 = $(this).attr('href');                
-$zen_1 = $zen_1.replace(/^edit[:](.+)$/,"$1");
-
-$.get($zen_1).done(function(css){
-     $("link[href='" +$zen_1+"']").remove();
-//modify directory file at url('')'s
-     $snick = css;
-     
-     if($("head style[title='"+$zen_1+"']").length === 0){     
-     $("head").append("<style title='"+$zen_1+"'>"+ $snick +"</style>");  
-         
-     }
-if($("#jones").length === 0){  
-$("a[href='"+$zen_0+"']").addClass("selected2").after("<a href='submit-edit' class='link_view link_view2 rad prompt finish_button'>Finish editing</a><textarea id='jones' title='"+$zen_1+"' style='height:500px;margin-top:5px'></textarea>");
-
-//hmm...     
-
-$("#jones").val($("style[title='"+$zen_1+"']").html());              
-}else{
-}
-     
-}); 
-
-
-}
-
-
-switch($(this).attr("href")){  //i'll do all the others later
-
-case "submit_sql":  
-$.post("<?php echo $main_dir; ?>template/simcheck.php?action=sql_q",{"sql_q":$("#" + $(this).attr('refer')).val()},function(message){
-$("#t_wrap").html(message);
-});
-break;
-}
-
-
 
 if(/^v[\137]/g.test($(this).attr("href"))){
 if($(".selected_link").attr("href") != $(this).attr("href")){
@@ -756,6 +897,7 @@ $("#admin_panel").attr("currently_open",$(this).attr("href"));
 //adjust the width for each different panel
 //the pains of making a draggable admin panel: Captivate(TM)
 //yay math calculations that can't be inline because intended concatenation will be confused for a math operator
+//I mean...operand
 
 $("div#" + $(this).attr("href")).addClass("open not_yet");
 diff = $("#panels").outerWidth() - 10;  
@@ -764,90 +906,11 @@ $(".open").attr("style","width:"+ diff +"px").removeClass("not_yet");
 }
 }
 
-<?php endif; ?>   //end admin panel stuff
-
-
-
-
-if($(this).attr("href") == "one-liner"){
-    $("#post_k input[name=tcha1]").val("<?php echo $nx['27'] ?>");
-    $("#post_k textarea[name=tcha2]").toggle("200",function(){$(this).attr("style","display:block;box-shadow:0 0 6px #556378")})
-    .removeClass("flick").val("<?php echo $nx['28'] ?>").end();  
-    $("#pt_post_op").appendTo("#pt_opts");
-}
-if($(this).attr("href") == "add-more-choices"){
-if($("input[name=poll_choice]").length < 21 && $("input[name=poll_choice]").eq(-1).val() !== "Add a choice here"){
-$(this).before("<input type='text' class='largeform flick' value='Add a choice here' name='poll_choice'>");
-}
-}
-
-if($(this).attr("href") == "add-friend"){  
-
-$(this).addClass("greened");
-$.get("<?php echo $main_dir; ?>template/simcheck.php",{"friend_status[]":[$("#check_friend_status").attr("ref1"),$("#check_friend_status").attr("ref2")],"action":"sg_req"},function(data){
-$("#check_friend_status").html(data);
-});   
-
-}
-
-if($(this).attr("href") == "finished-poll-q"){
-refs = "pass";
-for(i=0;i<=$("input[name=poll_choice]").length;i++){
-if(/^[ ]+$/.test($("input[name=poll_choice]").eq(i).val()) || $("input[name=poll_choice]").eq(i).val() == "Add a choice here"){
-refs = "fail";
-}
-}
-if(refs == "fail"){
-alert("One or more of the poll choices were left blank. Please correct them.");
-}else{
-//convert all form inputs to hidden type
-//append to post_k
-//close form
-
-//then i'm gonna have to do put it back here in case they decide to add/delete some stuff
-
-$("#content").insertBefore("form#post_k");
-
-if($("#input_save").html().length > 0){
-$("#input_save").empty();
-}
-
-$("#content input[type=text],#content input[type=checkbox]").each(function(){
-if($(this).attr("type") == "text"){
-var order = ($(this).attr('name') == "poll_choice") ? $(this).attr('name') + ($(this).index()-2) : $(this).attr('name');
-$("#input_save").prepend("<input type='hidden' name='"+ order +"' value='"+$(this).val()+"'>");
-}
-if($(this).attr("type") == "checkbox"){
-$("#input_save").prepend("<input type='hidden' name='"+$(this).attr('name')+"' value='"+ $(this).prop('checked') +"'>");
-}
-});
-$("#black_overlay").empty().detach();
-$("#attach_poll_q").html("MANAGE ATTACHED POLL");
-}
-
-
-}
-if($(this).attr("href") == "toggle"){
-if($(this).parent().next().is(".spoiler")){$(this).parent().next(".spoiler").toggle();}
-if($(this).parent().parent().is("#first1")){
-$("#first1").toggle();
-}
- 
-
-}
-
-if($(this).attr("href") == "add-poll" && !($("#black_overlay").length)){
-$("body").prepend($black_layer[0] + $black_layer[1]);
-$("#content").appendTo("#widthfix");  //keep the dynamicity?
-
-
-} 
+<?php endif; ?>   //end admin panel stuff 
 
 <?php endif; ?>   //end logged_in conditional
 
 }); 
-
-/*and CUT*/
 
 });
 

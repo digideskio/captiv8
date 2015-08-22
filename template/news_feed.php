@@ -6,7 +6,7 @@ if(isset($_GET['get_more'])){
     require_once("internal.php");
 } 
 if(isset($sg_details) && isset($_SESSION['saved_pt_views'][$sg_details['sg_id']]) 
-&& (count($_SESSION['saved_pt_views'][$sg_details['sg_id']]) > 0) && !isset($_GET['sg_id'])){   echo "a";
+&& (count($_SESSION['saved_pt_views'][$sg_details['sg_id']]) > 0) && !isset($_GET['sg_id'])){  
     $_GET['get_more'] = "special";
     $_GET['sg_id'] = $sg_details['sg_id']; //too much conditionals for such a tiny statement expression eugh
 
@@ -106,23 +106,31 @@ if(news_feed_check){
             $spoiler_patt = "#^[\050](One-liner)[\051]([ ]{0,5})[\133](.+)[\135]$#";
             $select_class[0] = ($vote == "yes" && isset($que_posts[2]) > 0) ? "selected" : "";
             $select_class[1] = ($vote == "no" && isset($que_posts[2]) > 0) ? "selected" : ""; 
-            $content_blur = preg_match("#^[ ]+$#",$que_own['content']) ? false : "<p>".$que_own['content'] ;
-            $content_blur = (preg_match($spoiler_patt,$que_own['title']) && ($content_blur !== false)) ? $content_blur . "</p>" : $content_blur ;
+            $num_comments_disp = "<a href='show-comments' class='mini-notice prompt rad' postid='$que_own[postid]'><strong>$que_own[num_replies]</strong> $nx[77]</a>";
+            $blank_post_check = (preg_match("#^[ ]+$#",$que_own['content']) === 1);
+            $content_blur = $blank_post_check ? false : "<p>".$que_own['content'] ;
+            $spoiler_tags = (preg_match($spoiler_patt,$que_own['title']) === 1) ? "<span class='quote_parse'>\"</span>" : "";
+            $content_blur = ($content_blur !== false || $blank_post_check) ? "<p>" . $spoiler_tags . $que_own['content'] : false;
+            $content_blur = (preg_match($spoiler_patt,$que_own['title']) && ($content_blur !== false)) ? $content_blur . $spoiler_tags . "</p>" : $content_blur ;
             $zing = ($content_blur == false || preg_match($spoiler_patt,$que_own['title'])) ? "" : "</p>";
             $align_blocks = preg_match("#^[ ]+$#",$que_own['content']) ? " valign='middle'" : "";
             echo "<div class='contentbox index_post' alt='".$que_own['postid']."'>
             <table><tr><td width='1%' class='left_side'><strong><a href='".$main_dir."profile/".$que_own['bywhom'] ."'>".$que_own['bywhom'] ."</a>
             </strong></td><td class='content'$align_blocks>";
             if(preg_match($spoiler_patt,$que_own['title'])){
-                preg_match($spoiler_patt,$que_own['title'],$matches);
-                if($matches[1] == "One-liner"){
-                    echo "<strong>". $matches[3] ." <a class='prompt' href='toggle'>Click here...</a></strong>";
-                    echo "<span class='spoiler'>".$content_blur."</span>";
+                preg_match("#^[\050]([^\041]+)[\051]([ ]{0,})[\133](.+)[\135]$[ ]{0,}#",$que_own['title'],$matches);
+                echo $num_comments_disp;
+                switch($matches[1]){
+                    case "One-liner":
+                        echo "<strong>". $matches[3] ." <a class='prompt' href='toggle'>$nx[76]</a></strong>";
+                        echo "<div class='spoiler'>".$content_blur."</div>";    
+                    break;   
                 }
             }
             else{
-                $wraps = (empty($content_blur)) ? ["<strong>","</strong>"] : ["<div class='r_title'>","</div>"];
-                echo $wraps[0] .$que_own['title'] . $wraps[1].$content_blur;                                           
+                $wraps = (empty($content_blur)) ? ["<strong>","</strong>"] : ["<div class='r_title rad'>","</div>"];
+                echo "<table><tr><td width='1%'>$num_comments_disp</td><td>" . $wraps[0] .$que_own['title'] . $wraps[1]. "<td></tr>
+                </table>" . $content_blur;                                           
             }
             echo "<span class='bywhom'> ";
             echo (isset($_SESSION['login_q']) && $que_own['forwhom'] == "self" && $que_own['bywhom'] == $_MONITORED['login_q']) ? 

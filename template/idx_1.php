@@ -165,9 +165,9 @@ if(isset($_GET['thread_view'])){
     if(isset($_SESSION['login_q'])){                  //solution to our session hash failing to verify :/
         //maybe if I alias the submission page then it won't fail to verify somehow
         //echo "<div id='thread_reply' class='contentbox'><form action='".$main_dir."index.php?direct=new_post&verify=".$_SESSION['temp_n']."' method='POST'>
-        echo "<div id='thread_reply' class='contentbox'><form action='".$main_dir."index.php?direct=new_post&verify=".$_SESSION['temp_n']."' method='POST'>
+        echo "<div id='thread_reply' class='contentbox'><form action='".$main_dir."index.php?direct=new_post' method='POST'>
         <input type='hidden' value='". $thread_data['postid'] ."' name='parent_comment'>
-        <input type='hidden' value='".$thread_id."' name='thread_id'>
+        <input type='hidden' value='".$thread_data['thread_id']."' name='thread_id'>
         <textarea name='tcha2' class='flick largeform'>Comment on this thread...</textarea>   <input type='submit' value='POST REPLY'>
     </form></div>";  
     }      //get main threads only
@@ -192,85 +192,35 @@ if(isset($_GET['thread_view'])){
         while($comment_loop = mysqli_fetch_assoc($specific)){     
             $sync_25 = mysqli_query($db_main, "SELECT * FROM posts WHERE parent='$comment_loop[parent]' 
             AND thread_id='$thread_data[postid]' ORDER BY stamptime DESC LIMIT 0,25");
-            if($comment_loop['parent'] == $thread_id){
-                echo "<div class='contentbox comment_box arch_1 selected'><table><tr>
-                <td class='user_info'><h4><a href='index.php?profile=".$comment_loop['bywhom']."'>".$comment_loop['bywhom']."</a></h4></td>
-                <td><p class='post_text'>".$comment_loop['content']."
-                <span class='side_info'>- Posted <a href='".$main_dir."thread/".$_GET['thread_view']."/comment/".$comment_loop['topic_hash'] ."'>". date(dflt_date_f, strtotime($comment_loop['stamptime'])) ."</a></span>
-                </p>";
-                if(isset($_SESSION['login_q'])){
-                    echo "<div class='opts_block' alt='".$comment_loop['postid']."'>";
-                    echo "<a href='#' class='comment_opts rad comment_q-u' name='post_".$comment_loop['postid']."' id='post_".$comment_loop['postid']."'>Reply</a><a href='#' id='edit_".$comment_loop['postid']."' class='comment_opts rad edit' name='edit_".$comment_loop['postid']."' >Edit</a>";
-                    echo "</div>";
-                }
-                echo "</td></tr></table>";
-                //second and third and fourth level of comments and so on
-                echo "</div>";      
+            if($comment_loop['parent'] === $thread_data['postid']){
+                $fill_data->show_reply($comment_loop,true);    
                 //this is soooooo tacky
                 if(mysqli_num_rows($sync_25) > 0){//function get_posts($pid_call,$tid_call = "1",$limit = "25",$chain = "5")
                     get_posts($comment_loop['postid'],$thread_data['postid']);
                 }
                 mysqli_free_result($sync_25);
             }
-            else{
-                //the devil
-                //wow I got this done so much more quickly
-                //I feel like celebrating   
-                function show_parents($queue,$parent,$parent_comments = "5"){ global $db_main,$thread_data,$nay,$fill_data;
-
-//the logic is, you will always need the margin unless it's the top ancestor generation     
-
-
-
-$show_1 = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$parent' AND thread_id='$thread_data[postid]'");
-$tell_1 = (mysqli_num_rows($show_1) > 0) ? mysqli_fetch_assoc($show_1) : "dead";
-
-if($tell_1 !== "dead" && $_SESSION['count'] > 0){    $_SESSION['count'] = $_SESSION['count'] - 1; $_SESSION['incr'] = $_SESSION['incr'] + 1; //remember, it has to be limited to 5 ancestor generations
-$show_2 = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$tell_1[parent]' AND thread_id='$thread_data[postid]'");
-$tell_2 = (mysqli_num_rows($show_2) > 0) ? mysqli_fetch_assoc($show_2) : "dead";
-if($tell_2 !== "dead" && $_SESSION['count'] > 0){      
-  $_SESSION['count'] = $_SESSION['count'] - 1;  $_SESSION['incr'] = $_SESSION['incr'] + 1; 
-if($tell_2['parent'] !== $thread_data['postid']){
-show_parents($tell_2['postid'],$tell_2['parent'],$_SESSION['count'] - 1);        $margin_set = (is_array($tell_1)) ? "<div class='margin'>" : "";
-echo $margin_set;
+            else{              
+                $_SESSION['reply_sync']['count'] = 5;   //initiate post count
+                $_SESSION['reply_sync']['incr'] = 0;
+                show_parents($comment_loop['postid'],$comment_loop['parent'],$_SESSION['reply_sync']['count']);
+                //this is soooooo tacky     
+                echo "<div class='margin'>";               
+                $fill_data->show_reply($comment_loop,true);     
+                get_posts($comment_loop['postid'],$thread_data['postid']);      
+                echo "</div>";
+                while(isset($_SESSION['reply_sync']['incr'])){   //close all the margins
+                    $_SESSION['reply_sync']['incr'] = $_SESSION['reply_sync']['incr'] - 1;
+                    if($_SESSION['reply_sync']['incr'] == 1) unset($_SESSION['reply_sync']['incr']);
+                    echo "</div>";
+                }   
+            }
+        }    
+        mysqli_free_result($specific);
+    }  
 }
-
- $fill_data->show_reply($tell_2); 
-
-} 
-
-         $margin_set = (is_array($tell_2)) ? "<div class='margin'>" : "";
-echo $margin_set;
-
- $fill_data->show_reply($tell_1); 
-
-        
-mysqli_free_result($show_2);
-}
-mysqli_free_result($show_1);
- //end show_parents();
-
-}
-$_SESSION['count'] = "5";   $_SESSION['incr'] = "0";
-show_parents($comment_loop['postid'],$comment_loop['parent'],$_SESSION['count']);
-
-
-//echo "</div>";      //this is soooooo tacky
-echo "<div class='margin'>";     $fill_data->show_reply($comment_loop); 
-get_posts($comment_loop['postid'],$thread_data['postid']);       
-
-}
-
-}
-    mysqli_free_result($specific);
-    
-    }
-
-   
-}
-
 mysqli_free_result($snipe8);
-mysqli_free_result($view_thread); }else{redir_process("Location:".$main_dir."index.php"); $_SESSION['error' .rand(56,1515)] = extraurl();}
+mysqli_free_result($view_thread); }else{redir_process("Location:".$main_dir."index.php"); $_SESSION['error'] = extraurl();}
 }else{
 if(isset($_GET['comment'])){
 $search_for_thread = mysqli_query($db_main, "SELECT * FROM posts WHERE topic_hash='$_FILTERED[comment]' ORDER BY stamptime DESC");

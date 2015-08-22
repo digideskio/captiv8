@@ -1,16 +1,23 @@
 <?php   
 
 //All user data needed in other php files, sanitized variables, time formatting, etc. goes here.
+//also functions that need to be embedded in all the files
+
+//June 16 edit: all this shit should be in one class lol. Or at least 2-3 hierchially extended to each other
+
 if(isset($_SESSION['login_q']) && isset($_SESSION['salt_q'])){
-$logged_query = mysqli_query($db_main,"SELECT userid,salt,day2,month2,year2,tabbed_users,misc_prefs,fullname FROM users WHERE username='$_SESSION[login_q]'");
+$logged_query = mysqli_query($db_main,"SELECT userid,salt,day2,month2,year2,tabbed_users,misc_prefs,fullname,login_att_last FROM users WHERE username='$_SESSION[login_q]'");
 $logged_dt = mysqli_fetch_assoc($logged_query);
-//any way to exclude just the password hash?
+//any way to exclude just the password hash from column selection?
 }       
 
 require_once("lib/simple_html_dom.php");
 
 if(isset($_GET['error_reporting']) && $_GET['error_reporting'] == "false"){      //This would be helpful for all get
 error_reporting(~E_ALL);
+}
+function blank_parse(&$queued_var){
+    return (isset($queued_var)) ? $queued_var : "";
 }
 
 function verify_var(&$array_in_question){
@@ -77,7 +84,9 @@ return mysqli_real_escape_string($db_main,$x);
 }
  
 
-function compare_dz($a, $b) {   //nanosecond timing attack prevention 
+function compare_dz($a, $b) {   
+    //nanosecond timing attack prevention 
+    //because no password_compare() in PHP 5.4
     if (strlen($a) !== strlen($b)) {
         return false;
     }
@@ -85,7 +94,7 @@ function compare_dz($a, $b) {   //nanosecond timing attack prevention
     for ($i = 0; $i < strlen($a); $i++) {
         $result |= ord($a[$i]) ^ ord($b[$i]);
     }
-    return $result == 0;
+    return $result === 0;
 }
 
 function key_associations($key_names,$is_one_to_others = null){//this limits which GET parameters you can have on any page to only appropriate associations.
@@ -107,16 +116,34 @@ function url_friendly($dt){
     return strtolower(preg_replace("#-{2,}#","-",preg_replace("#[^A-Za-z0-9_]#","-",$yy)));
 }
 
-function hack_free(&$data){           
+function search_for_string(&$array_ref,$search_string = ""){
+    if((is_array($array_ref) && in_array($search_string,$array_ref)) || 
+    (!is_array($array_ref) && preg_match("#".preg_quote($search_string)."#",$array_ref))){
+        return true;
+    }
+    return false;
+}
+
+function hack_free(&$data,$extras = ""){
+    if(strlen($extras) > 0){
+        $extras = preg_split("#,#",$extras);
+    }     
     global $db_main;
     if(is_array($data)){ //...
         array_map("hack_free",$data);  //how did I not know about this function?
     }
     else{
-        $data = mysqli_real_escape_string($db_main,$data);
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);       /*le filters*/
+        /*le filters*/
+
+        $data = !search_for_string($extras,"htmlspecialchars") ? htmlspecialchars($data) : $data;       
+        /* posting format code goes here */
+        $data = search_for_string($extras,"break-lines") ? str_replace("\n","<br>",$data) : $data;
+        //that was bizzare
+        /*and then filters again*/
+        $data = !search_for_string($extras,"mysqli_real_escape_string") ? mysqli_real_escape_string($db_main,$data) : $data;
+        $data = !search_for_string($extras,"stripslashes") ? stripslashes($data) : $data;
+        $data = !search_for_string($extras,"trim") ? trim($data) : $data;
+      
     }
     return $data;
 }
@@ -129,7 +156,6 @@ function filter_sql_queries(&$array,$order){
                  $filtered[$key] = is_array($val) ? $val[0] : $val; 
             }
         }
-
     }
     else{
         return false;    
@@ -149,8 +175,9 @@ if(preg_match("#^".$search."#",$key)){unset($listof[$key]);}
 }}
 if($_SERVER['REQUEST_METHOD'] == "POST"){foreach($_POST as $key => $room){ $z = isset($z) ? $z + 1 : 0;
 $copy = $_POST[$key];
-$_SPIN[$key] = mysqli_real_escape_string($db_main,preg_replace("/[\x27]/","&#39;",preg_replace("#[\n]#","<br>",htmlspecialchars($copy)))); //so mysqli_real_escape string doesnt do its job correctly no
-$_DATA[$key] = $_SPIN[$key];
+
+$_SPIN[$key] = hack_free($copy,"break-lines,stripslashes");
+$_DATA[$key] = $_SPIN[$key];  //don't know why I have two different copies
 $clone[$z] = $_SPIN[$key];             //increment array key
                    //lol spin and data are essentially the same thing
    }
@@ -251,9 +278,12 @@ function get_posts($pid_call,$tid_call,$limit = "25",$chain = "5",$special_selec
              while($q_dt = mysqli_fetch_assoc($q_req)) {
                  $margins = ($special_select == "none") ? array("<div class='margin'>","</div>") : array("","");   
                  echo $margins[0];
-                 $fill_data->show_reply($q_dt);
                  $inception_q = mysqli_query($db_main, "SELECT * FROM posts WHERE parent='".$q_dt['postid']."' 
                  AND thread_id='$tid_call' ORDER BY stamptime DESC LIMIT 0,$limit") or die(mysqli_error($db_main));
+                 if(mysqli_num_rows($inception_q) > 0 && $x == 1){
+                     $q_dt['more_replies_notice'] = true;
+                 }
+                 $fill_data->show_reply($q_dt);
                  if(mysqli_num_rows($inception_q) > 0){
                      get_posts($q_dt['postid'],$tid_call,"25",$chain-1);
                  }
@@ -294,5 +324,35 @@ function get_posts($pid_call,$tid_call,$limit = "25",$chain = "5",$special_selec
             mysqli_free_result($get_child_comments);
         }
     }//end function
+}
+function show_parents($queue,$parent,$parent_comments = "5"){ 
+    global $db_main,$thread_data,$nay,$fill_data,$x;    
+    $show_1 = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$parent' AND thread_id='$thread_data[postid]'");
+    $tell_1 = (mysqli_num_rows($show_1) > 0) ? mysqli_fetch_assoc($show_1) : "dead";         
+    if($tell_1 !== "dead" && $_SESSION['reply_sync']['count'] > 0){ 
+        $_SESSION['reply_sync']['count'] = $_SESSION['reply_sync']['count'] - 1; 
+          if($_SESSION['reply_sync']['count'] === 0) $_SESSION['reply_sync']['has_more_parents'] = "set";
+                $_SESSION['reply_sync']['incr'] = $_SESSION['reply_sync']['incr'] + 1; 
+                //remember, it has to be limited to 5 ancestor generations
+                $show_2 = mysqli_query($db_main, "SELECT * FROM posts WHERE postid='$tell_1[parent]' AND thread_id='$thread_data[postid]'");
+                $tell_2 = (mysqli_num_rows($show_2) > 0) ? mysqli_fetch_assoc($show_2) : "dead";                        
+                if($tell_2 !== "dead" && $_SESSION['reply_sync']['count'] > 0){   
+                    $_SESSION['reply_sync']['count'] = $_SESSION['reply_sync']['count'] - 1;   
+                    if($_SESSION['reply_sync']['count'] === 0) $_SESSION['reply_sync']['has_more_parents'] = "set";
+                    $_SESSION['reply_sync']['incr'] = $_SESSION['reply_sync']['incr'] + 1; 
+                    if($tell_2['parent'] !== $thread_data['postid'] && !isset($_SESSION['reply_sync']['has_more_parents'])){
+                    show_parents($tell_2['postid'],$tell_2['parent'],$_SESSION['reply_sync']['count'] - 1);        
+                        echo (is_array($tell_1) && !isset($_SESSION['reply_sync']['has_more_parents'])) ? "<div class='margin'>" : "";
+                        if(isset($_SESSION['reply_sync']['has_more_parents'])) unset($_SESSION['reply_sync']['has_more_parents']);
+                    }
+                    $fill_data->show_reply($tell_2);  
+                }   
+                echo (is_array($tell_2) && !isset($_SESSION['reply_sync']['has_more_parents'])) ? "<div class='margin'>" : ""; 
+                if(isset($_SESSION['reply_sync']['has_more_parents'])) unset($_SESSION['reply_sync']['has_more_parents']);
+                $fill_data->show_reply($tell_1);
+                mysqli_free_result($show_2);
+    }
+    mysqli_free_result($show_1);
+    //end show_parents();
 }
 ?>

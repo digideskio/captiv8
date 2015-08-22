@@ -1,10 +1,10 @@
-<?php              
+<?php            
 //AJAX calls page
 //this is the hotline center, bitchessssss 
 
 //made that comment months ago, I just gotta say: what an obscure metaphor.
 
-//I should get appropriate headers here to prevent DDOS's later.
+//I should get appropriate headers here to prevent DDOS's later, because this seems like the page to abuse for them lol
 
 session_start();      
 
@@ -13,9 +13,7 @@ date_default_timezone_set('America/Chicago');
 $db_main = mysqli_connect("localhost","root","","captiv8");  
 
 require_once("vars.php");
-
 require_once("auxiliary.php");
-
 
 if(isset($_GET['availability'])){
 $filter = hack_free($_GET['availability']);
@@ -32,7 +30,43 @@ if(compare_dz($logged_dt['salt'],$_SESSION['salt_q'])){      //extra measures
 if(isset($_GET['action'])){
 
 switch($_GET['action']){
-
+case "alter_post":
+    if(isset($_GET['typeof_alter'])){
+        if($db_checks->check_perms_of_post("altering_posts",$_FILTERED['postid'])){
+            $dt_assoc = $db_checks->check_perms_of_post("altering_posts",$_FILTERED['postid'],"post_data");
+            switch($_GET['typeof_alter']){
+                case "edit":  
+                    $edit_post = mysqli_query($db_main, "UPDATE posts SET content='$_DATA[dt]' WHERE postid='$_FILTERED[postid]'");
+                    if($edit_post){
+                        echo json_encode(["status" => "success","message" => $nx['67'],"html" => $_DATA['dt']]); 
+                        //i'll set up the post formatting later
+                    }
+                    else{
+                        echo json_encode(["status" => "fail","message" => $nx['68']]);
+                    }
+                break;
+                case "delete":
+                    //make them confirm first
+                    if(isset($_SESSION['confirm_delete'][$_FILTERED['postid']])){
+                        //update post count of threads for non-thread post deletions
+                        $reduce_to_skeleton = mysqli_query($db_main, "UPDATE posts SET content='' AND bywhom='' AND title=''
+                        AND num_replies = (CASE WHEN cnttype='1' THEN 0 ELSE num_replies - 1 END)
+                        WHERE postid='$_FILTERED[postid]'");     
+                        if($reduce_to_skeleton){
+                            echo $nx['69'];
+                        }
+                    }
+                    else{
+                        $_SESSION['confirm_delete'][$_FILTERED['postid']] = true;
+                        echo $nx['68'];
+                    }    
+                break;
+            }
+        }else{
+            echo "Hah.";
+        }
+    }  
+break;
 case "sync_all":
 
 $sync_in = 
@@ -154,7 +188,7 @@ break;  //end snowglobe follow status
 
 case "sql_q":   //first, test to check if it has a delete or drop statement
 echo "<br>";
-if(!preg_match("#[;]?[ ]{0,}(DELETE|DROP|delete|drop) #",$_POST['sql_q'])){
+if(!preg_match("#^[;]?[ ]{0,}(DELETE|DROP|delete|drop) #",$_POST['sql_q'])){
 
 if(preg_match("#^[ ]{0,}(SELECT|select)#",$_POST['sql_q'])){
 
@@ -165,7 +199,7 @@ $type = "row fetch";
 @$test_query = mysqli_query($db_main, $_POST['sql_q']);
 if($test_query){  //successful SQL query?          
 if(!preg_match("#^[ ]{0,}SELECT #",$_POST['sql_q'])){
-echo "The query \"" . $_SPIN['sql_q'] . "\" was successful.";    }else{ //display rows!
+echo "The query <span class='sql_q'>" . htmlspecialchars($_POST['sql_q']) . "</span> was successful.";    }else{ //display rows!
 //$get_rows = mysqli_fetch_assoc($test_query);
 /*foreach($get_rows as $keys => $values){
 $rows = isset($rows) ? array_merge([$keys],$rows) : [$keys];
@@ -325,7 +359,7 @@ echo "<a href='".$main_dir."profile_nuise/".$_MONITORED['login_q']."/find/new_sc
 
 }
 
-}      
+}   
 
 
 
@@ -338,12 +372,6 @@ $initial_validation_message = "Please correct the following information:";
 $initial_search_test = "SELECT * FROM users WHERE username='$_MONITORED[login_q]'"; //if there's no initial data checks needed. What a tacky loophole right      
 $successful_entry_msg = "";
 $redir = "none";
-
-
-
-//check for the a certain data field's availability
-
-
 
     /*     
     quick documentation for this. eugh
@@ -496,21 +524,24 @@ switch($_GET["box_action"]){
 
          
 if(isset($_GET['format'])){
-switch($_GET['format']){    
-     case "sync_in":
-     $select_unreads = mysqli_query($db_main, "SELECT bywhom FROM posts WHERE forwhom='$_MONITORED[login_q]' AND is_read='0' AND cnttype='3' ORDER BY stamptime DESC LIMIT 0,99");
-     if(mysqli_num_rows($select_unreads) > 0){
-     while($zx = mysqli_fetch_assoc($select_unreads)){ //only the 5 most recent users among 100 latest replies, append duplicate names
-     $new_replies_num = isset($new_replies_num) ? $new_replies_num + 1 : 1;
-     $new_messages = (isset($row) && array_search($zx['bywhom'],$row) !== false) ? array_merge($row, $zx['bywhom']): [$zx['bywhom']];  
-     }
-     }
-     echo json_encode(["new_messages" => (isset($new_messages)) ? $new_replies_num : 0,"senders" => (isset($new_replies_num) && $new_replies_num > 0) ? $new_messages : "none"]);
+    switch($_GET['format']){    
+        case "sync_in":
+            $select_unreads = mysqli_query($db_main, "SELECT bywhom FROM posts WHERE forwhom='$_MONITORED[login_q]' AND is_read='0' AND cnttype='3' ORDER BY stamptime DESC LIMIT 0,99");
+            if(mysqli_num_rows($select_unreads) > 0){
+                while($zx = mysqli_fetch_assoc($select_unreads)){ //only the 5 most recent users among 100 latest replies, append duplicate names
+                    $new_replies_num = isset($new_replies_num) ? $new_replies_num + 1 : 1;
+                    $new_messages = (isset($row) && array_search($zx['bywhom'],$row) !== false) ? array_merge($row, $zx['bywhom']): [$zx['bywhom']];  
+                }
+            }
+            echo json_encode(["new_messages" => (isset($new_messages)) ? 
+            $new_replies_num : 0,
+            "senders" => (isset($new_replies_num) && $new_replies_num > 0) ? $new_messages : "none"]);
       unset($new_messages);        unset($new_replies_num);   
           
      break;  
 
-}         }
+    }         
+}
 
 
 
@@ -518,13 +549,13 @@ switch($_GET['format']){
 
 
 if(isset($_GET['is_read'])){ //will be accessed upon the other user reading the messages
-  $mark_as_read = mysqli_query($db_main, "UPDATE posts SET is_read = '1' WHERE cnttype='3' AND forwhom='$_MONITORED[login_q]' AND bywhom='$_FILTERED[user]'");
+    $mark_as_read = mysqli_query($db_main, "UPDATE posts SET is_read = '1' WHERE cnttype='3' AND forwhom='$_MONITORED[login_q]' AND bywhom='$_FILTERED[user]'");
 }
   
     unset($post_list);
-  break;    //end chat search 
+break;    //end chat search 
 case "wikipedia_search":
-include("wikipedia_search.php");   
+    include("wikipedia_search.php");   
 break;
 
 case "confirm_school":
@@ -647,9 +678,8 @@ $ed_level = isset($properties['school_type']) ? $properties['school_type'] : $pr
 
 <?php if(!isset($_SESSION[$znip])): ?>    
 <form class="zenith">
-    <br>
+<br>
 <div class="contentbox fill_details"> <h3>Fill details</h3>        
- 
 <table><tr><th class="marginals" style="width:200px">School Name</th><td>
 <input type="text" name="school" value="<?php echo $strings['name'] ?>" class="largeform <?php echo 'a' . $z; ?>" disabled="disabled" name="school_name" style="opacity:.5">          </td>
 </tr>
@@ -666,13 +696,8 @@ $ed_level = isset($properties['school_type']) ? $properties['school_type'] : $pr
 </table>
 </div>
 </form>  
-
 <?php  $_SESSION[$znip] = "yes";   
-
-endif; ?>
-
-
-<?php      
+endif;     
 endif;   //end submission form                    
 unset($properties);     unset($fill_details);           unset($znip);
 
@@ -801,34 +826,12 @@ if(isset($_GET['fetch'])){ //display data
 
 if(isset($_SESSION['login_q'])){
 
-$get_admin_status = mysqli_query($db_main, "SELECT * FROM users WHERE username='$_MONITORED[login_q]' AND userid='1'");
 //really need to make a way to classify an account as being "admin"
-if(mysqli_num_rows($get_admin_status) == 1){  
+if($logged_dt['userid'] === "1"){  
 
 switch($_GET['fetch']){
-
-case "class_sg":
-    if(isset($_GET['school_id'])):
-        $search_all_sg = mysqli_query($db_main, "SELECT * FROM snowglobes WHERE special_settings='school' 
-        AND reference_num='$_FILTERED[school_id]' LIMIT 0,25");
-        if(mysqli_num_rows($search_all_sg) > 0):
-            while($c_sg_dt = mysqli_fetch_assoc($search_all_sg)):
-?>
-                <!--  <?php echo $c_sg_dt['']; ?>   -->
-                <div class="sgc">
-                <h4><a href="<?php echo $main_dir; ?>sg/<?php echo $c_sg_dt['sg_url']; ?>"><?php echo $c_sg_dt['sg_name']; ?></a></h4>
-                <div class="sg_desc"><?php echo $c_sg_dt['description']; ?></div> 
-                <p>Created <?php echo time_rounds($c_sg_dt['creation_date']); ?></p> 
-                </div>
-<?php
-            endwhile;
-        endif;
-    endif;
-break;
-
-case "post_type_panel":
-
-$get_post_types = mysqli_query($db_main, "SELECT * FROM post_types ORDER BY pt_id DESC");
+    case "post_type_panel":
+    $get_post_types = mysqli_query($db_main, "SELECT * FROM post_types ORDER BY pt_id DESC");
 ?>
 
 <tr class="pt_dt"><th>Default Listing</th><td>
@@ -883,6 +886,67 @@ There are currently no post_types. Feel free to make one in the fill-in form bel
 break;
 
 }
+
+}
+
+switch($_GET['fetch']){  //non-admin functions
+    case "comments":
+        //just get first-level comments for this
+        $get_comments = mysqli_query($db_main, "SELECT * FROM posts WHERE thread_id='$_FILTERED[postid]' AND parent='$_FILTERED[postid]' 
+        ORDER BY stamptime DESC LIMIT 0,5");
+        if($db_checks->check_perms_of_post("viewing_posts",$_FILTERED['postid'])){
+            $post_panel = $nx['79'];
+            if(mysqli_num_rows($get_comments) > 0){     
+                echo $post_panel;
+                echo "<h4>$nx[80]</h4>";      
+                echo "<div class='post_shill'>";       
+                while($comment_dt = mysqli_fetch_assoc($get_comments)){
+                    $alt_num = (isset($alt_num) && $alt_num === "4") ? "3" : "4";
+                    echo "<div class='shills a$alt_num'><a href='".$main_dir."profile/$comment_dt[bywhom]' class='profile_link'>$comment_dt[bywhom]</a>
+                    <p>$comment_dt[content] <span class='date_posted'> - <a href='".$main_dir."index.php?comment=$comment_dt[topic_hash]'>". time_rounds($comment_dt['stamptime']) ."</a></span></p></div>";
+                }
+                echo "</div>";
+            }
+            else{
+                echo $nx['78'];
+                echo $post_panel;
+            }
+        }
+    break;
+    case "class_sg":
+        if(isset($_GET['school_id'])):
+            $name_narrow_down = isset($_GET['extra_name']) ? " AND sg_name LIKE '%$_FILTERED[extra_name]%'" : "";
+            $search_all_sg = mysqli_query($db_main, "SELECT * FROM snowglobes WHERE special_settings='school' 
+            AND reference_num='$_FILTERED[school_id]'$name_narrow_down LIMIT 0,25");
+            if(mysqli_num_rows($search_all_sg) > 0):
+                while($c_sg_dt = mysqli_fetch_assoc($search_all_sg)):
+?>
+                <!--  <?php echo $c_sg_dt['']; ?>   -->
+                <div class="sgc">
+                <h4><a href="<?php echo $main_dir; ?>sg/<?php echo $c_sg_dt['sg_url']; ?>"><?php echo $c_sg_dt['sg_name']; ?></a></h4>
+                <div class="sg_desc"><?php echo $c_sg_dt['description']; ?></div> 
+                <p>Created <?php echo time_rounds($c_sg_dt['creation_date']); ?></p> 
+                </div>
+<?php
+                endwhile;
+            else:  ?>
+<div class="notice"><?php echo $nx['75']; ?></div>
+<?php            
+            endif;
+        endif;
+    break;                                   
+case "postedit_q":           
+     $select_post = mysqli_query($db_main,"SELECT * FROM posts post_c,sg_permissions sgp_c WHERE post_c.postid='$_FILTERED[postid]' 
+     AND CASE WHEN post_c.forwhom='self' THEN 1 ELSE CASE WHEN sgp_c.towhom=post_c.bywhom THEN 1 ELSE 0 END END  GROUP BY postid"); 
+     //no idea why it's giving out duplicate results
+     //checked for both mod and user rights above
+     
+     //check for admin, mod, and user rights 
+     if($logged_dt['userid'] === 1 || mysqli_num_rows($select_post) == 1){
+         $post_dt = mysqli_fetch_assoc($select_post);
+         echo $post_dt['content'];   
+     }
+break;
 
 }   
 

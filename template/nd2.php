@@ -8,7 +8,7 @@ if(!isset($_SESSION['login_q'])){       //not logged in to a user account, essen
               
 
 echo "<form action='".$main_dir."index.php?verify=". $_SESSION['temp_n'] ."&direct=login' id='login' method='post'><input type='text' value='".$nx[0]."' name='usernorm' class='flick'><input type='password' name='pwrdnorm' value='".$nx[1]."' class='flick'><input type='submit' value='".$nx[2]."' class='dt1space'>
-<a href='index.php?direct=signup' class='signup-a'>".$nx[3]."</a>";
+<a href='".$main_dir."signup' class='signup-a'>".$nx[3]."</a>";
 if(isset($_COOKIE['inc_ombination'])){
 echo '<div class="notice left glow">'.$_COOKIE["inc_ombination"].'</div>';
 setcookie("inc_ombination","yeah",time()-1);
@@ -117,12 +117,12 @@ echo "<div class='box chat-b' ref='" . $value . "' preloaded='true'>
     <div class='chat_panel'>
         <textarea></textarea>
     </div>
-    <a class='prompt button_samp rad chat-buttons' href='submit-chat-msg'>SUBMIT</a>   <a class='prompt button_samp rad chat-buttons' href='close-chat'>Close</a>
+    <a class='prompt button_samp rad chat-buttons greened' href='submit-chat-msg'>SUBMIT</a>   <a class='prompt button_samp rad chat-buttons' href='close-chat'>Close</a>
 </div>";
 
 }
 
-echo "<div class='box' id='chat_list'><h3>Online Users</h3><p>Users will show up here if you both follow each other. Of course you can send a message regardless, but it will be shown somewhere less exposed.</p>";
+echo "<div class='box' id='chat_list'><h3>Online Users</h3><p>$nx[66]</p>";
 
 if(mysqli_num_rows($find_users_to_chat_with) > 0){
     while($fetch_chat = mysqli_fetch_assoc($find_users_to_chat_with)){  //   $fetch_chat['granted_by'] has the user whom you could chat with
@@ -141,13 +141,7 @@ else{
         $sidebar = mysqli_query($db_main,$sidebar);
         $sidebar_dt = mysqli_fetch_assoc($sidebar);
         if($thread_data['forwhom'] === "self"){
-            ?>
-                <div class="box">
-                <h3>About the poster:</h3>
-                <p><a href="<?php echo $main_dir;?>profile/<?php echo $sidebar_dt['username'];?>">Profile Link</a><br>
-                Joined <?php echo time_rounds($sidebar_dt['joindate']); ?></p>
-                </div>
-            <?php
+            $fill_data->about_poster_sidebar($sidebar_dt);
         }
         else{
             $fill_data->sg_sidebar($sidebar_dt,true);
@@ -164,10 +158,8 @@ echo "</td><td width='99%' id='vc2'>";
 
 
 //edit profile action, and all the other actions for query= [ ]
-if(isset($_GET['query'])){   
-if(logged_in_check){ 
+if(isset($_GET['query']) && logged_in_check){   
 if(count($_GET) == 1){
-$edu_find = mysqli_query($db_main, "SELECT * FROM education e, school s WHERE e.school_id = s.s_id AND e.forwhom='$_MONITORED[login_q]'");
 
 //editing your own profile
 echo "<form action='".$main_dir."index.php?verify=". $_SESSION['temp_n'] ."&action=edit_profile' method='POST'>";
@@ -218,11 +210,11 @@ $nt = isset($nt) ? $nt . ", " .$edu_list['school_type'] : $edu_list['school_type
 $class_sg_check = mysqli_query($db_main, "SELECT * FROM snowglobes WHERE special_settings='school' AND reference_num='$edu_list[s_id]'");
 ?>
 <div class="contentbox hide" s_id="<?php echo $edu_list['s_id']; ?>">
-<h3>Classes on <em><?php echo $edu_list['name']; ?></em></h3> 
+<h3>Classes on <em><?php echo $edu_list['name']; ?></em> <a href="close-window" class="button_samp rad greened prompt" return_to="#vc2">Close Panel</a></h3> 
 
 
 <div id="new_snowglobe"> <table>
-<tr class="h4_row"><td>Classroom Snowglobe</td><td>Fill-in Form</td></tr>
+<tr class="h4_row"><td><?php echo $nx['71']; ?></td><td><?php echo $nx['72']; ?></td></tr>
 
 <tr class="message"><td width="50%" class="notice2<?php if(mysqli_num_rows($class_sg_check) > 0){ echo " top_off"; }?>">
 
@@ -230,6 +222,8 @@ $class_sg_check = mysqli_query($db_main, "SELECT * FROM snowglobes WHERE special
 <?php if(mysqli_num_rows($class_sg_check) > 0){ 
 //has classes in school or none
 ?>
+
+<div class="search_box"><input class="largeform flick chop" type="text" value="<?php echo $nx['74']; ?>"></div> 
 
 <div class="load_classes" school_id="<?php echo $edu_list['s_id'];?>"></div>  
 
@@ -240,6 +234,8 @@ $class_sg_check = mysqli_query($db_main, "SELECT * FROM snowglobes WHERE special
 <?php } ?>    </td>
 
 <td class="form_cobble" valign="top">
+
+<p><?php echo $nx['73']; ?></p>
  
 <!-- <input type="text" value="" name="" class="flick largeform" validation="{new_sg:x}">  -->
 <input type="text" value="Name of class/subject, or teacher's name, or both." name="sg_name" class="flick largeform">
@@ -424,8 +420,6 @@ break;
 }
 }
 
-
-}
 }     
 }
 

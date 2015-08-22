@@ -4,11 +4,15 @@
 setInterval(function(){
 
 
-$.get("<?php echo $main_dir; ?>template/simcheck.php",{"action":"sync_all"},function(sync){
-//activates if necessary
-sync_in = sync;        
-
-},"json");
+$.ajax({
+    url: "<?php echo $main_dir; ?>template/simcheck.php",
+    data: {"action":"sync_all"},
+    async: false,
+    success: function(sync){
+        sync_in = sync;        
+    },
+    dataType: "json"
+});
 
 
                    
